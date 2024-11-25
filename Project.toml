@@ -1,0 +1,22 @@
+name = "CVModel"
+uuid = "07b7ff27-7ac2-4b9c-a5be-1b4a345d90da"
+authors = ["Rich Whittle <rswhittle@ucdavis.edu>"]
+version = "0.1.0"
+
+[deps]
+CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
+CirculatorySystemModels = "4211d73e-f4e8-40c4-b600-92e4b82f0e1a"
+DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
+DifferentialEquations = "0c46a032-eb83-5123-abaf-570d42b7fbaa"
+ModelingToolkit = "961ee093-0014-501f-94e3-6117800e7a78"
+OrdinaryDiffEq = "1dea7af3-3e70-54e6-95c3-0bf5283fa5ed"
+Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
+
+[compat]
+CSV = "0.10.15"
+CirculatorySystemModels = "0.4.1"
+DataFrames = "1.7.0"
+DifferentialEquations = "7.14.0"
+ModelingToolkit = "9.49.0"
+OrdinaryDiffEq = "6.89.0"
+Plots = "1.40.8"
