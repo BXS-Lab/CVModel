@@ -1,5 +1,53 @@
-Cardiovascular Model.
-Version 3.0 (May 3rd, 2025).
-BXS Lab, UC Davis; Authors: RS Whittle, AJ Kondoor, HS Vellore.
-Contact info: Dr. Rich Whittle – Department of Mechanical and Aerospace Engineering, UC Davis, One Shields Ave, Davis CA 95616 (rswhittle@ucdavis.edu).
-This model is a simulation of the human cardiovascular system, including a four chamber heart, arteries, veins, and microcirculation. It includes reflex control for the arterial baroreflex (ABR) and cardiopulmonary reflex (CPR), as well as hydrostatic effects, interstitial fluid flow, and external tissue pressures. The model is designed to simulate various physiological scenarios, including a tilt angle protocol, altered-gravity environment, and lower body negative pressure (LBNP) protocol. The underlying equations are based on the work of Heldt (2004), Zamanian (2007), Diaz Artiles (2015), and Whittle (2023). The model is implemented using the ModelingToolkit.jl package in Julia.
+# Cardiovascular Model
+
+**Version:** 3.0  
+**Release Date:** May 3rd, 2025  
+**Lab:** BXS Lab, UC Davis  
+**Authors:** R.S. Whittle, A.J. Kondoor, H.S. Vellore  
+**Contact:**  
+Dr. Rich Whittle  
+Department of Mechanical and Aerospace Engineering  
+University of California, Davis  
+One Shields Avenue, Davis, CA 95616  
+📧 rswhittle@ucdavis.edu
+
+---
+
+## Overview
+
+This repository contains a simulation of the human cardiovascular system developed using [ModelingToolkit.jl](https://mtk.sciml.ai/stable/) in Julia. The model includes:
+
+- A four-chamber heart
+- Arterial and venous systems
+- Microcirculation
+- Arterial baroreflex (ABR) and cardiopulmonary reflex (CPR)
+- Hydrostatic effects and interstitial fluid dynamics
+- External tissue pressure modeling
+
+## Simulation Scenarios
+
+The model supports simulation of:
+
+- Tilt-angle protocols
+- Altered-gravity environments
+- Lower body negative pressure (LBNP) protocols
+
+## Model Basis
+
+The mathematical formulation is based on prior work by:
+
+- Heldt (2004)  
+- Zamanian (2007)  
+- Diaz Artiles (2015)  
+- Whittle (2023)
+
+---
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
+
+## DOI
+
+[![DOI](https://zenodo.org/badge/894082810.svg)](https://doi.org/10.5281/zenodo.15338311)
+
