@@ -5,7 +5,7 @@ BXS Lab, UC Davis; Authors: RS Whittle, AJ Kondoor, HS Vellore
 Contact info: Dr. Rich Whittle – Department of Mechanical and Aerospace Engineering, UC Davis, One Shields Ave, Davis CA 95616 (rswhittle@ucdavis.edu)
 This model is a simulation of the human cardiovascular system, including a four chamber heart, arteries, veins, and microcirculation. It includes reflex control for the arterial baroreflex (ABR) and cardiopulmonary reflex (CPR), as well as hydrostatic effects, interstitial fluid flow, and external tissue pressures. The model is designed to simulate various physiological scenarios, including a tilt angle protocol, altered-gravity environment, and lower body negative pressure (LBNP) protocol. The underlying equations are based on the work of Heldt (2004), Zamanian (2007), Diaz Artiles (2015), and Whittle (2023). The model is implemented using the ModelingToolkit.jl package in Julia.
 """
-### TODO v3.1: (1) Collapse in vessels (2) Inductances (Note: Inductances are visible but not currently fully working. Working for all but the Asc_A and Pulm_art due to valves; set flag to true in Artery definition in CompartmentDefinitions.jl to test)
+### TODO v3.1: (1) Collapse in vessels
 
 module CVModel
 display("Cardiovascular Model v3.0 (May 3rd, 2025) - BXS Lab, UC Davis")
@@ -62,18 +62,22 @@ This section of code instances the compartments used in the model, based on the 
 
 #### Right Heart
 @named RA = HeldtChamber(V₀=v0_ra, Eₘᵢₙ=Ed_ra, Eₘₐₓ=Ees_ra, τₑₛ=τₐₛ, inP=true)
-@named R_tricuspid = ResistorDiode(R=R_tv)
+@named R_tricuspid = MynardValve_Atrioventricular(Ann=Ann_tv, Kvc=Kvc_tv, Kvo=Kvo_tv)
+# @named R_tricuspid = ResistorDiode(R=R_tv)
 @named RV = HeldtChamber(V₀=v0_rv, Eₘᵢₙ=Ed_rv, Eₘₐₓ=Ees_rv, Elimit = Elimit_rv, τₑₛ=τᵥₛ, inP=true, has_abr=true)
+@named R_pulmonary = MynardValve_SemiLunar(Leff=Leff_pv, Ann=Ann_pv, Kvc=Kvc_pv, Kvo=Kvo_pv)
 
 #### Pulmonary Circulation
-@named Pulm_art = Artery(C=Cpa, R=Rpa, V₀=v0pa, has_hydrostatic=false, has_valve=true, rad=rad_Thor, L=Lpa, has_inertia=false)
+@named Pulm_art = Artery(C=Cpa, R=Rpa, V₀=v0pa, has_hydrostatic=false, rad=rad_Thor, L=Lpa, has_inertia=false)
 @named Pulm_cap = StarlingResistor(R=Rpc, h=h_Lungs)
 @named Pulm_vein = Vein(C=Cpv, R=Rpv, V₀=v0pv, has_hydrostatic=false, rad=rad_Thor)
 
 #### Left Heart
 @named LA = HeldtChamber(V₀=v0_la, Eₘᵢₙ=Ed_la, Eₘₐₓ=Ees_la, τₑₛ=τₐₛ, inP=true)
-@named R_mitral = ResistorDiode(R=R_mv)
+@named R_mitral = MynardValve_Atrioventricular(Ann=Ann_mv, Kvc=Kvc_mv, Kvo=Kvo_mv)
+# @named R_mitral = ResistorDiode(R=R_mv)
 @named LV = HeldtChamber(V₀=v0_lv, Eₘᵢₙ=Ed_lv, Eₘₐₓ=Ees_lv, Elimit = Elimit_lv, τₑₛ=τᵥₛ, inP=true, has_abr=true)
+@named R_aortic = MynardValve_SemiLunar(Leff=Leff_av, Ann=Ann_av, Kvc=Kvc_av, Kvo=Kvo_av)
 
 #### Heart Tissue Pressures
 # These create the external thoracic tissue weight on the heart (all arteries and veins already have this lumped in to their models).
@@ -83,7 +87,7 @@ This section of code instances the compartments used in the model, based on the 
 @named LV_tissue = TissuePressure(rad=rad_Thor)
 
 #### Arterial Circulation
-@named Asc_A = Artery(C=C_Asc_A, R=R_Asc_A, V₀=v0_Asc_A, h=h_Asc_A, has_valve=true, rad=rad_Thor, L=L_Asc_A, has_inertia=false)
+@named Asc_A = Artery(C=C_Asc_A, R=R_Asc_A, V₀=v0_Asc_A, h=h_Asc_A, rad=rad_Thor, L=L_Asc_A, has_inertia=false)
 @named BC_A = Artery(C=C_BC_A, R=R_BC_A, V₀=v0_BC_A, h=h_BC_A, rad=rad_Thor, L=L_BC_A)
 @named UpBd_art = Artery(C=C_UpBd_art, R=R_UpBd_art, V₀=v0_UpBd_art, h=h_UpBd_art, rad=rad_UB, L=L_UpBd_art)
 @named Thor_A = Artery(C=C_Thor_A, R=R_Thor_A, V₀=v0_Thor_A, h=h_Thor_A, rad=rad_Thor, L=L_Thor_A)
@@ -143,13 +147,15 @@ circ_eqs = [
   #### Heart and Pulmonary System
   connect(RA.out, R_tricuspid.in),
   connect(R_tricuspid.out, RV.in),
-  connect(RV.out, Pulm_art.in),
+  connect(RV.out, R_pulmonary.in),
+  connect(R_pulmonary.out,Pulm_art.in),
   connect(Pulm_art.out, Pulm_cap.in),
   connect(Pulm_cap.out, Pulm_vein.in),
   connect(Pulm_vein.out, LA.in),
   connect(LA.out, R_mitral.in),
   connect(R_mitral.out, LV.in),
-  connect(LV.out, Asc_A.in),
+  connect(LV.out, R_aortic.in),
+  connect(R_aortic.out, Asc_A.in),
 
   #### Arterial Tree
   connect(Asc_A.out, BC_A.in, Thor_A.in),
@@ -310,7 +316,7 @@ This section of the code composes the system of ordinary differential equations 
 """
 
 @named _circ_model = ODESystem(circ_eqs, t)
-@named circ_model = compose(_circ_model, [SA, RA, R_tricuspid, RV, Pulm_art, Pulm_cap, Pulm_vein, LA, R_mitral, LV, # Heart and Lungs
+@named circ_model = compose(_circ_model, [SA, RA, R_tricuspid, RV, R_pulmonary, Pulm_art, Pulm_cap, Pulm_vein, LA, R_mitral, LV, R_aortic, # Heart and Lungs
   Asc_A, BC_A, UpBd_art, Thor_A, Abd_A, Renal_art, Splanchnic_art, Leg_art, # Arterial Tree
   UpBd_vein, SVC, Renal_vein, Splanchnic_vein, Leg_vein, Abd_veins, Thor_IVC, # Venous Tree
   UpBd_cap, Renal_cap, Splanchnic_cap, Leg_cap, # Microcirculation
@@ -363,13 +369,13 @@ u0 = [
 
   #### Inductance Flows (set to zero for end-diastole)
   # Asc_A.L.q => 0.0,
-  # BC_A.L.q => 0.0,
-  # UpBd_art.L.q => 0.0,
-  # Thor_A.L.q => 0.0,
-  # Abd_A.L.q => 0.0,
-  # Renal_art.L.q => 0.0,
-  # Splanchnic_art.L.q => 0.0,
-  # Leg_art.L.q => 0.0,
+  BC_A.L.q => 0.0,
+  UpBd_art.L.q => 0.0,
+  Thor_A.L.q => 0.0,
+  Abd_A.L.q => 0.0,
+  Renal_art.L.q => 0.0,
+  Splanchnic_art.L.q => 0.0,
+  Leg_art.L.q => 0.0,
   # Pulm_art.L.q => 0.0,
 
   #### Interstitial Compartment
@@ -440,7 +446,16 @@ u0 = [
   SA.RR_held => RRₙₒₘ,
   SA.ϕ => 0.0,
   SA.Eabr_rv_held => 0.0,
-  SA.Eabr_lv_held => 0.0
+  SA.Eabr_lv_held => 0.0,
+
+  R_tricuspid.ζ => 1,
+  R_pulmonary.ζ => 0,
+  R_pulmonary.q => 0,
+  #R_pulmonary.Δp => eps(),
+  R_mitral.ζ => 1,
+  R_aortic.ζ => 0,
+  R_aortic.q => 0
+  #R_aortic.Δp => eps()
 ]
 
 """
@@ -527,19 +542,19 @@ p2b = plot(Sol, idxs=[LV.pₜₘ, LA.pₜₘ, Asc_A.C.pₜₘ],
              label = ["LV" "LA" "Asc_A"],
              xlabel = "Time (s)",
              ylabel = "Pressure (mmHg)",
-             xlims = (Stop_time-10,Stop_time),
+             xlims = (50,60),
              title = "Left Heart")
 p2c = plot(Sol, idxs=[RA.E, RV.E, LA.E, LV.E],
              label = ["RA" "RV" "LA" "LV"],
              xlabel = "Time (s)",
              ylabel = "E (mmHg/ml)",
-             xlims = (Stop_time-10,Stop_time),
+             xlims = (50,60),
              title = "Cardiac Elastance")
 p2d = plot(Sol, idxs=[Asc_A.in.q],
              label = "Qlvo",
              xlabel = "Time (s)",
              ylabel = "Q (ml/s)",
-             xlims = (Stop_time-10,Stop_time),
+             xlims = (50,60),
              title = "Left Ventricular Outflow")
 
 display(plot(p2a, p2b, p2c, p2d, layout=(2,2), size=(900,600), suptitle="Hemodynamics"))

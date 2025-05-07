@@ -14,6 +14,8 @@ HRₙₒₘ = 67.0  # Nominal Heart Rate (bpm)
 TBV = 5700.0 # Total Blood Volume (ml)
 ρ_b = 1060.0 # Blood Density (kg/m^3)
 Pa2mmHg = 0.00750062 # Conversion factor from Pascal to mmHg
+mmHg2dynecm2 = 10/Pa2mmHg # Conversion factor from mmHg to dyne/cm^2
+η_b = 0.004 # Blood Viscosity (Pa.s)
 
 """
 Segment Pressures
@@ -70,9 +72,27 @@ Ed_lv = 0.11 # Left Ventricle diastolic elastance (mmHg/ml)
 Ees_lv = 2.5 # Left Ventricle end systolic elastance (mmHg/ml)
 Elimit_lv = 8.0 # Left Ventricle elastance limit (mmHg/ml)
 
-#### Valves
-R_tv = 0.006 # Tricuspid Valve resistance (PRU)
-R_mv = 0.01 # Mitral Valve resistance (PRU)
+#### Tricuspid Valve
+Ann_tv = 8.0 # Annulus area of the tricuspid valve (cm^2)
+Kvc_tv = 0.04 # Tricuspid valve closing rate coefficient (cm^2/(dynes*s))
+Kvo_tv = 0.03 # Tricuspid valve opening rate coefficient (cm^2/(dynes*s))
+
+#### Pulmonary Valve
+Leff_pv = 5.0 # Effective length of the pulmonary valve (cm) Pulmonary trunk length
+Ann_pv = 7.1 # Annulus area of the pulmonary valve (cm^2)
+Kvc_pv = 0.02 # Pulmonary valve closing rate coefficient (cm^2/(dynes*s))
+Kvo_pv = 0.02 # Pulmonary valve opening rate coefficient (cm^2/(dynes*s))
+
+#### Mitral Valve
+Ann_mv = 7.7 # Annulus area of the mitral valve (cm^2)
+Kvc_mv = 0.04 # Mitral valve closing rate coefficient (cm^2/(dynes*s))
+Kvo_mv = 0.03 # Mitral valve opening rate coefficient (cm^2/(dynes*s))
+
+#### Aortic Valve
+Leff_av = 10.0 # Effective length of the aortic valve (cm) Aortic arch length
+Ann_av = 6.8 # Annulus area of the aortic valve (cm^2)
+Kvc_av = 0.012 # Aortic valve closing rate coefficient (cm^2/(dynes*s))
+Kvo_av = 0.0120 # Aortic valve opening rate coefficient (cm^2/(dynes*s))
 
 """
 Pulmonary System Parameters

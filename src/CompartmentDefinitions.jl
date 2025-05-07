@@ -135,7 +135,7 @@ end
 
 """
 Starling Lung Resistor
-XXX
+This model represents the blood flow through the lungs as a series of parallel Starling Resistors. Based on 20% of the lung parenchyma below the pulmonary artery and vein, the model defines 3 zones for blood flow: continuous flow, periodic flow, and no flow. Equations from Heldt (2004).
 """
 
 @mtkmodel StarlingResistor begin
@@ -496,7 +496,7 @@ This model represents an arterial compartment. It is a lumped compartment consis
     has_valve = false
     has_hydrostatic = true  # new flag to include/exclude Ph
     has_tissue = true
-    has_inertia = false
+    has_inertia = true
     ρt = ρ_fft
     rad = 10.0
     L = 1.0
@@ -781,5 +781,128 @@ This model represents the external pressure on the legs. It is defined by a base
   end
   @equations begin
     pext.p ~ p_ext + p_lbnp
+  end
+end
+
+"""
+`MynardValve_Atrioventricular(; name, ρ, Mrg, Mst, Ann, Kvc, Kvo)`
+
+Implements the Mynard description for flow across the atrioventricular valves, full description in [Mynard].
+This valve description corresponds to the atrioventricular valves where interia is not considered.
+
+Note: The minimum level of regurgitation has to be set to machine precision eps()
+
+Parameters are in the cm, g, s system.
+Pressure in mmHg.
+Flow in cm^3/s (ml/s)
+p is scaled to ensure units are consistent throughout.
+
+Named parameters:
+
+name    name of the element
+`ρ`     Blood density in kg/m^3
+`Mrg`   Level of regurgitation exhibited by a valve in DN
+`Mst`   Level of stenosis exhibited by a valve in DN
+`Ann`   Annulus area in cm^2
+`Kvc`   Valve closing rate coefficent in  cm^2/(dynes*s)
+`Kvo`   Valve opening rate coefficent in cm^2/(dynes*s)
+
+p is calculated in mmHg
+q is calculated in cm^3/s (ml/s)
+"""
+
+@mtkmodel MynardValve_Atrioventricular begin
+  @extend OnePort()
+  @parameters begin
+          ρ = ρ_b
+          Mrg = 0.0
+          Mst = 1.0
+          Ann
+          Kvc
+          Kvo
+  end
+  @variables begin
+          Aeff(t)
+          ζ(t)
+          B(t)
+          Aeff_min(t)
+          Aeff_max(t)
+          L(t)
+  end
+  begin
+    Δp = -mmHg2dynecm2 * Δp # Convert mmHg to dynes/cm^2 = 1 Barye = 1 g/(cm*s^2)
+  end
+  @equations begin
+          # Opening ratio
+          D(ζ) ~ (Δp > 0) * ((1 - ζ) * Kvo * Δp) + (Δp < 0) * (ζ * Kvc * Δp)
+          Aeff_min ~ Mrg * Ann + eps()
+          Aeff_max ~ Mst * Ann
+          Aeff ~ (Aeff_max - Aeff_min) * ζ + Aeff_min
+          # Flow equation
+          B ~ (ρ/1000) / (2 * Aeff^2)
+          q ~ sqrt(1 / B * abs(Δp)) * sign(Δp)
+  end
+end
+
+"""
+`MynardValve_SemiLunar(; name, ρ, Leff, Mrg, Mst, Ann, Kvc, Kvo)`
+
+Implements the Mynard description for flow across the semilunar valves, full description in [Mynard].
+This valve description corresponds to the semilunar valves where interia is an effect we consider.
+
+Note: The minimum level of regurgitation has to be set to machine precision eps()
+
+Parameters are in the cm, g, s system.
+Pressure in mmHg.
+Flow in cm^3/s (ml/s)
+p is scaled to ensure units are consistent throughout.
+
+Named parameters:
+
+name    name of the element
+`ρ`     Blood density in kg/m^3
+`Leff`  An effective length in cm
+`Mrg`   Level of regurgitation exhibited by a valve in DN
+`Mst`   Level of stenosis exhibited by a valve in DN
+`Ann`   Annulus area in cm^2
+`Kvc`   Valve closing rate coefficent in  cm^2/(dynes*s)
+`Kvo`   Valve opening rate coefficent in cm^2/(dynes*s)
+
+p is calculated in mmHg
+q is calculated in cm^3/s (ml/s)
+"""
+
+@mtkmodel MynardValve_SemiLunar begin
+  @extend OnePort()
+  @parameters begin
+          ρ = ρ_b
+          Leff
+          Mrg = 0.0
+          Mst = 1.0
+          Ann
+          Kvc
+          Kvo
+  end
+  @variables begin
+          Aeff(t)
+          ζ(t)
+          B(t)
+          Aeff_min(t)
+          Aeff_max(t)
+          L(t)
+  end
+  begin
+          Δp = -mmHg2dynecm2 * Δp # Convert mmHg to dynes/cm^2 = 1 Barye = 1 g/(cm*s^2)
+  end
+  @equations begin
+          # Opening ratio
+          D(ζ) ~ (Δp > 0) * ((1 - ζ) * Kvo * Δp) + (Δp < 0) * (ζ * Kvc * Δp)
+          Aeff_min ~ Mrg * Ann + eps()
+          Aeff_max ~ Mst * Ann
+          Aeff ~ (Aeff_max - Aeff_min) * ζ + Aeff_min
+          # Flow equation
+          B ~ (ρ/1000) / (2 * Aeff^2)
+          L ~ (ρ/1000) * Leff / Aeff
+          D(q) ~ (Δp - B * q * abs(q)) * 1 / L
   end
 end
