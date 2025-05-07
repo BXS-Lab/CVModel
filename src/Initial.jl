@@ -240,7 +240,7 @@ function mnewt!(b)
 
 
     # Upper body veins to superior vena cava
-    A[5,4]  = -1/R_UpBd_cap
+    A[5,3]  = -1/R_UpBd_cap
     A[5,4]  = 1/R_UpBd_cap + 1/R_UpBd_vein
     A[5,5]  = -1/R_UpBd_vein
 
@@ -429,7 +429,7 @@ A[4,4] = -1/R_UpBd_cap
 
 
 # Upper body veins to superior vena cava
-A[5,4]  = -1/R_UpBd_cap
+A[5,3]  = -1/R_UpBd_cap
 A[5,4]  = 1/R_UpBd_cap + 1/R_UpBd_vein
 A[5,5]  = -1/R_UpBd_vein
 

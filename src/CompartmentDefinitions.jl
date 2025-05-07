@@ -149,6 +149,7 @@ XXX
     ρ = ρ_b
     p₀ = pₐₗᵥ
     ϵ = 1e-6  # small positive value
+    Pa2mmHg_conv = Pa2mmHg # conversion factor from pascals to mmHg
   end
   @variables begin
     q(t)
@@ -162,9 +163,9 @@ XXX
     0 ~ in.q + out.q
     q ~ in.q
     safe_gsinα ~ ifelse(abs(g * sin(α)) < ϵ, ϵ, g * sin(α))
-    l₁ ~ clamp((out.p - p₀) / (ρ * safe_gsinα * 0.0000750062), -h/5, 4*h/5)
-    l₂ ~ clamp((in.p - p₀) / (ρ * safe_gsinα * 0.0000750062), -h/5, 4*h/5)
-    q ~ ((in.p - out.p) / (h * R) * (l₁ + h / 5)) + ((in.p - p₀) / (h * R) * (l₂ - l₁)) - ((ρ * g * 0.0000750062) / (2 * h * R) * sin(α) * (l₂^2 - l₁^2))
+    l₁ ~ clamp((out.p - p₀) / (ρ * safe_gsinα * Pa2mmHg_conv), -(h/100)/5, 4*(h/100)/5)
+    l₂ ~ clamp((in.p - p₀) / (ρ * safe_gsinα * Pa2mmHg_conv), -(h/100)/5, 4*(h/100)/5)
+    q ~ ((in.p - out.p) / ((h/100) * R) * (l₁ + (h/100) / 5)) + ((in.p - p₀) / ((h/100) * R) * (l₂ - l₁)) - ((ρ * g * Pa2mmHg_conv) / (2 * (h/100) * R) * sin(α) * (l₂^2 - l₁^2))
   end
 end
 
@@ -450,9 +451,10 @@ This model represents the hydrostatic pressure in a fluid column. It has a stati
     ρ = ρ_b # density of the blood (kg/m^3)
     h = 10.0 # vertical length (cm)
     con = con_default # conversion factor (e.g., 2.0 for half height)
+    Pa2mmHg_conv = Pa2mmHg # conversion factor from pascals to mmHg
   end
   @equations begin
-    Δp ~ ρ * g * h / con * sin(α) * 0.0000750062 # mmHg conversion
+    Δp ~ ρ * g * (h / con / 100) * sin(α) * Pa2mmHg_conv
   end
 end
 
@@ -470,9 +472,10 @@ This model represents the tissue pressure on a fluid column. It has a static par
   @parameters begin
     ρ = ρ_fft # density of fat free tissue (kg/m^3)
     rad = 10.0 # Radius of compartment (cm)
+    Pa2mmHg_conv = Pa2mmHg # conversion factor from pascals to mmHg
   end
   @equations begin
-    Δp ~ ρ * g * rad * cos(α) * 0.0000750062 # mmHg conversion
+    Δp ~ ρ * g * (rad/100) * cos(α) * Pa2mmHg_conv # mmHg conversion
   end
 end
 

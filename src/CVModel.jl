@@ -28,6 +28,7 @@ This file loads all of the model parameters.
 """
 
 include("ModelParameters.jl")
+using .ModelParams
 
 """
 Compartment Definitions
@@ -253,7 +254,7 @@ circ_eqs = [
 
   #### Reflex Arc Afferent Inputs (Sensed Pressures)
   CPRafferent.e ~ (RA.pₜₘ),
-  ABRafferent.e ~ (Asc_A.C.pₜₘ+(BC_A.C.pₜₘ + (ρ_b*gravity_driver.g*h_cs*sin(alpha_driver.α)*0.0000750062)))/2.0,
+  ABRafferent.e ~ (Asc_A.C.pₜₘ+(BC_A.C.pₜₘ + (ρ_b*gravity_driver.g*(h_cs/100)*sin(alpha_driver.α)*Pa2mmHg)))/2.0,
 
   #### Reflex Arc Afferent Outputs Connected to Transfer Function Inputs
   ABRafferent.δ ~ abr_αr.u,
@@ -328,6 +329,8 @@ circ_sys = structural_simplify(circ_model)
 equations(expand(circ_sys))
 unknowns(circ_sys)
 equations(expand(circ_model))
+
+# include("InitialUpdate.jl")
 
 """
 Initial Conditions
@@ -574,10 +577,6 @@ Uncomment the following lines to save the outputs to a CSV file.
 
 # using CSV
 # using DataFrames
-
-# module ModelParams
-# include("ModelParameters.jl")
-# end
 
 # df_cycle = DataFrame(
 #     beat_times = beat_times,

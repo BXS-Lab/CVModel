@@ -4,13 +4,16 @@ This file contains the model parameters for the cardiovascular system simulation
 BXS Lab, UC Davis. Last updated April 30th, 2025.
 """
 
+module ModelParams
+
 """
 Global System Parameters
 These parameters define global anthropometric and physiological constants for the model.
 """
 HRₙₒₘ = 67.0  # Nominal Heart Rate (bpm)
-TBV = 5150.0 # Total Blood Volume (ml)
+TBV = 5700.0 # Total Blood Volume (ml)
 ρ_b = 1060.0 # Blood Density (kg/m^3)
+Pa2mmHg = 0.00750062 # Conversion factor from Pascal to mmHg
 
 """
 Segment Pressures
@@ -332,3 +335,11 @@ Gcpr_vub = 13.0 # CPR Upper Body Volume Gain (ml/mmHg) (Previous 13.5)
 Gcpr_vre = 3.0 # CPR Renal Volume Gain (ml/mmHg) (Previous 2.7)
 Gcpr_vsp = 64.0 # CPR Splanchnic Volume Gain (ml/mmHg)
 Gcpr_vlb = 30.0 # CPR Lower Body Volume Gain (ml/mmHg)
+
+for name in names(@__MODULE__; all=true, imported=false)
+  if isdefined(@__MODULE__, name) && !(name in (:eval, :include, :__doc__))
+      @eval export $name
+  end
+end
+
+end
