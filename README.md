@@ -1,7 +1,7 @@
 # Cardiovascular Model
 
-**Version:** 3.0  
-**Release Date:** May 3rd, 2025  
+**Version:** 3.1
+**Release Date:** May 9th, 2025  
 **Lab:** BXS Lab, UC Davis  
 **Authors:** R.S. Whittle, A.J. Kondoor, H.S. Vellore  
 **Contact:**  
@@ -23,6 +23,7 @@ This repository contains a simulation of the human cardiovascular system develop
 - Arterial baroreflex (ABR) and cardiopulmonary reflex (CPR)
 - Hydrostatic effects and interstitial fluid dynamics
 - External tissue pressure modeling
+- Pulmonary circulation
 
 ## Simulation Scenarios
 
@@ -37,8 +38,10 @@ The model supports simulation of:
 The mathematical formulation is based on prior work by:
 
 - Heldt (2004)  
-- Zamanian (2007)  
-- Diaz Artiles (2015)  
+- Zamanian (2007)
+- Mynard (2012)  
+- Diaz Artiles (2015)
+- Albanese (2016)  
 - Whittle (2023)
 
 ---
