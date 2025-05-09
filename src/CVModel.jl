@@ -50,7 +50,7 @@ Find Initial Conditions
 This file uses Heldt's method to find the initial pressure vector for the model using a modified Newton-Raphson algorithm. It also calculates the initial interstitial volume (modeled as an equilibrium state) based on the starting angle, gravity, and LBNP.
 """
 
-include("InitialUpdate.jl")
+include("Initial.jl")
 
 """
 Instance Compartments
