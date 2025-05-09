@@ -63,27 +63,30 @@ This section of code instances the compartments used in the model, based on the 
 #### Right Heart
 @named RA = HeldtChamber(V₀=v0_ra, Eₘᵢₙ=Ed_ra, Eₘₐₓ=Ees_ra, τₑₛ=τₐₛ, inP=true)
 @named R_tricuspid = MynardValve_Atrioventricular(Ann=Ann_tv, Kvc=Kvc_tv, Kvo=Kvo_tv)
-# @named R_tricuspid = ResistorDiode(R=R_tv)
 @named RV = HeldtChamber(V₀=v0_rv, Eₘᵢₙ=Ed_rv, Eₘₐₓ=Ees_rv, Elimit = Elimit_rv, τₑₛ=τᵥₛ, inP=true, has_abr=true)
 @named R_pulmonary = MynardValve_SemiLunar(Leff=Leff_pv, Ann=Ann_pv, Kvc=Kvc_pv, Kvo=Kvo_pv)
 
 #### Pulmonary Circulation
-@named Pulm_art = Artery(C=Cpa, R=Rpa, V₀=v0pa, has_hydrostatic=false, has_tissue=false, L=Lpa, has_inertia=false)
+@named Pulm_art = Artery(C=Cpa, R=Rpa, V₀=v0pa, has_hydrostatic=false, has_tissue=false, has_inertia=false)
 @named Pulm_cap = StarlingResistor(R=Rpc, h=h_Lungs)
 @named Pulm_vein = Vein(C=Cpv, R=Rpv, V₀=v0pv, has_hydrostatic=false, has_tissue=false)
 
 #### Left Heart
 @named LA = HeldtChamber(V₀=v0_la, Eₘᵢₙ=Ed_la, Eₘₐₓ=Ees_la, τₑₛ=τₐₛ, inP=true)
 @named R_mitral = MynardValve_Atrioventricular(Ann=Ann_mv, Kvc=Kvc_mv, Kvo=Kvo_mv)
-# @named R_mitral = ResistorDiode(R=R_mv)
 @named LV = HeldtChamber(V₀=v0_lv, Eₘᵢₙ=Ed_lv, Eₘₐₓ=Ees_lv, Elimit = Elimit_lv, τₑₛ=τᵥₛ, inP=true, has_abr=true)
 @named R_aortic = MynardValve_SemiLunar(Leff=Leff_av, Ann=Ann_av, Kvc=Kvc_av, Kvo=Kvo_av)
 
+#### Coronary Circulation
+@named Cor_art = Artery(C=Cca, R=Rca, V₀=v0ca, has_hydrostatic=false, has_tissue=false)
+@named Cor_cap = VarResistor()
+@named Cor_vein = Vein(C=Ccv, R=Rcv, V₀=v0cv, has_hydrostatic=false, has_tissue=false)
+
 #### Arterial Circulation
-@named Asc_A = Artery(C=C_Asc_A, R=R_Asc_A, V₀=v0_Asc_A, h=h_Asc_A, rad=rad_Thor, L=L_Asc_A, has_inertia=false)
-@named BC_A = Artery(C=C_BC_A, R=R_BC_A, V₀=v0_BC_A, h=h_BC_A, rad=rad_Thor, L=L_BC_A)
+@named Asc_A = Artery(C=C_Asc_A, R=R_Asc_A, V₀=v0_Asc_A, h=h_Asc_A, has_tissue=false, has_inertia=false)
+@named BC_A = Artery(C=C_BC_A, R=R_BC_A, V₀=v0_BC_A, h=h_BC_A, has_tissue=false, L=L_BC_A)
 @named UpBd_art = Artery(C=C_UpBd_art, R=R_UpBd_art, V₀=v0_UpBd_art, h=h_UpBd_art, rad=rad_UB, L=L_UpBd_art)
-@named Thor_A = Artery(C=C_Thor_A, R=R_Thor_A, V₀=v0_Thor_A, h=h_Thor_A, rad=rad_Thor, L=L_Thor_A)
+@named Thor_A = Artery(C=C_Thor_A, R=R_Thor_A, V₀=v0_Thor_A, h=h_Thor_A, has_tissue=false, L=L_Thor_A)
 @named Abd_A = Artery(C=C_Abd_A, R=R_Abd_A, V₀=v0_Abd_A, h=h_Abd_A, rad=rad_Abd, L=L_Abd_A)
 @named Renal_art = Artery(C=C_Renal_art, R=R_Renal_art, V₀=v0_Renal_art, h=h_Renal_art, rad=rad_Abd, L=L_Renal_art)
 @named Splanchnic_art = Artery(C=C_Splanchnic_art, R=R_Splanchnic_art, V₀=v0_Splanchnic_art, h=h_Splanchnic_art, rad=rad_Abd, L=L_Splanchnic_art)
@@ -91,12 +94,12 @@ This section of code instances the compartments used in the model, based on the 
 
 #### Venous Circulation
 @named UpBd_vein = Vein(C=C_UpBd_vein, R=R_UpBd_vein, V₀=v0_UpBd_vein, h=h_UpBd_vein, has_valve=true, has_abr=true, has_cpr=true, rad=rad_UB)
-@named SVC = Vein(C=C_SVC, R=R_SVC, V₀=v0_SVC, h=h_SVC, rad=rad_Thor)
+@named SVC = Vein(C=C_SVC, R=R_SVC, V₀=v0_SVC, h=h_SVC, has_tissue=false)
 @named Renal_vein = Vein(C=C_Renal_vein, R=R_Renal_vein, V₀=v0_Renal_vein, h=h_Renal_vein, has_abr=true, has_cpr=true, rad=rad_Abd, V_min=vₘᵢₙ_Renal_vein)
 @named Splanchnic_vein = Vein(C=C_Splanchnic_vein, R=R_Splanchnic_vein, V₀=v0_Splanchnic_vein, h=h_Splanchnic_vein, is_nonlinear=true, Flow_div = Flow_Splanchnic_vein, V_max=vM_Splanchnic_vein, has_abr=true, has_cpr=true, rad=rad_Abd)
 @named Leg_vein = Vein(C=C_Leg_vein, R=R_Leg_vein, V₀=v0_Leg_vein, h=h_Leg_vein, con=con_Leg_vein, has_valve=true, is_nonlinear=true, Flow_div = Flow_Leg_vein, V_max=vM_Leg_vein, has_abr=true, has_cpr=true, rad=rad_Leg)
 @named Abd_veins = Vein(C=C_Abd_veins, R=R_Abd_veins, V₀=v0_Abd_veins, h=h_Abd_veins, is_nonlinear=true, Flow_div = Flow_Abd_veins, V_max=vM_Abd_vein, rad=rad_Abd)
-@named Thor_IVC = Vein(C=C_Thor_IVC, R=R_Thor_IVC, V₀=v0_Thor_IVC, h=h_Thor_IVC, rad=rad_Thor)
+@named Thor_IVC = Vein(C=C_Thor_IVC, R=R_Thor_IVC, V₀=v0_Thor_IVC, h=h_Thor_IVC, has_tissue=false)
 
 #### Microcirculation
 @named UpBd_cap = VarResistor()
@@ -155,10 +158,14 @@ circ_eqs = [
   connect(R_aortic.out, Asc_A.in),
 
   #### Arterial Tree
-  connect(Asc_A.out, BC_A.in, Thor_A.in),
+  connect(Asc_A.out, BC_A.in, Thor_A.in, Cor_art.in),
   connect(BC_A.out, UpBd_art.in),
   connect(Thor_A.out, Abd_A.in),
   connect(Abd_A.out, Renal_art.in, Splanchnic_art.in, Leg_art.in),
+
+  #### Coronary Circulation
+  connect(Cor_art.out, Cor_cap.in),
+  connect(Cor_cap.out, Cor_vein.in),
 
   #### Upper Body Circulation
   connect(UpBd_art.out, UpBd_cap.in),
@@ -180,10 +187,10 @@ circ_eqs = [
   connect(UpBd_vein.out, SVC.in),
   connect(Abd_veins.in, Renal_vein.out, Splanchnic_vein.out, Leg_vein.out),
   connect(Abd_veins.out, Thor_IVC.in),
-  connect(Thor_IVC.out, SVC.out, RA.in),
+  connect(Thor_IVC.out, SVC.out, Cor_vein.out, RA.in),
 
   #### External Pressures
-  connect(Intrathoracic.pth, Asc_A.ep, BC_A.ep, Thor_A.ep, SVC.ep, Thor_IVC.ep, RA.ep, RV.ep, Pulm_art.ep, Pulm_vein.ep, LA.ep, LV.ep),
+  connect(Intrathoracic.pth, Asc_A.ep, BC_A.ep, Thor_A.ep, SVC.ep, Thor_IVC.ep, RA.ep, RV.ep, Pulm_art.ep, Pulm_vein.ep, LA.ep, LV.ep, Cor_art.ep, Cor_vein.ep),
   connect(Abdominal.pabd, Abd_A.ep, Renal_art.ep, Splanchnic_art.ep, Renal_vein.ep, Splanchnic_vein.ep, Abd_veins.ep),
   connect(External.pext, UpBd_art.ep, UpBd_vein.ep, Lung.in, RespMuscles.in),
   connect(ExternalLBNP.pext, Leg_art.ep, Leg_vein.ep),
@@ -263,6 +270,9 @@ circ_eqs = [
   #### Reflex Arc Efferents
   # The outputs of the transfer functions are connected directly to the relevant compartments via static gains defined in the parameters file.
 
+  # Coronary Resistance
+  Cor_cap.R ~ Rcc,
+
   # Arterial Resistance (ABR and CPR)
   UpBd_cap.R ~ R_UpBd_cap + (Gabr_r * abr_αr.y) + (Gcpr_r * cpr_αr.y),
   Renal_cap.R ~ R_Renal_cap + (Gabr_r * abr_αr.y) + (Gcpr_r * cpr_αr.y),
@@ -307,6 +317,7 @@ This section of the code composes the system of ordinary differential equations 
 
 @named _circ_model = ODESystem(circ_eqs, t)
 @named circ_model = compose(_circ_model, [SA, RA, R_tricuspid, RV, R_pulmonary, Pulm_art, Pulm_cap, Pulm_vein, LA, R_mitral, LV, R_aortic, # Heart and Lungs
+  Cor_art, Cor_cap, Cor_vein, # Coronary Circulation
   Asc_A, BC_A, UpBd_art, Thor_A, Abd_A, Renal_art, Splanchnic_art, Leg_art, # Arterial Tree
   UpBd_vein, SVC, Renal_vein, Splanchnic_vein, Leg_vein, Abd_veins, Thor_IVC, # Venous Tree
   UpBd_cap, Renal_cap, Splanchnic_cap, Leg_cap, # Microcirculation
@@ -356,6 +367,8 @@ u0 = [
   Pulm_vein.C.p => x[20],
   LA.p => x[21],
   LV.p => x[22], # x[23] is the LV end-systolic pressure
+  Cor_art.C.p => x[24],
+  Cor_vein.C.p => x[25],
 
   #### Inductance Flows (set to zero for end-diastole)
   BC_A.L.q => 0.0,
@@ -365,6 +378,7 @@ u0 = [
   Renal_art.L.q => 0.0,
   Splanchnic_art.L.q => 0.0,
   Leg_art.L.q => 0.0,
+  Cor_art.L.q => 0.0,
 
   #### Interstitial Compartment
   Interstitial.Qint => 0.0,
@@ -436,6 +450,7 @@ u0 = [
   SA.Eabr_rv_held => 0.0,
   SA.Eabr_lv_held => 0.0,
 
+  #### Valves
   R_tricuspid.ζ => 1,
   R_pulmonary.ζ => 0,
   R_pulmonary.q => 0,
@@ -443,6 +458,7 @@ u0 = [
   R_aortic.ζ => 0,
   R_aortic.q => 0,
 
+  #### Lung Mechanics
   Lung.p_l => p₀,
   Lung.p_tr => p₀,
   Lung.p_b => p₀,
@@ -577,6 +593,16 @@ p3d = plot(beat_times, [SV],
              title = "Stroke Volume")
 
 display(plot(p3a, p3b, p3c, p3d, layout=(2,2), size=(900,600), suptitle="Beat-to-Beat Trends"))
+
+display(plot(beat_times, [(UpBd_art_Vmean + UpBd_vein_Vmean),
+        (Renal_art_Vmean + Renal_vein_Vmean),
+        (Splanchnic_art_Vmean + Splanchnic_vein_Vmean),
+        (Leg_art_Vmean + Leg_vein_Vmean),
+        (Cor_art_Vmean + Cor_vein_Vmean)],
+        label = ["Upper Body" "Renal" "Splanchnic" "Leg" "Coronary"],
+        xlabel = "Time (s)",
+        ylabel = "Volume (ml)",
+        title = "Average Branch Volumes"))
 
 #### Pulmonary and Respiratory Plots
 

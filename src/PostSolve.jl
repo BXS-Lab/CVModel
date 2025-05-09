@@ -9,9 +9,9 @@ Calculate Lumped Elements
 This code section calculates some of the lumped values including the total vascular volume, the instantaneous zero-pressure filling volume, the interstitial volume, the total volume (use as a check on conservation), and the total peripheral resistance (TPR). It also calculates the instantaneous heart rate (HR) based on the RR interval.
 """
 
-Vvessel = Asc_A.C.V + BC_A.C.V + UpBd_art.C.V + UpBd_vein.C.V + SVC.C.V + Thor_A.C.V + Abd_A.C.V + Renal_art.C.V + Renal_vein.C.V + Splanchnic_art.C.V + Splanchnic_vein.C.V + Leg_art.C.V + Leg_vein.C.V + Abd_veins.C.V + Thor_IVC.C.V + RA.V + RV.V + Pulm_art.C.V + Pulm_vein.C.V + LA.V + LV.V
+Vvessel = Asc_A.C.V + BC_A.C.V + UpBd_art.C.V + UpBd_vein.C.V + SVC.C.V + Thor_A.C.V + Abd_A.C.V + Renal_art.C.V + Renal_vein.C.V + Splanchnic_art.C.V + Splanchnic_vein.C.V + Leg_art.C.V + Leg_vein.C.V + Abd_veins.C.V + Thor_IVC.C.V + RA.V + RV.V + Pulm_art.C.V + Pulm_vein.C.V + LA.V + LV.V + Cor_art.C.V + Cor_vein.C.V
 
-Vzpf = v0_Asc_A + v0_BC_A + v0_UpBd_art + UpBd_vein.C.V₀eff + v0_SVC + v0_Thor_A + v0_Abd_A + v0_Renal_art + Renal_vein.C.V₀eff + v0_Splanchnic_art + Splanchnic_vein.C.V₀eff + v0_Leg_art + Leg_vein.C.V₀eff + v0_Abd_veins + v0_Thor_IVC + v0_ra + v0_rv + v0pa + v0pv + v0_la + v0_lv
+Vzpf = v0_Asc_A + v0_BC_A + v0_UpBd_art + UpBd_vein.C.V₀eff + v0_SVC + v0_Thor_A + v0_Abd_A + v0_Renal_art + Renal_vein.C.V₀eff + v0_Splanchnic_art + Splanchnic_vein.C.V₀eff + v0_Leg_art + Leg_vein.C.V₀eff + v0_Abd_veins + v0_Thor_IVC + v0_ra + v0_rv + v0pa + v0pv + v0_la + v0_lv + v0ca + v0cv
 
 Vinterstitial = Interstitial.Vint
 Vtotal = Vvessel + Vinterstitial
@@ -113,6 +113,8 @@ Pulm_art_V = Sol[Pulm_art.C.V]
 Pulm_vein_V = Sol[Pulm_vein.C.V]
 LA_V = Sol[LA.V]
 LV_V = Sol[LV.V]
+Cor_art_V = Sol[Cor_art.C.V]
+Cor_vein_V = Sol[Cor_vein.C.V]
 
 Asc_A_Vmean = Float64[]
 BC_A_Vmean = Float64[]
@@ -135,8 +137,10 @@ Pulm_art_Vmean = Float64[]
 Pulm_vein_Vmean = Float64[]
 LA_Vmean = Float64[]
 LV_Vmean = Float64[]
+Cor_art_Vmean = Float64[]
+Cor_vein_Vmean = Float64[]
 
-function compute_beat_averaged_volumes(beat_indices, t_vals, Asc_A_V, BC_A_V, UpBd_art_V, UpBd_vein_V, SVC_V, Thor_A_V, Abd_A_V, Renal_art_V, Renal_vein_V, Splanchnic_art_V, Splanchnic_vein_V, Leg_art_V, Leg_vein_V, Abd_veins_V, Thor_IVC_V, RA_V, RV_V, Pulm_art_V, Pulm_vein_V, LA_V, LV_V)
+function compute_beat_averaged_volumes(beat_indices, t_vals, Asc_A_V, BC_A_V, UpBd_art_V, UpBd_vein_V, SVC_V, Thor_A_V, Abd_A_V, Renal_art_V, Renal_vein_V, Splanchnic_art_V, Splanchnic_vein_V, Leg_art_V, Leg_vein_V, Abd_veins_V, Thor_IVC_V, RA_V, RV_V, Pulm_art_V, Pulm_vein_V, LA_V, LV_V, Cor_art_V, Cor_vein_V)
   start_idx = 1
   for stop_idx in beat_indices
       beat_range = start_idx:stop_idx
@@ -162,6 +166,8 @@ function compute_beat_averaged_volumes(beat_indices, t_vals, Asc_A_V, BC_A_V, Up
       Pulm_vein_v_segment = Pulm_vein_V[beat_range]
       LA_v_segment = LA_V[beat_range]
       LV_v_segment = LV_V[beat_range]
+      Cor_art_v_segment = Cor_art_V[beat_range]
+      Cor_vein_v_segment = Cor_vein_V[beat_range]
       dt = diff(t_segment)
       integrand_Asc_A = Asc_A_v_segment[1:end-1] .* dt
       integrand_BC_A = BC_A_v_segment[1:end-1] .* dt
@@ -184,6 +190,8 @@ function compute_beat_averaged_volumes(beat_indices, t_vals, Asc_A_V, BC_A_V, Up
       integrand_Pulm_vein = Pulm_vein_v_segment[1:end-1] .* dt
       integrand_LA = LA_v_segment[1:end-1] .* dt
       integrand_LV = LV_v_segment[1:end-1] .* dt
+      integrand_Cor_art = Cor_art_v_segment[1:end-1] .* dt
+      integrand_Cor_vein = Cor_vein_v_segment[1:end-1] .* dt
       push!(Asc_A_Vmean, sum(integrand_Asc_A) / (t_segment[end] - t_segment[1]))
       push!(BC_A_Vmean, sum(integrand_BC_A) / (t_segment[end] - t_segment[1]))
       push!(UpBd_art_Vmean, sum(integrand_UpBd_art) / (t_segment[end] - t_segment[1]))
@@ -205,7 +213,9 @@ function compute_beat_averaged_volumes(beat_indices, t_vals, Asc_A_V, BC_A_V, Up
       push!(Pulm_vein_Vmean, sum(integrand_Pulm_vein) / (t_segment[end] - t_segment[1]))
       push!(LA_Vmean, sum(integrand_LA) / (t_segment[end] - t_segment[1]))
       push!(LV_Vmean, sum(integrand_LV) / (t_segment[end] - t_segment[1]))
+      push!(Cor_art_Vmean, sum(integrand_Cor_art) / (t_segment[end] - t_segment[1]))
+      push!(Cor_vein_Vmean, sum(integrand_Cor_vein) / (t_segment[end] - t_segment[1]))
       start_idx = stop_idx + 1
   end
 end
-compute_beat_averaged_volumes(beat_indices, t_vals, Asc_A_V, BC_A_V, UpBd_art_V, UpBd_vein_V, SVC_V, Thor_A_V, Abd_A_V, Renal_art_V, Renal_vein_V, Splanchnic_art_V, Splanchnic_vein_V, Leg_art_V, Leg_vein_V, Abd_veins_V, Thor_IVC_V, RA_V, RV_V, Pulm_art_V, Pulm_vein_V, LA_V, LV_V)
+compute_beat_averaged_volumes(beat_indices, t_vals, Asc_A_V, BC_A_V, UpBd_art_V, UpBd_vein_V, SVC_V, Thor_A_V, Abd_A_V, Renal_art_V, Renal_vein_V, Splanchnic_art_V, Splanchnic_vein_V, Leg_art_V, Leg_vein_V, Abd_veins_V, Thor_IVC_V, RA_V, RV_V, Pulm_art_V, Pulm_vein_V, LA_V, LV_V, Cor_art_V, Cor_vein_V)

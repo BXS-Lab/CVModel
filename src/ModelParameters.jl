@@ -11,7 +11,7 @@ Global System Parameters
 These parameters define global anthropometric and physiological constants for the model.
 """
 HRₙₒₘ = 67.0  # Nominal Heart Rate (bpm)
-TBV = 5700.0 # Total Blood Volume (ml)
+TBV = 5300.0 # Total Blood Volume (ml)
 ρ_b = 1060.0 # Blood Density (kg/m^3)
 Pa2mmHg = 0.00750062 # Conversion factor from Pascal to mmHg
 mmHg2dynecm2 = 10/Pa2mmHg # Conversion factor from mmHg to dyne/cm^2
@@ -79,7 +79,7 @@ Kvc_tv = 0.04 # Tricuspid valve closing rate coefficient (cm^2/(dynes*s))
 Kvo_tv = 0.03 # Tricuspid valve opening rate coefficient (cm^2/(dynes*s))
 
 #### Pulmonary Valve
-Leff_pv = 5.0 # Effective length of the pulmonary valve (cm) Pulmonary trunk length
+Leff_pv = 1.6 # Effective length of the pulmonary valve (cm) Pulmonary trunk length
 Ann_pv = 7.1 # Annulus area of the pulmonary valve (cm^2)
 Kvc_pv = 0.02 # Pulmonary valve closing rate coefficient (cm^2/(dynes*s))
 Kvo_pv = 0.02 # Pulmonary valve opening rate coefficient (cm^2/(dynes*s))
@@ -90,7 +90,7 @@ Kvc_mv = 0.04 # Mitral valve closing rate coefficient (cm^2/(dynes*s))
 Kvo_mv = 0.03 # Mitral valve opening rate coefficient (cm^2/(dynes*s))
 
 #### Aortic Valve
-Leff_av = 10.0 # Effective length of the aortic valve (cm) Aortic arch length
+Leff_av = 1.8 # Effective length of the aortic valve (cm) Aortic arch length
 Ann_av = 6.8 # Annulus area of the aortic valve (cm^2)
 Kvc_av = 0.012 # Aortic valve closing rate coefficient (cm^2/(dynes*s))
 Kvo_av = 0.0120 # Aortic valve opening rate coefficient (cm^2/(dynes*s))
@@ -104,7 +104,7 @@ These parameters define the properties of the pulmonary system, including the pu
 Rpa = 0.006 # Pulmonary Artery resistance (PRU)
 Cpa = 3.4 # Pulmonary Artery compliance (ml/mmHg)
 v0pa = 160.0 # Pulmonary Artery zero pressure volume (ml)
-Lpa = 0.000016 # Pulmonary Artery inductance (mmHg.s^2/ml)
+# Lpa is included in the valve model
 
 #### Pulmonary Capillaries
 Rpc = 0.07 # Pulmonary Capillary microvascular resistance (PRU)
@@ -116,13 +116,32 @@ Cpv = 9.0 # Pulmonary Vein compliance (ml/mmHg)
 v0pv = 430.0 # Pulmonary Vein zero pressure volume (ml)
 
 """
+Coronary System Parameters
+These parameters define the properties of the coronary system, including the coronary artery and vein resistances, compliances, and zero pressure volumes. The coronary microvascular resistance is also defined here. Values were taken from Albanese (2016) and subracted from splanchnic values in the original Heldt model.
+"""
+
+#### Coronary Artery
+Rca = 0.34 # Coronary Artery resistance (PRU)
+Cca = 0.15 # Coronary Artery compliance (ml/mmHg)
+v0ca = 24.0 # Coronary Artery zero pressure volume (ml)
+Lca = 0.047 # Coronary Artery inductance (mmHg.s^2/ml)
+
+#### Coronary Capillaries
+Rcc = 19.36 # Coronary Capillary microvascular resistance (PRU)
+
+#### Coronary Vein parameters
+Rcv = 0.224 # Coronary Vein resistance (PRU)
+Ccv = 2.5 # Coronary Vein compliance (ml/mmHg)
+v0cv = 98.2 # Coronary Vein zero pressure volume (ml)
+
+"""
 Microvascular Resistances
 These parameters define the baseline microvascular resistances for different compartments of the body, including the upper body, renal, splanchnic, and leg compartments.
 """
 
 R_UpBd_cap = 4.4 # Upper Body microvascular resistance (PRU)
 R_Renal_cap = 4.7 # Renal microvascular resistance (PRU)
-R_Splanchnic_cap = 2.8 # Splanchnic microvascular resistance (PRU)
+R_Splanchnic_cap = 3.1 # Splanchnic microvascular resistance (PRU) (Increased from 2.8 for coronary arteries)
 R_Leg_cap = 4.0 # Leg microvascular resistance (PRU)
 
 """
@@ -135,7 +154,7 @@ R_Asc_A = 0.007 # Ascending Aorta resistance (PRU)
 C_Asc_A = 0.28 # Ascending Aorta compliance (ml/mmHg)
 v0_Asc_A = 21.0 # Ascending Aorta zero pressure volume (ml)
 h_Asc_A = -10.0 # Ascending Aorta length (cm)
-L_Asc_A = 0.0005 # Ascending Aorta inductance (mmHg.s^2/ml)
+# L_Asc_A is included in the valve model
 
 #### Compartment 2: Bracehocephalic Arteries
 R_BC_A = 0.003 # Bracehocephalic Artery resistance (PRU)
@@ -175,7 +194,7 @@ L_Renal_art = 0.00070 # Renal Artery inductance (mmHg.s^2/ml)
 #### Compartment 10: Splanchnic Artery
 R_Splanchnic_art = 0.07 # Splanchnic Artery resistance (PRU)
 C_Splanchnic_art = 0.42 # Splanchnic Artery compliance (ml/mmHg)
-v0_Splanchnic_art = 300.0 # Splanchnic Artery zero pressure volume (ml)
+v0_Splanchnic_art = 276.0 # Splanchnic Artery zero pressure volume (ml) (Subtracted coronary arteries)
 h_Splanchnic_art = 10.0 # Splanchnic Artery length (cm)
 L_Splanchnic_art = 0.00031 # Splanchnic Artery inductance (mmHg.s^2/ml)
 
@@ -214,9 +233,10 @@ vₘᵢₙ_Renal_vein = 5.0 # The Renal vein has a minimum zero-pressure volume 
 #### Compartment 11: Splanchnic Vein (nonlinear)
 R_Splanchnic_vein = 0.07 # Splanchnic Vein resistance (PRU)
 C_Splanchnic_vein = 50.0 # Splanchnic Vein compliance (ml/mmHg)
-v0_Splanchnic_vein = 1146.0 # Splanchnic Vein zero pressure volume (ml)
+v0_Splanchnic_vein = 1047.8 # Splanchnic Vein zero pressure volume (ml) (Subtracted coronary veins)
 h_Splanchnic_vein = -10.0 # Splanchnic Vein length (cm)
 vM_Splanchnic_vein = 1565.0 # Splanchnic Vein maximum volume (ml)
+
 
 #### Compartment 13: Leg Vein (nonlinear)
 R_Leg_vein = 0.1 # Leg Vein resistance (PRU)

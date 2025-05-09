@@ -74,7 +74,7 @@ Here we use the previously extracted initial angle and gravity to determine the 
 """
 
 pt0_UB = ρ_fft * gravity_val_numeric * (rad_UB/100) * cos(α_val_numeric) * Pa2mmHg
-pt0_Thor = ρ_fft * gravity_val_numeric * (rad_Thor/100) * cos(α_val_numeric) * Pa2mmHg
+# pt0_Thor = ρ_fft * gravity_val_numeric * (rad_Thor/100) * cos(α_val_numeric) * Pa2mmHg
 pt0_Abd = ρ_fft * gravity_val_numeric * (rad_Abd/100) * cos(α_val_numeric) * Pa2mmHg
 pt0_Leg = ρ_fft * gravity_val_numeric * (rad_Leg/100) * cos(α_val_numeric) * Pa2mmHg
 
@@ -109,7 +109,7 @@ pₜₕ₀ = pₚₗ₀ - 3.5 * (gravity_val_numeric / 9.81) * sin(α_val_numeri
 Create Pressure Vector
 """
 
-const N_STATE = 23
+const N_STATE = 25
 x = zeros(N_STATE)
 x[1] = 90 # Asc_A.C.p
 x[2] = 90 # BC_A.C.p
@@ -134,18 +134,20 @@ x[20] = 5 # Pulm_vein.C.p
 x[21] = 5 # LA.p
 x[22] = 5 # LV.p (Diastole)
 x[23] = 120 # LV.p (End-Systole)
+x[24] = 90 # Cor_art.C.p
+x[25] = 5 # Cor_vein.C.p
 
 """
 Create External Pressure Vector
 """
 
 p_rel = zeros(N_STATE)
-p_rel[1] = pₜₕ₀ + pt0_Thor
-p_rel[2] = pₜₕ₀ + pt0_Thor
+p_rel[1] = pₜₕ₀
+p_rel[2] = pₜₕ₀
 p_rel[3] = pt0_UB
 p_rel[4] = pt0_UB
-p_rel[5] = pₜₕ₀ + pt0_Thor
-p_rel[6] = pₜₕ₀ + pt0_Thor
+p_rel[5] = pₜₕ₀
+p_rel[6] = pₜₕ₀
 p_rel[7] = pt0_Abd
 p_rel[8] = pt0_Abd
 p_rel[9] = pt0_Abd
@@ -154,7 +156,7 @@ p_rel[11] = pt0_Abd
 p_rel[12] = pt0_Leg
 p_rel[13] = pt0_Leg
 p_rel[14] = pt0_Abd
-p_rel[15] = pₜₕ₀ + pt0_Thor
+p_rel[15] = pₜₕ₀
 p_rel[16] = pₜₕ₀
 p_rel[17] = pₜₕ₀
 p_rel[18] = pₜₕ₀
@@ -163,6 +165,8 @@ p_rel[20] = pₜₕ₀
 p_rel[21] = pₜₕ₀
 p_rel[22] = pₜₕ₀
 p_rel[23] = pₜₕ₀
+p_rel[24] = pₜₕ₀
+p_rel[25] = pₜₕ₀
 
 """
 Determine the nonlinear effective compliance equations
@@ -204,7 +208,9 @@ conab = (π*C_Abd_veins)/(2*vM_Abd_vein)
         F[20] = SV - T * (x[19] - x[20]) / Rpc
         F[21] = SV - T * (x[20] - x[21]) / Rpv
         F[22] = SV - Tdias * (x[21] - x[22]) / sqrt(1/(ρ_b / (2 * Ann_mv^2)))
-        F[23] = TBV - (
+        F[23] = SV - T * (x[24] - x[1]) / Rca
+        F[24] = SV - T * (x[25] - x[24]) / Rcc
+        F[25] = TBV - (
             (x[1]-p[1])*C_Asc_A + v0_Asc_A +
             (x[2]-p[2])*C_BC_A + v0_BC_A +
             (x[3]-p[3])*C_UpBd_art + v0_UpBd_art +
@@ -226,6 +232,8 @@ conab = (π*C_Abd_veins)/(2*vM_Abd_vein)
             (x[20]-p[20])*Cpv + v0pv +
             (x[21]-p[21])/Ela0 + v0_la +
             (x[22]-p[22])/Ed_lv + v0_lv +
+            (x[24]-p[24])*Cca + v0ca +
+            (x[25]-p[25])*Ccv + v0cv +
             VintIC
         )
     end
@@ -257,4 +265,6 @@ x = x_sol
             (x_sol[20]-p_rel[20])*Cpv + v0pv +
             (x_sol[21]-p_rel[21])/Ela0 + v0_la +
             (x_sol[22]-p_rel[22])/Ed_lv + v0_lv +
+            (x_sol[24]-p_rel[24])*Cca + v0ca +
+            (x_sol[25]-p_rel[25])*Ccv + v0cv +
             VintIC)
