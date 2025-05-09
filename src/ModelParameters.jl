@@ -18,14 +18,14 @@ mmHg2dynecm2 = 10/Pa2mmHg # Conversion factor from mmHg to dyne/cm^2
 cmH2O2mmHg = 0.73555912 # Conversion factor from cmH2O to mmHg
 η_b = 0.004 # Blood Viscosity (Pa.s)
 
+p₀ = 0.0 # Atmospheric pressure (mmHg)
+pₚₗ₀ = -5.0 * cmH2O2mmHg # Initial Pleural pressure (mmHg)
+
 """
 Segment Pressures
 These parameters define the external static pressures on different segments of the cardiovascular system.
 """
-p₀ = 0.0  # External Pressure (mmHg)
-pₜₕ = -4.0 # Thoracic Pressure (mmHg)
 p_abd = 0.0 # Abdominal Pressure (mmHg)
-pₐₗᵥ = p₀ # Alveolar Pressure (mmHg)
 
 con_default = 2.0 # Default hydrostatic conversion factor
 
@@ -361,49 +361,40 @@ Gcpr_vlb = 30.0 # CPR Lower Body Volume Gain (ml/mmHg)
 Lung Model
 """
 
-p_musmin = -5.0 # df* cmH2O2mmHg # Minimum respiratory muscle pressure (mmHg)
-RRbreath = 12.0 # Breathing Rate (breaths/min)
+cmH2O2mmHg = 0.73555912 # Conversion factor from cmH2O to mmHg
+
+p_musmin = -5.0 * cmH2O2mmHg # Minimum respiratory muscle pressure (mmHg)
+RespRateₙₒₘ = 12.0 # Breathing Rate (breaths/min)
 IEratio = 0.6 # Inspiratory to Expiratory Ratio
-Tbreath = 60.0 / RRbreath # Total Breathing Cycle Time (s)
+Tbreath = 60.0 / RespRateₙₒₘ # Total Breathing Cycle Time (s)
 T_E = Tbreath/(1 + IEratio) # Expiratory Time (s)
 T_I = T_E * IEratio # Inspiratory Time (s)
 τ_mus = T_E/5 # Respiratory muscle time constant (s)
 
-p_ao = p₀
-# R_ml = 1.021 * cmH2O2mmHg / 1000 # mmHg.s/ml
-# C_l = 1.27 / cmH2O2mmHg # ml/mmHg
-# v0_l = 34.4 # ml
-# R_lt = 0.3369 * cmH2O2mmHg / 1000 # mmHg.s/ml
-# C_t = 2.38 / cmH2O2mmHg # ml/mmHg
-# v0_t = 6.63 # ml
-# R_tb = 0.3063 * cmH2O2mmHg / 1000 # mmHg.s/ml
-# C_b = 13.1 / cmH2O2mmHg # ml/mmHg
-# v0_b = 18.7 # ml
-# R_bA = 0.0817 * cmH2O2mmHg / 1000 # mmHg.s/ml
-# C_A = 200 / cmH2O2mmHg # ml/mmHg
-# FRC = 2400 # ml
+Rml = 1.021 * cmH2O2mmHg /1000 # Mouth-Larynx resistance (mmHg.s/ml: PRU)
+Cl = 1.27 / cmH2O2mmHg # Larynx compliance (ml/mmHg)
+V₀l = 34.4 # Larynx zero pressure volume (ml)
+Rlt = 0.3369 * cmH2O2mmHg /1000 # Larynx-Trachea resistance (mmHg.s/ml: PRU)
+Ctr = 2.38 / cmH2O2mmHg # Trachea compliance (ml/mmHg)
+V₀tr = 6.63 # Trachea zero pressure volume (ml)
+Rtb = 0.3063 * cmH2O2mmHg /1000 # Trachea-Bronchial resistance (mmHg.s/ml: PRU)
+Cb = 13.1 / cmH2O2mmHg # Bronchial compliance (ml/mmHg)
+V₀b = 18.7 # Brochea zero pressure volume (ml)
+RbA = 0.0817 * cmH2O2mmHg /1000 # Bronchea-Alveolar resistance (mmHg.s/ml: PRU)
+CA = 200 / cmH2O2mmHg # Alveolar compliance (ml/mmHg)
+Ccw = 244.5 / cmH2O2mmHg # Chest wall compliance (ml/mmHg)
+FRC = 2400 # Functional Residual Capacity (ml)
 
-R_ml = 1.021
-C_l = 0.00127
-v0_l = 34.4 / 1000
-R_lt = 0.3369
-C_t = 0.00238 / 1000
-
-R_tb = 0.3063
-C_b = 0.0131
-v0_b = 18.7 / 1000
-R_bA = 0.0817
-C_A = 0.2
-v0_A = 1.263 / 1000
-C_cw = 0.2445 / 1000
-
-# test = FRC + C_A * -5 - (-5*C_b) - (-5*C_l) - (-5*C_t)
-# v0_A = 1.263 # ml
-# C_cw = 244.5 / cmH2O2mmHg # Chest wall compliance (ml/mmHg)
+V₀A = FRC + (CA * pₚₗ₀) - (V₀l) - (Ctr * (p₀ - pₚₗ₀) + V₀tr) - (Cb * (p₀ - pₚₗ₀) + V₀b) # Alveolar zero pressure volume (ml)
 
 for name in names(@__MODULE__; all=true, imported=false)
-  if isdefined(@__MODULE__, name) && !(name in (:eval, :include, :__doc__))
-      @eval export $name
+  # Only export if it's not a function or macro and is defined
+  if isdefined(@__MODULE__, name) && !(name in (:eval, :include, :__doc__)) && !(name in names(Base))
+      obj = getfield(@__MODULE__, name)
+      # Only export if it's a variable, not a function
+      if !(obj isa Function) && !(obj isa Type)
+          @eval export $name
+      end
   end
 end
 

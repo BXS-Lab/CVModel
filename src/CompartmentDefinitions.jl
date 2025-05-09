@@ -147,7 +147,7 @@ This model represents the blood flow through the lungs as a series of parallel S
     R = 1.0
     h = 1.0
     ρ = ρ_b
-    p₀ = pₐₗᵥ
+    # p₀ = pₐₗᵥ
     ϵ = 1e-6  # small positive value
     Pa2mmHg_conv = Pa2mmHg # conversion factor from pascals to mmHg
   end
@@ -158,14 +158,15 @@ This model represents the blood flow through the lungs as a series of parallel S
     l₂(t)
     α(t)
     g(t)
+    pₐₗᵥ(t)
   end
   @equations begin
     0 ~ in.q + out.q
     q ~ in.q
     safe_gsinα ~ ifelse(abs(g * sin(α)) < ϵ, ϵ, g * sin(α))
-    l₁ ~ clamp((out.p - p₀) / (ρ * safe_gsinα * Pa2mmHg_conv), -(h/100)/5, 4*(h/100)/5)
-    l₂ ~ clamp((in.p - p₀) / (ρ * safe_gsinα * Pa2mmHg_conv), -(h/100)/5, 4*(h/100)/5)
-    q ~ ((in.p - out.p) / ((h/100) * R) * (l₁ + (h/100) / 5)) + ((in.p - p₀) / ((h/100) * R) * (l₂ - l₁)) - ((ρ * g * Pa2mmHg_conv) / (2 * (h/100) * R) * sin(α) * (l₂^2 - l₁^2))
+    l₁ ~ clamp((out.p - pₐₗᵥ) / (ρ * safe_gsinα * Pa2mmHg_conv), -(h/100)/5, 4*(h/100)/5)
+    l₂ ~ clamp((in.p - pₐₗᵥ) / (ρ * safe_gsinα * Pa2mmHg_conv), -(h/100)/5, 4*(h/100)/5)
+    q ~ ((in.p - out.p) / ((h/100) * R) * (l₁ + (h/100) / 5)) + ((in.p - pₐₗᵥ) / ((h/100) * R) * (l₂ - l₁)) - ((ρ * g * Pa2mmHg_conv) / (2 * (h/100) * R) * sin(α) * (l₂^2 - l₁^2))
   end
 end
 
@@ -345,7 +346,7 @@ This model represents the sino-atrial node of the heart. In our implementation i
     D(ϕ) ~ 1 / RR_held
     ϕ_wrapped ~ ϕ - floor(ϕ)
 
-    ϕ_wrapped_atria ~ ϕ + τₐᵥ * sqrt(RR_held) - floor(ϕ + τₐᵥ * sqrt(RR_held))
+    ϕ_wrapped_atria ~ ϕ + τₐᵥ / sqrt(RR_held) - floor(ϕ + τₐᵥ / sqrt(RR_held))
 
     refractory_ok ~ 1 / (1 + exp(-k * RR_held * (ϕ_wrapped - τ_refract)))
     beat_trigger ~ exp(-((ϕ_wrapped - 1)^2) / ε) * refractory_ok
@@ -733,15 +734,16 @@ This model represents the intrathoracic pressure. It is defined by a baseline pr
   @components begin
     pth = Pin()
   end
-  @parameters begin
-    pₜₕ = -4.0 # Baseline intrathoracic pressure (mmHg)
-  end
+  # @parameters begin
+  #   pₜₕ = -4.0 # Baseline intrathoracic pressure (mmHg)
+  # end
   @variables begin
     α(t)
     g(t)
+    pₚₗ(t)
   end
   @equations begin
-    pth.p ~ pₜₕ - 3.5 * (g / 9.81) * sin(α)
+    pth.p ~ pₚₗ - 3.5 * (g / 9.81) * sin(α)
   end
 end
 
@@ -922,10 +924,15 @@ q is calculated in cm^3/s (ml/s)
   end
 end
 
-@mtkmodel DrivenLungPressure begin
+"""
+Respiratory Muscles
+This model represents the action of the respiratory muscles during breathing.
+"""
+
+@mtkmodel RespiratoryMuscles begin
   @extend OnePort()
   @parameters begin
-    P = p_musmin
+    p = p_musmin
     TI = T_I
     TE = T_E
     T0 = Tbreath
@@ -933,14 +940,81 @@ end
   end
   @variables begin
     t0(t) # Time withing the breathing cycle
-    ϕ(t)
+    ϕ(t) # Phase of the breathing cycle
   end
   @equations begin
     D(ϕ) ~ 1 / T0
     t0 ~ (ϕ - floor(ϕ)) * T0
     # Δp ~ ifelse(t0 <= TI, 0.01 * t0, 0.1 * t0)
     # Time within the breathing cycle
-    Δp ~ ifelse(t0 <= TI, (-P/(TI*TE)*t0^2 + P*T0/(TI*TE)*t0),
-          (P/(1-exp(-TE/τ))*(exp(-(t0-TI)/τ)-exp(-TE/τ))))
+    Δp ~ ifelse(t0 <= TI, (-p/(TI*TE)*t0^2 + p*T0/(TI*TE)*t0),
+          (p/(1-exp(-TE/τ))*(exp(-(t0-TI)/τ)-exp(-TE/τ))))
+  end
+end
+
+"""
+Lung
+This is a complete model of the lung mechanics, based on the work of Albanese (2016). It has been modified to include the effects of altered-gravity and tilt on intrathoracic pressure.
+"""
+
+@mtkmodel Lung begin
+  @components begin
+    in = Pin()
+    chestwall = Pin()
+  end
+  @parameters begin
+    R_ml = Rml # Mouth-Larynx resistance (mmHg.s/ml: PRU)
+    C_l = Cl # Larynx compliance (ml/mmHg)
+    V₀_l = V₀l # Larynx zero pressure volume (ml)
+    R_lt = Rlt # Larynx-Trachea resistance (mmHg.s/ml: PRU)
+    C_tr = Ctr # Trachea compliance (ml/mmHg)
+    V₀_tr = V₀tr # Trachea zero pressure volume (ml)
+    R_tb = Rtb # Trachea-Bronchial resistance (mmHg.s/ml: PRU)
+    C_b = Cb # Bronchial compliance (ml/mmHg)
+    V₀_b = V₀b # Brochea zero pressure volume (ml)
+    R_bA = RbA # Bronchea-Alveolar resistance (mmHg.s/ml: PRU)
+    C_A = CA # Alveolar compliance (ml/mmHg)
+    C_cw = Ccw # Chest wall compliance (ml/mmHg)
+    V₀_A = V₀A # Alveolar zero pressure volume (ml)
+  end
+  @variables begin
+    pₐₒ(t) # External pressure (mmHg)
+    p_l(t) # Larynx pressure (mmHg)
+    p_tr(t) # Trachea pressure (mmHg)
+    p_b(t) # Bronchial pressure (mmHg)
+    p_A(t) # Alveolar pressure (mmHg)
+    pₚₗ(t) # Pleural pressure (mmHg)
+    V_l(t) # Larynx volume (ml)
+    V_tr(t) # Trachea volume (ml)
+    V_b(t) # Brochea volume (ml)
+    V_A(t) # Alveolar volume (ml)
+    V_D(t) # Dead space volume (ml)
+    pₘᵤₛ(t) # Muscular pressure (mmHg)
+    Vrᵢₙ(t) # Flow rate (ml/s)
+    Vr_A(t) # Alveolar flow rate (ml/s)
+    α(t) # Angle (radians)
+    g(t) # Gravity (m/s^2)
+  end
+  @equations begin
+    in.p ~ pₐₒ
+    in.q ~ Vrᵢₙ
+
+    chestwall.q ~ 0
+    chestwall.p ~ pₘᵤₛ
+
+    C_l * D(p_l) ~ (pₐₒ - p_l) / R_ml - (p_l - p_tr) / R_lt
+    C_tr * (D(p_tr) - D(pₚₗ)) ~ (p_l - p_tr) / R_lt - (p_tr - p_b) / R_tb
+    C_b * (D(p_b) - D(pₚₗ)) ~ (p_tr - p_b) / R_tb - (p_b - p_A) / R_bA
+    C_A * (D(p_A) - D(pₚₗ)) ~ (p_b - p_A) / R_bA
+    C_cw * (D(pₚₗ) - D(pₘᵤₛ)) ~ (p_l - p_tr) / R_lt
+
+    Vrᵢₙ ~ (pₐₒ - p_l) / R_ml
+    Vr_A ~ (p_b - p_A) / R_bA
+
+    V_l ~ C_l * p_l + V₀_l
+    V_tr ~ C_tr * (p_tr - pₚₗ) + V₀_tr
+    V_b ~ C_b * (p_b - pₚₗ) + V₀_b
+    V_A ~ C_A * (p_A - pₚₗ) + V₀_A
+    V_D ~ V_l + V_tr + V_b
   end
 end

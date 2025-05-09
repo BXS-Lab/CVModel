@@ -5,7 +5,7 @@ BXS Lab, UC Davis; Authors: RS Whittle, AJ Kondoor, HS Vellore
 Contact info: Dr. Rich Whittle – Department of Mechanical and Aerospace Engineering, UC Davis, One Shields Ave, Davis CA 95616 (rswhittle@ucdavis.edu)
 This model is a simulation of the human cardiovascular system, including a four chamber heart, arteries, veins, and microcirculation. It includes reflex control for the arterial baroreflex (ABR) and cardiopulmonary reflex (CPR), as well as hydrostatic effects, interstitial fluid flow, and external tissue pressures. The model is designed to simulate various physiological scenarios, including a tilt angle protocol, altered-gravity environment, and lower body negative pressure (LBNP) protocol. The underlying equations are based on the work of Heldt (2004), Zamanian (2007), Diaz Artiles (2015), and Whittle (2023). The model is implemented using the ModelingToolkit.jl package in Julia.
 """
-### TODO v3.1: (1) Collapse in vessels
+### TODO: (1) Collapse in vessels (2) Bring Intrathoracic Pressure into Lung Model
 
 module CVModel
 display("Cardiovascular Model v3.0 (May 3rd, 2025) - BXS Lab, UC Davis")
@@ -108,7 +108,7 @@ This section of code instances the compartments used in the model, based on the 
 @named Interstitial = InterstitialCompartment(Vmtilt=Vmax_tilt, Vmlbnp=Vmax_lbnp, τ=τint)
 
 #### External Pressures
-@named Intrathoracic = IntrathoracicPressure(pₜₕ=pₜₕ)
+@named Intrathoracic = IntrathoracicPressure()
 @named Abdominal = IntraAbdominalPressure(p_abd=p_abd)
 @named External = ExternalPressureUB(p_ext=p₀)
 @named ExternalLBNP = ExternalPressureLB(p_ext=p₀)
@@ -132,21 +132,8 @@ This section of code instances the compartments used in the model, based on the 
 @named cpr_αv = TransferFunction(delay_order = reflex_delay_order, reflex_delay = cpr_αv_delay, reflex_peak = cpr_αv_peak, reflex_end = cpr_αv_end)
 
 #### Lung model
-@named Breathing = DrivenLungPressure()
-@named ChestWall = Capacitor(C=C_cw)
-@named MouthLarynx = Resistor(R=R_ml)
-@named Larynx = Compliance(V₀=v0_l, C=C_l, inP=true, has_ep=true, has_variable_ep=true, p₀=p₀, is_nonlinear=false)
-@named LarynxTrachea = Resistor(R=R_lt)
-@named Trachea = Compliance(V₀=v0_t, C=C_t, inP=true, has_ep=true, has_variable_ep=true, p₀=p₀, is_nonlinear=false)
-@named TracheaBronchea = Resistor(R=R_tb)
-@named Bronchea = Compliance(V₀=v0_b, C=C_b, inP=true, has_ep=true, has_variable_ep=true, p₀=p₀, is_nonlinear=false)
-@named BroncheaAlveoli = Resistor(R=R_bA)
-@named Alveoli = Compliance(V₀=v0_A, C=C_A, inP=true, has_ep=true, has_variable_ep=true, p₀=p₀, is_nonlinear=false)
-
-
-
-
-
+@named RespMuscles = RespiratoryMuscles()
+@named Lung = Lung()
 
 """
 Structural Connections
@@ -198,18 +185,13 @@ circ_eqs = [
   #### External Pressures
   connect(Intrathoracic.pth, Asc_A.ep, BC_A.ep, Thor_A.ep, SVC.ep, Thor_IVC.ep, RA.ep, RV.ep, Pulm_art.ep, Pulm_vein.ep, LA.ep, LV.ep),
   connect(Abdominal.pabd, Abd_A.ep, Renal_art.ep, Splanchnic_art.ep, Renal_vein.ep, Splanchnic_vein.ep, Abd_veins.ep),
-  connect(External.pext, UpBd_art.ep, UpBd_vein.ep, MouthLarynx.in, Larynx.ep, Breathing.in),
+  connect(External.pext, UpBd_art.ep, UpBd_vein.ep, Lung.in, RespMuscles.in),
   connect(ExternalLBNP.pext, Leg_art.ep, Leg_vein.ep),
 
-  connect(MouthLarynx.out, Larynx.in),
-  connect(Larynx.out, LarynxTrachea.in),
-  connect(LarynxTrachea.out, Trachea.in),
-  connect(Trachea.out, TracheaBronchea.in),
-  connect(TracheaBronchea.out, Bronchea.in),
-  connect(Bronchea.out, BroncheaAlveoli.in),
-  connect(BroncheaAlveoli.out, Alveoli.in),
-  connect(Breathing.out, ChestWall.in),
-  connect(ChestWall.out, Trachea.ep, Bronchea.ep, Alveoli.ep),
+  connect(Lung.chestwall, RespMuscles.out),
+
+  Pulm_cap.pₐₗᵥ ~ Lung.p_A,
+  Intrathoracic.pₚₗ ~ Lung.pₚₗ,
 
   #### Interstitial Connections (Direct Connections)
   Splanchnic_vein.C.qint ~ Interstitial.Qint,
@@ -237,6 +219,7 @@ circ_eqs = [
   Pulm_art.α ~ alpha_driver.α,
   Pulm_vein.α ~ alpha_driver.α,
   Pulm_cap.α ~ alpha_driver.α,
+  Lung.α ~ alpha_driver.α,
 
   #### Gravity Equations (Direct Connections)
   Asc_A.g ~ gravity_driver.g,
@@ -259,6 +242,7 @@ circ_eqs = [
   Pulm_art.g ~ gravity_driver.g,
   Pulm_vein.g ~ gravity_driver.g,
   Pulm_cap.g ~ gravity_driver.g,
+  Lung.g ~ gravity_driver.g,
 
   #### LBNP Equations (Direct Connections)
   ExternalLBNP.p_lbnp ~ lbnp_driver.p_lbnp,
@@ -331,7 +315,7 @@ This section of the code composes the system of ordinary differential equations 
   ABRafferent, abr_αr, abr_αv, abr_β, abr_para, # Arterial Baroreflex
   CPRafferent, cpr_αr, cpr_αv, # Cardiopulmonary Reflex
   alpha_driver, gravity_driver, lbnp_driver, # Design of Experiments Drivers
-  MouthLarynx, Larynx, LarynxTrachea, Trachea, TracheaBronchea, Bronchea, BroncheaAlveoli, Alveoli, Breathing, ChestWall # Lung Model Breathing ChestWall
+  Lung, RespMuscles # Lung Model Breathing ChestWall
   ])
 
 circ_sys = structural_simplify(circ_model)
@@ -459,13 +443,12 @@ u0 = [
   R_aortic.ζ => 0,
   R_aortic.q => 0,
 
-  # ChestWall.Δp => 0.0,
-  Larynx.p => 0.0,
-  Trachea.p => 0.0,
-  Bronchea.p => 0.0,
-  Alveoli.p => 0.0,
-  Breathing.ϕ => 0.0,
-  ChestWall.Δp => -5.0
+  Lung.p_l => p₀,
+  Lung.p_tr => p₀,
+  Lung.p_b => p₀,
+  Lung.p_A => p₀,
+  RespMuscles.ϕ => 0.0,
+  Lung.pₚₗ => pₚₗ₀
 ]
 
 """
@@ -496,16 +479,6 @@ display(plot(Sol, idxs=[Vtotal],
         xlabel = "Time (s)",
         ylabel = "Volume (ml)",
         title = "Total Blood Volume")) # Debugging plot to quickly check volume conservation
-
-display(plot(Sol, idxs=[Breathing.out.p, ChestWall.p], xlims = (0, 60),
-        label = ["Lung Pressure" "Chest Wall Pressure"],
-        xlabel = "Time (s)",
-        ylabel = "Pressure (mmHg)",
-        title = "Lung Pressure"))
-
-display(plot(Sol, idxs=[Alveoli.V], xlims = (0, 60)))
-
-display(plot(Sol, idxs=[Breathing.out.p, Alveoli.p], xlims = (0, 60)))
 
 #### Direct from Solution Plots
 
@@ -605,12 +578,62 @@ p3d = plot(beat_times, [SV],
 
 display(plot(p3a, p3b, p3c, p3d, layout=(2,2), size=(900,600), suptitle="Beat-to-Beat Trends"))
 
+#### Pulmonary and Respiratory Plots
+
+p4a = plot(Sol, idxs=[RespMuscles.out.p], xlims = (0, 250),
+        label = "pₘᵤₛ",
+        xlabel = "Time (s)",
+        ylabel = "Pressure (mmHg)",
+        title = "Respiratory Muscle Pressure")
+
+p4b = plot(Sol, idxs=[Lung.pₚₗ], xlims = (0, 250),
+        label = "pₚₗ",
+        xlabel = "Time (s)",
+        ylabel = "Pressure (mmHg)",
+        title = "Pleural Pressure")
+
+p4c = plot(Sol, idxs=[Lung.p_A], xlims = (0, 250),
+        label = "p_A",
+        xlabel = "Time (s)",
+        ylabel = "Pressure (mmHg)",
+        title = "Alveolar Pressure")
+
+p4d = plot(Sol, idxs=[Lung.Vrᵢₙ], xlims = (0, 250),
+        label = "Air Flow",
+        xlabel = "Time (s)",
+        ylabel = "Flow (ml/s)",
+        title = "Air Flow")
+
+p4e = plot(Sol, idxs=[Lung.V_A + Lung.V_D], xlims = (0, 250),
+        label = "V_L",
+        xlabel = "Time (s)",
+        ylabel = "Volume (ml)",
+        title = "Lung Volume")
+
+p4f = plot(Sol, idxs=[Lung.V_A], xlims = (0, 250),
+        label = "V_A",
+        xlabel = "Time (s)",
+        ylabel = "Volume (ml)",
+        title = "Alveolar Volume")
+
+p4g = plot(Sol, idxs=[Lung.V_D], xlims = (0, 250),
+        label = "V_D",
+        xlabel = "Time (s)",
+        ylabel = "Volume (ml)",
+        title = "Dead Space Volume")
+
+p4h = plot(Sol, idxs=[Intrathoracic.pth.p], xlims = (0, 250),
+      label = "pₜₕ",
+      xlabel = "Time (s)",
+      ylabel = "Pressure (mmHg)",
+      title = "Intrathoracic Pressure")
+
+display(plot(p4a,p4b,p4c,p4d,p4e,p4f,p4g,p4h, layout=(4,2), size=(900,600), suptitle="Lungs"))
+
 """
 Save Outputs
 Uncomment the following lines to save the outputs to a CSV file.
 """
-
-
 
 # using CSV
 # using DataFrames

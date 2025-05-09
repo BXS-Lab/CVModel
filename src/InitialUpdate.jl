@@ -91,6 +91,13 @@ ph0_Leg_vein = ρ_b * gravity_val_numeric * (h_Leg_vein/100/con_Leg_vein) * sin(
 ph0_Abd_veins = ρ_b * gravity_val_numeric * (h_Abd_veins/100/con_default) * sin(α_val_numeric) * Pa2mmHg
 ph0_Thor_IVC = ρ_b * gravity_val_numeric * (h_Thor_IVC/100/con_default) * sin(α_val_numeric) * Pa2mmHg
 
+
+"""
+
+"""
+
+pₜₕ₀ = pₚₗ₀ - 3.5 * (gravity_val_numeric / 9.81) * sin(α_val_numeric)
+
 """
 Create Pressure Vector
 """
@@ -126,12 +133,12 @@ Create External Pressure Vector
 """
 
 p_rel = zeros(N_STATE)
-p_rel[1] = pₜₕ + pt0_Thor
-p_rel[2] = pₜₕ + pt0_Thor
+p_rel[1] = pₜₕ₀ + pt0_Thor
+p_rel[2] = pₜₕ₀ + pt0_Thor
 p_rel[3] = pt0_UB
 p_rel[4] = pt0_UB
-p_rel[5] = pₜₕ + pt0_Thor
-p_rel[6] = pₜₕ + pt0_Thor
+p_rel[5] = pₜₕ₀ + pt0_Thor
+p_rel[6] = pₜₕ₀ + pt0_Thor
 p_rel[7] = pt0_Abd
 p_rel[8] = pt0_Abd
 p_rel[9] = pt0_Abd
@@ -140,15 +147,15 @@ p_rel[11] = pt0_Abd
 p_rel[12] = pt0_Leg
 p_rel[13] = pt0_Leg
 p_rel[14] = pt0_Abd
-p_rel[15] = pₜₕ + pt0_Thor
-p_rel[16] = pₜₕ
-p_rel[17] = pₜₕ
-p_rel[18] = pₜₕ
-p_rel[19] = pₜₕ
-p_rel[20] = pₜₕ
-p_rel[21] = pₜₕ
-p_rel[22] = pₜₕ
-p_rel[23] = pₜₕ
+p_rel[15] = pₜₕ₀ + pt0_Thor
+p_rel[16] = pₜₕ₀
+p_rel[17] = pₜₕ₀
+p_rel[18] = pₜₕ₀
+p_rel[19] = pₜₕ₀
+p_rel[20] = pₜₕ₀
+p_rel[21] = pₜₕ₀
+p_rel[22] = pₜₕ₀
+p_rel[23] = pₜₕ₀
 
 """
 Determine the nonlinear effective compliance equations
