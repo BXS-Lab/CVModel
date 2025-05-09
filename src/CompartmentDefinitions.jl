@@ -170,6 +170,21 @@ This model represents the blood flow through the lungs as a series of parallel S
 end
 
 """
+Capacitor
+The Capacitor model extends the One Port model and represents a capacitive element. It has a single static parameter C (ml/mmHg), which represents the compliance of the element. The flow is related to the pressure difference by a first-order differential equation, where the rate of change of pressure difference is proportional to the negative flow through the capacitor.
+"""
+
+@mtkmodel Capacitor begin
+  @extend OnePort()
+  @parameters begin
+          C = 1.0
+  end
+  @equations begin
+          D(Δp) ~ -q / C
+  end
+end
+
+"""
 Inductor
 The Inductor model extends the One Port model and represents an inductive element. It has a single static parameter L (mmHg*s^2/ml), which represents the inertia of the fluid in the system. The flow is related to the pressure difference by a first-order differential equation, where the rate of change of flow is proportional to the negative pressure difference across the inductor.
 """
@@ -904,5 +919,28 @@ q is calculated in cm^3/s (ml/s)
           B ~ (ρ/1000) / (2 * Aeff^2)
           L ~ (ρ/1000) * Leff / Aeff
           D(q) ~ (Δp - B * q * abs(q)) * 1 / L
+  end
+end
+
+@mtkmodel DrivenLungPressure begin
+  @extend OnePort()
+  @parameters begin
+    P = p_musmin
+    TI = T_I
+    TE = T_E
+    T0 = Tbreath
+    τ = τ_mus
+  end
+  @variables begin
+    t0(t) # Time withing the breathing cycle
+    ϕ(t)
+  end
+  @equations begin
+    D(ϕ) ~ 1 / T0
+    t0 ~ (ϕ - floor(ϕ)) * T0
+    # Δp ~ ifelse(t0 <= TI, 0.01 * t0, 0.1 * t0)
+    # Time within the breathing cycle
+    Δp ~ ifelse(t0 <= TI, (-P/(TI*TE)*t0^2 + P*T0/(TI*TE)*t0),
+          (P/(1-exp(-TE/τ))*(exp(-(t0-TI)/τ)-exp(-TE/τ))))
   end
 end

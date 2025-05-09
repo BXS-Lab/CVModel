@@ -50,7 +50,7 @@ Find Initial Conditions
 This file uses Heldt's method to find the initial pressure vector for the model using a modified Newton-Raphson algorithm. It also calculates the initial interstitial volume (modeled as an equilibrium state) based on the starting angle, gravity, and LBNP.
 """
 
-include("Initial.jl")
+include("InitialUpdate.jl")
 
 """
 Instance Compartments
@@ -68,9 +68,9 @@ This section of code instances the compartments used in the model, based on the 
 @named R_pulmonary = MynardValve_SemiLunar(Leff=Leff_pv, Ann=Ann_pv, Kvc=Kvc_pv, Kvo=Kvo_pv)
 
 #### Pulmonary Circulation
-@named Pulm_art = Artery(C=Cpa, R=Rpa, V₀=v0pa, has_hydrostatic=false, rad=rad_Thor, L=Lpa, has_inertia=false)
+@named Pulm_art = Artery(C=Cpa, R=Rpa, V₀=v0pa, has_hydrostatic=false, has_tissue=false, L=Lpa, has_inertia=false)
 @named Pulm_cap = StarlingResistor(R=Rpc, h=h_Lungs)
-@named Pulm_vein = Vein(C=Cpv, R=Rpv, V₀=v0pv, has_hydrostatic=false, rad=rad_Thor)
+@named Pulm_vein = Vein(C=Cpv, R=Rpv, V₀=v0pv, has_hydrostatic=false, has_tissue=false)
 
 #### Left Heart
 @named LA = HeldtChamber(V₀=v0_la, Eₘᵢₙ=Ed_la, Eₘₐₓ=Ees_la, τₑₛ=τₐₛ, inP=true)
@@ -78,13 +78,6 @@ This section of code instances the compartments used in the model, based on the 
 # @named R_mitral = ResistorDiode(R=R_mv)
 @named LV = HeldtChamber(V₀=v0_lv, Eₘᵢₙ=Ed_lv, Eₘₐₓ=Ees_lv, Elimit = Elimit_lv, τₑₛ=τᵥₛ, inP=true, has_abr=true)
 @named R_aortic = MynardValve_SemiLunar(Leff=Leff_av, Ann=Ann_av, Kvc=Kvc_av, Kvo=Kvo_av)
-
-#### Heart Tissue Pressures
-# These create the external thoracic tissue weight on the heart (all arteries and veins already have this lumped in to their models).
-@named RA_tissue = TissuePressure(rad=rad_Thor)
-@named RV_tissue = TissuePressure(rad=rad_Thor)
-@named LA_tissue = TissuePressure(rad=rad_Thor)
-@named LV_tissue = TissuePressure(rad=rad_Thor)
 
 #### Arterial Circulation
 @named Asc_A = Artery(C=C_Asc_A, R=R_Asc_A, V₀=v0_Asc_A, h=h_Asc_A, rad=rad_Thor, L=L_Asc_A, has_inertia=false)
@@ -138,6 +131,23 @@ This section of code instances the compartments used in the model, based on the 
 @named cpr_αr = TransferFunction(delay_order = reflex_delay_order, reflex_delay = cpr_αr_delay, reflex_peak = cpr_αr_peak, reflex_end = cpr_αr_end)
 @named cpr_αv = TransferFunction(delay_order = reflex_delay_order, reflex_delay = cpr_αv_delay, reflex_peak = cpr_αv_peak, reflex_end = cpr_αv_end)
 
+#### Lung model
+@named Breathing = DrivenLungPressure()
+@named ChestWall = Capacitor(C=C_cw)
+@named MouthLarynx = Resistor(R=R_ml)
+@named Larynx = Compliance(V₀=v0_l, C=C_l, inP=true, has_ep=true, has_variable_ep=true, p₀=p₀, is_nonlinear=false)
+@named LarynxTrachea = Resistor(R=R_lt)
+@named Trachea = Compliance(V₀=v0_t, C=C_t, inP=true, has_ep=true, has_variable_ep=true, p₀=p₀, is_nonlinear=false)
+@named TracheaBronchea = Resistor(R=R_tb)
+@named Bronchea = Compliance(V₀=v0_b, C=C_b, inP=true, has_ep=true, has_variable_ep=true, p₀=p₀, is_nonlinear=false)
+@named BroncheaAlveoli = Resistor(R=R_bA)
+@named Alveoli = Compliance(V₀=v0_A, C=C_A, inP=true, has_ep=true, has_variable_ep=true, p₀=p₀, is_nonlinear=false)
+
+
+
+
+
+
 """
 Structural Connections
 This section of code connects the instanced compartments together to form the cardiovascular system. The hemodynamic connections are made using the "connect" function, which connects pins linked in pressure and flow via Kirchhoff's laws. The DOE integrations and reflex connections are just included as direct signal connections to the respective compartments.
@@ -185,17 +195,21 @@ circ_eqs = [
   connect(Abd_veins.out, Thor_IVC.in),
   connect(Thor_IVC.out, SVC.out, RA.in),
 
-  #### Heart Tissue Pressures
-  connect(RA.ep, RA_tissue.out),
-  connect(RV.ep, RV_tissue.out),
-  connect(LA.ep, LA_tissue.out),
-  connect(LV.ep, LV_tissue.out),
-
   #### External Pressures
-  connect(Intrathoracic.pth, Asc_A.ep, BC_A.ep, Thor_A.ep, SVC.ep, Thor_IVC.ep, RA_tissue.in, RV_tissue.in, Pulm_art.ep, Pulm_vein.ep, LA_tissue.in, LV_tissue.in),
+  connect(Intrathoracic.pth, Asc_A.ep, BC_A.ep, Thor_A.ep, SVC.ep, Thor_IVC.ep, RA.ep, RV.ep, Pulm_art.ep, Pulm_vein.ep, LA.ep, LV.ep),
   connect(Abdominal.pabd, Abd_A.ep, Renal_art.ep, Splanchnic_art.ep, Renal_vein.ep, Splanchnic_vein.ep, Abd_veins.ep),
-  connect(External.pext, UpBd_art.ep, UpBd_vein.ep),
+  connect(External.pext, UpBd_art.ep, UpBd_vein.ep, MouthLarynx.in, Larynx.ep, Breathing.in),
   connect(ExternalLBNP.pext, Leg_art.ep, Leg_vein.ep),
+
+  connect(MouthLarynx.out, Larynx.in),
+  connect(Larynx.out, LarynxTrachea.in),
+  connect(LarynxTrachea.out, Trachea.in),
+  connect(Trachea.out, TracheaBronchea.in),
+  connect(TracheaBronchea.out, Bronchea.in),
+  connect(Bronchea.out, BroncheaAlveoli.in),
+  connect(BroncheaAlveoli.out, Alveoli.in),
+  connect(Breathing.out, ChestWall.in),
+  connect(ChestWall.out, Trachea.ep, Bronchea.ep, Alveoli.ep),
 
   #### Interstitial Connections (Direct Connections)
   Splanchnic_vein.C.qint ~ Interstitial.Qint,
@@ -222,10 +236,6 @@ circ_eqs = [
   Intrathoracic.α ~ alpha_driver.α,
   Pulm_art.α ~ alpha_driver.α,
   Pulm_vein.α ~ alpha_driver.α,
-  RA_tissue.α ~ alpha_driver.α,
-  RV_tissue.α ~ alpha_driver.α,
-  LA_tissue.α ~ alpha_driver.α,
-  LV_tissue.α ~ alpha_driver.α,
   Pulm_cap.α ~ alpha_driver.α,
 
   #### Gravity Equations (Direct Connections)
@@ -248,10 +258,6 @@ circ_eqs = [
   Intrathoracic.g ~ gravity_driver.g,
   Pulm_art.g ~ gravity_driver.g,
   Pulm_vein.g ~ gravity_driver.g,
-  RA_tissue.g ~ gravity_driver.g,
-  RV_tissue.g ~ gravity_driver.g,
-  LA_tissue.g ~ gravity_driver.g,
-  LV_tissue.g ~ gravity_driver.g,
   Pulm_cap.g ~ gravity_driver.g,
 
   #### LBNP Equations (Direct Connections)
@@ -322,10 +328,10 @@ This section of the code composes the system of ordinary differential equations 
   UpBd_cap, Renal_cap, Splanchnic_cap, Leg_cap, # Microcirculation
   Interstitial, # Interstitial Compartment
   Intrathoracic, Abdominal, External, ExternalLBNP, # External Pressures
-  RA_tissue, RV_tissue, LA_tissue, LV_tissue, # Heart Tissue Pressures
   ABRafferent, abr_αr, abr_αv, abr_β, abr_para, # Arterial Baroreflex
   CPRafferent, cpr_αr, cpr_αv, # Cardiopulmonary Reflex
-  alpha_driver, gravity_driver, lbnp_driver # Design of Experiments Drivers
+  alpha_driver, gravity_driver, lbnp_driver, # Design of Experiments Drivers
+  MouthLarynx, Larynx, LarynxTrachea, Trachea, TracheaBronchea, Bronchea, BroncheaAlveoli, Alveoli, Breathing, ChestWall # Lung Model Breathing ChestWall
   ])
 
 circ_sys = structural_simplify(circ_model)
@@ -368,7 +374,6 @@ u0 = [
   LV.p => x[22], # x[23] is the LV end-systolic pressure
 
   #### Inductance Flows (set to zero for end-diastole)
-  # Asc_A.L.q => 0.0,
   BC_A.L.q => 0.0,
   UpBd_art.L.q => 0.0,
   Thor_A.L.q => 0.0,
@@ -376,7 +381,6 @@ u0 = [
   Renal_art.L.q => 0.0,
   Splanchnic_art.L.q => 0.0,
   Leg_art.L.q => 0.0,
-  # Pulm_art.L.q => 0.0,
 
   #### Interstitial Compartment
   Interstitial.Qint => 0.0,
@@ -451,11 +455,17 @@ u0 = [
   R_tricuspid.ζ => 1,
   R_pulmonary.ζ => 0,
   R_pulmonary.q => 0,
-  #R_pulmonary.Δp => eps(),
   R_mitral.ζ => 1,
   R_aortic.ζ => 0,
-  R_aortic.q => 0
-  #R_aortic.Δp => eps()
+  R_aortic.q => 0,
+
+  # ChestWall.Δp => 0.0,
+  Larynx.p => 0.0,
+  Trachea.p => 0.0,
+  Bronchea.p => 0.0,
+  Alveoli.p => 0.0,
+  Breathing.ϕ => 0.0,
+  ChestWall.Δp => -5.0
 ]
 
 """
@@ -486,6 +496,16 @@ display(plot(Sol, idxs=[Vtotal],
         xlabel = "Time (s)",
         ylabel = "Volume (ml)",
         title = "Total Blood Volume")) # Debugging plot to quickly check volume conservation
+
+display(plot(Sol, idxs=[Breathing.out.p, ChestWall.p], xlims = (0, 60),
+        label = ["Lung Pressure" "Chest Wall Pressure"],
+        xlabel = "Time (s)",
+        ylabel = "Pressure (mmHg)",
+        title = "Lung Pressure"))
+
+display(plot(Sol, idxs=[Alveoli.V], xlims = (0, 60)))
+
+display(plot(Sol, idxs=[Breathing.out.p, Alveoli.p], xlims = (0, 60)))
 
 #### Direct from Solution Plots
 
@@ -589,6 +609,8 @@ display(plot(p3a, p3b, p3c, p3d, layout=(2,2), size=(900,600), suptitle="Beat-to
 Save Outputs
 Uncomment the following lines to save the outputs to a CSV file.
 """
+
+
 
 # using CSV
 # using DataFrames

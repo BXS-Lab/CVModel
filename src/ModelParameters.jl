@@ -15,6 +15,7 @@ TBV = 5700.0 # Total Blood Volume (ml)
 ρ_b = 1060.0 # Blood Density (kg/m^3)
 Pa2mmHg = 0.00750062 # Conversion factor from Pascal to mmHg
 mmHg2dynecm2 = 10/Pa2mmHg # Conversion factor from mmHg to dyne/cm^2
+cmH2O2mmHg = 0.73555912 # Conversion factor from cmH2O to mmHg
 η_b = 0.004 # Blood Viscosity (Pa.s)
 
 """
@@ -355,6 +356,50 @@ Gcpr_vub = 13.0 # CPR Upper Body Volume Gain (ml/mmHg) (Previous 13.5)
 Gcpr_vre = 3.0 # CPR Renal Volume Gain (ml/mmHg) (Previous 2.7)
 Gcpr_vsp = 64.0 # CPR Splanchnic Volume Gain (ml/mmHg)
 Gcpr_vlb = 30.0 # CPR Lower Body Volume Gain (ml/mmHg)
+
+"""
+Lung Model
+"""
+
+p_musmin = -5.0 # df* cmH2O2mmHg # Minimum respiratory muscle pressure (mmHg)
+RRbreath = 12.0 # Breathing Rate (breaths/min)
+IEratio = 0.6 # Inspiratory to Expiratory Ratio
+Tbreath = 60.0 / RRbreath # Total Breathing Cycle Time (s)
+T_E = Tbreath/(1 + IEratio) # Expiratory Time (s)
+T_I = T_E * IEratio # Inspiratory Time (s)
+τ_mus = T_E/5 # Respiratory muscle time constant (s)
+
+p_ao = p₀
+# R_ml = 1.021 * cmH2O2mmHg / 1000 # mmHg.s/ml
+# C_l = 1.27 / cmH2O2mmHg # ml/mmHg
+# v0_l = 34.4 # ml
+# R_lt = 0.3369 * cmH2O2mmHg / 1000 # mmHg.s/ml
+# C_t = 2.38 / cmH2O2mmHg # ml/mmHg
+# v0_t = 6.63 # ml
+# R_tb = 0.3063 * cmH2O2mmHg / 1000 # mmHg.s/ml
+# C_b = 13.1 / cmH2O2mmHg # ml/mmHg
+# v0_b = 18.7 # ml
+# R_bA = 0.0817 * cmH2O2mmHg / 1000 # mmHg.s/ml
+# C_A = 200 / cmH2O2mmHg # ml/mmHg
+# FRC = 2400 # ml
+
+R_ml = 1.021
+C_l = 0.00127
+v0_l = 34.4 / 1000
+R_lt = 0.3369
+C_t = 0.00238 / 1000
+
+R_tb = 0.3063
+C_b = 0.0131
+v0_b = 18.7 / 1000
+R_bA = 0.0817
+C_A = 0.2
+v0_A = 1.263 / 1000
+C_cw = 0.2445 / 1000
+
+# test = FRC + C_A * -5 - (-5*C_b) - (-5*C_l) - (-5*C_t)
+# v0_A = 1.263 # ml
+# C_cw = 244.5 / cmH2O2mmHg # Chest wall compliance (ml/mmHg)
 
 for name in names(@__MODULE__; all=true, imported=false)
   if isdefined(@__MODULE__, name) && !(name in (:eval, :include, :__doc__))

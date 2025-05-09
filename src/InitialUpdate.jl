@@ -141,14 +141,14 @@ p_rel[12] = pt0_Leg
 p_rel[13] = pt0_Leg
 p_rel[14] = pt0_Abd
 p_rel[15] = pₜₕ + pt0_Thor
-p_rel[16] = pₜₕ #+ pt0_Thor
-p_rel[17] = pₜₕ #+ pt0_Thor
-p_rel[18] = pₜₕ #+ pt0_Thor
-p_rel[19] = pₜₕ #+ pt0_Thor
-p_rel[20] = pₜₕ #+ pt0_Thor
-p_rel[21] = pₜₕ #+ pt0_Thor
-p_rel[22] = pₜₕ #+ pt0_Thor
-p_rel[23] = pₜₕ #+ pt0_Thor
+p_rel[16] = pₜₕ
+p_rel[17] = pₜₕ
+p_rel[18] = pₜₕ
+p_rel[19] = pₜₕ
+p_rel[20] = pₜₕ
+p_rel[21] = pₜₕ
+p_rel[22] = pₜₕ
+p_rel[23] = pₜₕ
 
 """
 Determine the nonlinear effective compliance equations
@@ -185,11 +185,11 @@ conab = (π*C_Abd_veins)/(2*vM_Abd_vein)
         F[15] = SV - T * (x[13] - x[14]) / R_Leg_vein
         F[16] = SV - T * (x[14] - x[15]) / R_Abd_veins
         F[17] = SV - T * (x[15] - x[16]) / R_Thor_IVC
-        F[18] = SV - Tdias * (x[16] - x[17]) / R_tv
+        F[18] = SV - Tdias * (x[16] - x[17]) / sqrt(1/(ρ_b / (2 * Ann_tv^2)))
         F[19] = SV - Tsys * (x[18] - x[19]) / Rpa
         F[20] = SV - T * (x[19] - x[20]) / Rpc
         F[21] = SV - T * (x[20] - x[21]) / Rpv
-        F[22] = SV - Tdias * (x[21] - x[22]) / R_mv
+        F[22] = SV - Tdias * (x[21] - x[22]) / sqrt(1/(ρ_b / (2 * Ann_mv^2)))
         F[23] = TBV - (
             (x[1]-p[1])*C_Asc_A + v0_Asc_A +
             (x[2]-p[2])*C_BC_A + v0_BC_A +
