@@ -9,13 +9,13 @@ Calculate Lumped Elements
 This code section calculates some of the lumped values including the total vascular volume, the instantaneous zero-pressure filling volume, the interstitial volume, the total volume (use as a check on conservation), and the total peripheral resistance (TPR). It also calculates the instantaneous heart rate (HR) based on the RR interval.
 """
 
-Vvessel = Asc_A.C.V + BC_A.C.V + UpBd_art.C.V + UpBd_vein.C.V + SVC.C.V + Thor_A.C.V + Abd_A.C.V + Renal_art.C.V + Renal_vein.C.V + Splanchnic_art.C.V + Splanchnic_vein.C.V + Leg_art.C.V + Leg_vein.C.V + Abd_veins.C.V + Thor_IVC.C.V + RA.V + RV.V + Pulm_art.C.V + Pulm_vein.C.V + LA.V + LV.V + Cor_art.C.V + Cor_vein.C.V
+Vvessel = Asc_A.C.V + BC_A.C.V + UpBd_art.C.V + UpBd_vein.C.V + SVC.C.V + Thor_A.C.V + Abd_A.C.V + Renal_art.C.V + Renal_vein.C.V + Splanchnic_art.C.V + Splanchnic_vein.C.V + Leg_art.C.V + Leg_vein.C.V + Abd_veins.C.V + Thor_IVC.C.V + CommonCarotid.C.V + Head_art.C.V + Head_veins.C.V + Jugular_vein.C.V + RA.V + RV.V + Pulm_art.C.V + Pulm_vein.C.V + LA.V + LV.V + Cor_art.C.V + Cor_vein.C.V
 
-Vzpf = v0_Asc_A + v0_BC_A + v0_UpBd_art + UpBd_vein.C.V₀eff + v0_SVC + v0_Thor_A + v0_Abd_A + v0_Renal_art + Renal_vein.C.V₀eff + v0_Splanchnic_art + Splanchnic_vein.C.V₀eff + v0_Leg_art + Leg_vein.C.V₀eff + v0_Abd_veins + v0_Thor_IVC + v0_ra + v0_rv + v0pa + v0pv + v0_la + v0_lv + v0ca + v0cv
+Vzpf = v0_Asc_A + v0_BC_A + v0_UpBd_art + UpBd_vein.C.V₀eff + v0_SVC + v0_Thor_A + v0_Abd_A + v0_Renal_art + Renal_vein.C.V₀eff + v0_Splanchnic_art + Splanchnic_vein.C.V₀eff + v0_Leg_art + Leg_vein.C.V₀eff + v0_Abd_veins + v0_Thor_IVC + v0_CCA + v0_Head_art + v0_Head_veins + v0_Jugular_vein + v0_ra + v0_rv + v0pa + v0pv + v0_la + v0_lv + v0ca + v0cv
 
 Vinterstitial = Interstitial.Vint
 Vtotal = Vvessel + Vinterstitial
-TPR = 1 / (1/UpBd_cap.R + 1/Renal_cap.R + 1/Splanchnic_cap.R + 1/Leg_cap.R)
+TPR = 1 / (1/UpBd_cap.R + 1/Renal_cap.R + 1/Splanchnic_cap.R + 1/Leg_cap.R + 1/Cor_cap.R + 1/Head_cap.R)
 HR = 60 / SA.RR_held
 RR = SA.RR_held * 1000 # Convert to ms
 
@@ -107,6 +107,10 @@ Leg_art_V = Sol[Leg_art.C.V]
 Leg_vein_V = Sol[Leg_vein.C.V]
 Abd_veins_V = Sol[Abd_veins.C.V]
 Thor_IVC_V = Sol[Thor_IVC.C.V]
+CommonCarotid_V = Sol[CommonCarotid.C.V]
+Head_art_V = Sol[Head_art.C.V]
+Head_veins_V = Sol[Head_veins.C.V]
+Jugular_vein_V = Sol[Jugular_vein.C.V]
 RA_V = Sol[RA.V]
 RV_V = Sol[RV.V]
 Pulm_art_V = Sol[Pulm_art.C.V]
@@ -131,6 +135,10 @@ Leg_art_Vmean = Float64[]
 Leg_vein_Vmean = Float64[]
 Abd_veins_Vmean = Float64[]
 Thor_IVC_Vmean = Float64[]
+CommonCarotid_Vmean = Float64[]
+Head_art_Vmean = Float64[]
+Head_veins_Vmean = Float64[]
+Jugular_vein_Vmean = Float64[]
 RA_Vmean = Float64[]
 RV_Vmean = Float64[]
 Pulm_art_Vmean = Float64[]
@@ -140,7 +148,7 @@ LV_Vmean = Float64[]
 Cor_art_Vmean = Float64[]
 Cor_vein_Vmean = Float64[]
 
-function compute_beat_averaged_volumes(beat_indices, t_vals, Asc_A_V, BC_A_V, UpBd_art_V, UpBd_vein_V, SVC_V, Thor_A_V, Abd_A_V, Renal_art_V, Renal_vein_V, Splanchnic_art_V, Splanchnic_vein_V, Leg_art_V, Leg_vein_V, Abd_veins_V, Thor_IVC_V, RA_V, RV_V, Pulm_art_V, Pulm_vein_V, LA_V, LV_V, Cor_art_V, Cor_vein_V)
+function compute_beat_averaged_volumes(beat_indices, t_vals, Asc_A_V, BC_A_V, UpBd_art_V, UpBd_vein_V, SVC_V, Thor_A_V, Abd_A_V, Renal_art_V, Renal_vein_V, Splanchnic_art_V, Splanchnic_vein_V, Leg_art_V, Leg_vein_V, Abd_veins_V, Thor_IVC_V, CommonCarotid_V, Head_art_V, Head_veins_V, Jugular_vein_V, RA_V, RV_V, Pulm_art_V, Pulm_vein_V, LA_V, LV_V, Cor_art_V, Cor_vein_V)
   start_idx = 1
   for stop_idx in beat_indices
       beat_range = start_idx:stop_idx
@@ -160,6 +168,10 @@ function compute_beat_averaged_volumes(beat_indices, t_vals, Asc_A_V, BC_A_V, Up
       Leg_vein_v_segment = Leg_vein_V[beat_range]
       Abd_veins_v_segment = Abd_veins_V[beat_range]
       Thor_IVC_v_segment = Thor_IVC_V[beat_range]
+      CommonCarotid_v_segment = CommonCarotid_V[beat_range]
+      Head_art_v_segment = Head_art_V[beat_range]
+      Head_veins_v_segment = Head_veins_V[beat_range]
+      Jugular_vein_v_segment = Jugular_vein_V[beat_range]
       RA_v_segment = RA_V[beat_range]
       RV_v_segment = RV_V[beat_range]
       Pulm_art_v_segment = Pulm_art_V[beat_range]
@@ -184,6 +196,10 @@ function compute_beat_averaged_volumes(beat_indices, t_vals, Asc_A_V, BC_A_V, Up
       integrand_Leg_vein = Leg_vein_v_segment[1:end-1] .* dt
       integrand_Abd_veins = Abd_veins_v_segment[1:end-1] .* dt
       integrand_Thor_IVC = Thor_IVC_v_segment[1:end-1] .* dt
+      integrand_CommonCarotid = CommonCarotid_v_segment[1:end-1] .* dt
+      integrand_Head_art = Head_art_v_segment[1:end-1] .* dt
+      integrand_Head_veins = Head_veins_v_segment[1:end-1] .* dt
+      integrand_Jugular_vein = Jugular_vein_v_segment[1:end-1] .* dt
       integrand_RA = RA_v_segment[1:end-1] .* dt
       integrand_RV = RV_v_segment[1:end-1] .* dt
       integrand_Pulm_art = Pulm_art_v_segment[1:end-1] .* dt
@@ -207,6 +223,10 @@ function compute_beat_averaged_volumes(beat_indices, t_vals, Asc_A_V, BC_A_V, Up
       push!(Leg_vein_Vmean, sum(integrand_Leg_vein) / (t_segment[end] - t_segment[1]))
       push!(Abd_veins_Vmean, sum(integrand_Abd_veins) / (t_segment[end] - t_segment[1]))
       push!(Thor_IVC_Vmean, sum(integrand_Thor_IVC) / (t_segment[end] - t_segment[1]))
+      push!(CommonCarotid_Vmean, sum(integrand_CommonCarotid) / (t_segment[end] - t_segment[1]))
+      push!(Head_art_Vmean, sum(integrand_Head_art) / (t_segment[end] - t_segment[1]))
+      push!(Head_veins_Vmean, sum(integrand_Head_veins) / (t_segment[end] - t_segment[1]))
+      push!(Jugular_vein_Vmean, sum(integrand_Jugular_vein) / (t_segment[end] - t_segment[1]))
       push!(RA_Vmean, sum(integrand_RA) / (t_segment[end] - t_segment[1]))
       push!(RV_Vmean, sum(integrand_RV) / (t_segment[end] - t_segment[1]))
       push!(Pulm_art_Vmean, sum(integrand_Pulm_art) / (t_segment[end] - t_segment[1]))
@@ -218,4 +238,4 @@ function compute_beat_averaged_volumes(beat_indices, t_vals, Asc_A_V, BC_A_V, Up
       start_idx = stop_idx + 1
   end
 end
-compute_beat_averaged_volumes(beat_indices, t_vals, Asc_A_V, BC_A_V, UpBd_art_V, UpBd_vein_V, SVC_V, Thor_A_V, Abd_A_V, Renal_art_V, Renal_vein_V, Splanchnic_art_V, Splanchnic_vein_V, Leg_art_V, Leg_vein_V, Abd_veins_V, Thor_IVC_V, RA_V, RV_V, Pulm_art_V, Pulm_vein_V, LA_V, LV_V, Cor_art_V, Cor_vein_V)
+compute_beat_averaged_volumes(beat_indices, t_vals, Asc_A_V, BC_A_V, UpBd_art_V, UpBd_vein_V, SVC_V, Thor_A_V, Abd_A_V, Renal_art_V, Renal_vein_V, Splanchnic_art_V, Splanchnic_vein_V, Leg_art_V, Leg_vein_V, Abd_veins_V, Thor_IVC_V, CommonCarotid_V, Head_art_V, Head_veins_V, Jugular_vein_V, RA_V, RV_V, Pulm_art_V, Pulm_vein_V, LA_V, LV_V, Cor_art_V, Cor_vein_V)

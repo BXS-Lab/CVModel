@@ -99,7 +99,7 @@ ph0_Leg_art = ρ_b * gravity_val_numeric * (h_Leg_art/100/con_Leg_art) * sin(α_
 ph0_Leg_vein = ρ_b * gravity_val_numeric * (h_Leg_vein/100/con_Leg_vein) * sin(α_val_numeric) * Pa2mmHg
 ph0_Abd_veins = ρ_b * gravity_val_numeric * (h_Abd_veins/100/con_default) * sin(α_val_numeric) * Pa2mmHg
 ph0_Thor_IVC = ρ_b * gravity_val_numeric * (h_Thor_IVC/100/con_default) * sin(α_val_numeric) * Pa2mmHg
-ph0_CommonCarotid = ρ_b * gravity_val_numeric * (h_CommonCarotid/100/con_default) * sin(α_val_numeric) * Pa2mmHg
+ph0_CommonCarotid = ρ_b * gravity_val_numeric * (h_CCA/100/con_default) * sin(α_val_numeric) * Pa2mmHg
 ph0_Head_art = ρ_b * gravity_val_numeric * (h_Head_art/100/con_default) * sin(α_val_numeric) * Pa2mmHg
 ph0_Head_veins = ρ_b * gravity_val_numeric * (h_Head_veins/100/con_default) * sin(α_val_numeric) * Pa2mmHg
 ph0_Jugular_vein = ρ_b * gravity_val_numeric * (h_Jugular_vein/100/con_default) * sin(α_val_numeric) * Pa2mmHg
@@ -244,7 +244,7 @@ conab = (π*C_Abd_veins)/(2*vM_Abd_vein)
             2 * vM_Leg_vein * atan(conll*(x[13]-p[13])) / π + v0_Leg_vein +
             2 * vM_Abd_vein * atan(conab*(x[14]-p[14])) / π + v0_Abd_veins +
             (x[15]-p[15])*C_Thor_IVC + v0_Thor_IVC +
-            (x[16]-p[16])*C_CommonCarotid + v0_CommonCarotid +
+            (x[16]-p[16])*C_CCA + v0_CCA +
             (x[17]-p[17])*C_Head_art + v0_Head_art +
             (x[18]-p[18])*C_Head_veins + v0_Head_veins +
             (x[19]-p[19])*C_Jugular_vein + v0_Jugular_vein +
@@ -281,7 +281,7 @@ x = x_sol
             2 * vM_Leg_vein * atan(conll*(x_sol[13]-p_rel[13])) / π + v0_Leg_vein +
             2 * vM_Abd_vein * atan(conab*(x_sol[14]-p_rel[14])) / π + v0_Abd_veins +
             (x_sol[15]-p_rel[15])*C_Thor_IVC + v0_Thor_IVC +
-            (x_sol[16]-p_rel[16])*C_CommonCarotid + v0_CommonCarotid +
+            (x_sol[16]-p_rel[16])*C_CCA + v0_CCA +
             (x_sol[17]-p_rel[17])*C_Head_art + v0_Head_art +
             (x_sol[18]-p_rel[18])*C_Head_veins + v0_Head_veins +
             (x_sol[19]-p_rel[19])*C_Jugular_vein + v0_Jugular_vein +
