@@ -505,7 +505,7 @@ This section of the code solves the ODE system. The time span and save interval 
 
 prob = ODEProblem(circ_sys, u0, tspan)
 
-@time Sol = solve(prob, Tsit5(), reltol=1e-10, abstol=1e-12, maxiters=1e8, saveat=Start_time:Time_step:Stop_time)
+@time Sol = solve(prob, Tsit5(), reltol=1e-10, abstol=1e-12, maxiters=1e8, saveat=Start_time:Time_step:Stop_time, progress = true)
 # For a discussion on the solver choice, see: https://docs.sciml.ai/DiffEqDocs/stable/solvers/ode_solve/
 # Previously used KenCarp4() which incorporates a stiffness detection and auto-switching algorithm. Tsit5() is the default choice and faster.
 
@@ -548,7 +548,7 @@ p0c = plot(Sol, idxs=[lbnp_driver.p_lbnp],
              title = "Lower Body Negative Pressure",
              ylims = (-50, 0))
 
-p0 = plot(p0a, p0b, p0c, layout=(2,2), size=(900,600), suptitle="Design of Experiments")
+display(plot(p0a, p0b, p0c, layout=(2,2), size=(900,600), suptitle="Design of Experiments"))
 
 p1a = plot(Sol, idxs=[TPR],
              label = "TPR",
@@ -571,7 +571,7 @@ p1d = plot(Sol, idxs=[RV.Eₘₐₓeff, LV.Eₘₐₓeff],
              ylabel = "End-Systolic E (mmHg/ml)",
              title = "Ventricular Contractility")
 
-p1 = plot(p1a, p1b, p1c, p1d, layout=(2,2), size=(900,600), suptitle="Reflex Action")
+display(plot(p1a, p1b, p1c, p1d, layout=(2,2), size=(900,600), suptitle="Reflex Action"))
 
 p2a = plot(Sol, idxs=[Vtotal, Vvessel, Vinterstitial],
              label = ["Vtotal" "Vvessel" "Vinterstitial"],
@@ -597,7 +597,7 @@ p2d = plot(Sol, idxs=[Asc_A.in.q],
              xlims = (50,60),
              title = "Left Ventricular Outflow")
 
-p2 = plot(p2a, p2b, p2c, p2d, layout=(2,2), size=(900,600), suptitle="Hemodynamics")
+display(plot(p2a, p2b, p2c, p2d, layout=(2,2), size=(900,600), suptitle="Hemodynamics"))
 
 #### Beat-to-Beat Plots
 
@@ -623,9 +623,9 @@ p3d = plot(beat_times, [SV],
              ylabel = "SV (ml)",
              title = "Stroke Volume")
 
-p3 = plot(p3a, p3b, p3c, p3d, layout=(2,2), size=(900,600), suptitle="Beat-to-Beat Trends")
+display(plot(p3a, p3b, p3c, p3d, layout=(2,2), size=(900,600), suptitle="Beat-to-Beat Trends"))
 
-plot(beat_times, [(Head_art_Vmean + Head_veins_Vmean + Jugular_vein_Vmean + CommonCarotid_Vmean),
+display(plot(beat_times, [(Head_art_Vmean + Head_veins_Vmean + Jugular_vein_Vmean + CommonCarotid_Vmean),
         (UpBd_art_Vmean + UpBd_vein_Vmean),
         (Renal_art_Vmean + Renal_vein_Vmean),
         (Splanchnic_art_Vmean + Splanchnic_vein_Vmean),
@@ -636,7 +636,7 @@ plot(beat_times, [(Head_art_Vmean + Head_veins_Vmean + Jugular_vein_Vmean + Comm
         label = ["Head" "Upper Body" "Renal" "Splanchnic" "Leg" "Coronary" "Thoracic" "Cardiopulmonary"],
         xlabel = "Time (s)",
         ylabel = "Volume (ml)",
-        title = "Average Branch Volumes")
+        title = "Average Branch Volumes"))
 
 #### Pulmonary and Respiratory Plots
 
@@ -688,7 +688,7 @@ p4h = plot(Sol, idxs=[Intrathoracic.pth.p], xlims = (0, 250),
       ylabel = "Pressure (mmHg)",
       title = "Intrathoracic Pressure")
 
-p4 = plot(p4a,p4b,p4c,p4d,p4e,p4f,p4g,p4h, layout=(4,2), size=(900,600), suptitle="Lungs")
+display(plot(p4a,p4b,p4c,p4d,p4e,p4f,p4g,p4h, layout=(4,2), size=(900,600), suptitle="Lungs"))
 
 """
 Save Outputs
