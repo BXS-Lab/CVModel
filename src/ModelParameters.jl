@@ -36,8 +36,8 @@ These parameters define the tissue properties, including the density of fat-free
 """
 ρ_fft = 1100.0  # Fat Free Tissue Density (kg/m^3)
 
-rad_head = 10.0 # Radius of the Head Segment (cm)
-rad_neck = 7.0 # Radius of the Neck Segment (cm)
+rad_Head = 10.0 # Radius of the Head Segment (cm)
+rad_Neck = 7.0 # Radius of the Neck Segment (cm)
 rad_UB = 7.0 # Radius of the Brachiocephalic Segment (cm)
 rad_Thor = 14.0 # Radius of the Thoracic Segment (cm)
 rad_Abd = 12.0 # Radius of the Abdominal Segment (cm)

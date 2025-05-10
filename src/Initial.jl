@@ -178,8 +178,8 @@ p_rel[24] = pₜₕ₀
 p_rel[25] = pₜₕ₀
 p_rel[26] = pₜₕ₀
 p_rel[27] = pₜₕ₀
-p_rel[28] = pt0_Head
-p_rel[29] = pt0_Head
+p_rel[28] = pₜₕ₀
+p_rel[29] = pₜₕ₀
 
 """
 Determine the nonlinear effective compliance equations
@@ -194,41 +194,39 @@ conab = (π*C_Abd_veins)/(2*vM_Abd_vein)
         p = p_rel
 
         # Equation 1: Ventricular volume match
-        F[1] =((x[22]-p[22])/Ed_lv - (x[23]-p[23])/Ees_lv) - ((x[17]-p[17])/Ed_rv - (x[18]-p[18])/Ees_rv)
+        F[1] =((x[26]-p[26])/Ed_lv - (x[27]-p[27])/Ees_lv) - ((x[21]-p[21])/Ed_rv - (x[22]-p[22])/Ees_rv)
         # Equations 2–28: Flows across resistances equal stroke volume (with branch divisions)
-        SV = (x[22]-p[22])/Ed_lv - (x[23]-p[23])/Ees_lv
-        F[2]  = SV - Tsys * (x[23] - x[1]) / R_Asc_A
-        F[3]  = SV - T * (x[2] - x[1]) / R_BC_A
-        F[4]  = (T * (x[3] - x[4]) / R_UpBd_cap) - T * (x[3] - x[2]) / R_UpBd_art
-        # F[5]  = SV - T * (x[3] - x[4]) / R_UpBd_cap
-        F[5]  = SV - T * (x[4] - x[5]) / R_UpBd_vein
-        F[6]  = SV - T * (x[5] - x[16]) / R_SVC
-        F[7]  = SV - T * (x[6] - x[1]) / R_Thor_A
-        F[8]  = SV - T * (x[7] - x[6]) / R_Abd_A
-        F[9] = (T * (x[8] - x[9]) / R_Renal_cap) - T * (x[8] - x[7]) / R_Renal_art
-        # F[11] = SV - T * (x[8] - x[9]) / R_Renal_cap
-        F[10] = SV - T * (x[9] - x[14]) / R_Renal_vein
-        F[11] = (T * (x[10] - x[11]) / R_Splanchnic_cap) - T * (x[10] - x[7]) / R_Splanchnic_art
-        # F[14] = SV - T * (x[10] - x[11]) / R_Splanchnic_cap
-        F[12] = SV - T * (x[11] - x[14]) / R_Splanchnic_vein
-        F[13] = SV - T * (x[12] - x[7]) / R_Leg_art
-        F[14] = SV - T * (x[12] - x[13]) / R_Leg_cap
-        F[15] = SV - T * (x[13] - x[14]) / R_Leg_vein
-        F[16] = SV - T * (x[14] - x[15]) / R_Abd_veins
-        F[17] = SV - T * (x[15] - x[16]) / R_Thor_IVC
-        F[18] = SV - Tdias * (x[16] - x[17]) / sqrt(1/(ρ_b / (2 * Ann_tv^2)))
-        F[19] = SV - Tsys * (x[18] - x[19]) / Rpa
-        F[20] = SV - T * (x[19] - x[20]) / Rpc
-        F[21] = SV - T * (x[20] - x[21]) / Rpv
-        F[22] = SV - Tdias * (x[21] - x[22]) / sqrt(1/(ρ_b / (2 * Ann_mv^2)))
-        F[23] = SV - T * (x[24] - x[1]) / Rca
-        F[24] = SV - T * (x[25] - x[24]) / Rcc
-        F[25] = SV - T * (x[25] - x[26]) / Rcv
-        F[26] = SV - T * (x[26] - x[27]) / RCor_cap
-        F[27] = SV - T * (x[27] - x[28]) / RCor_vein
-        F[28] = SV - T * (x[28] - x[29]) / RCor_vein
+        SV = (x[26]-p[26])/Ed_lv - (x[27]-p[27])/Ees_lv
+        F[2]  = SV - Tsys * (x[27] - x[1]) / R_Asc_A # SV -> Asc_A
+        F[3]  = (Tsys * (x[27] - x[1]) / R_Asc_A) - (T * (x[1] - x[2]) / R_BC_A + T * (x[1] - x[6]) / R_Thor_A + T * (x[1] - x[28]) / Rca) # Asc_A -> BC_A + Thor_A + Cor_art
+        F[4] = (T * (x[1] - x[2]) / R_BC_A) - (T * (x[2] - x[3]) / R_UpBd_art + T * (x[2] - x[16]) / R_CCA) # BC_A -> UpBd_art + CCA
+        F[5] = (T * (x[2] - x[3]) / R_UpBd_art) - (T * (x[3] - x[4]) / R_UpBd_cap) # UpBd_art -> UpBd_cap
+        F[6] = (T * (x[2] - x[16]) / R_CCA) - (T * (x[16] - x[17]) / R_Head_art) # CCA -> Head_art
+        F[7] = (T * (x[16] - x[17]) / R_Head_art) - (T * (x[17] - x[18]) / R_Head_cap) # Head_art -> Head_cap
+        F[8] = (T * (x[17] - x[18]) / R_Head_cap) - (T * (x[18] - x[19]) / R_Head_veins) # Head_cap -> Head_veins
+        F[9] = (T * (x[18] - x[19]) / R_Head_veins) - (T * (x[19] - x[5]) / R_Jugular_vein) # Head_veins -> Jugular_vein
+        F[10] = (T * (x[3] - x[4]) / R_UpBd_cap) - (T * (x[4] - x[5]) / R_UpBd_vein) # UpBd_cap -> UpBd_vein
+        F[11] = (T * (x[4] - x[5]) / R_UpBd_vein + T * (x[19] - x[5]) / R_Jugular_vein) - (T * (x[5] - x[20]) / R_SVC) # UpBd_vein + Jugular_vein -> SVC
+        F[12] = (T * (x[1] - x[6]) / R_Thor_A) - (T * (x[6] - x[7]) / R_Abd_A) # Thor_A -> Abd_A
+        F[13] = (T * (x[6] - x[7]) / R_Abd_A) - (T * (x[7] - x[8]) / R_Renal_art + T * (x[7] - x[10]) / R_Splanchnic_art + T * (x[7] - x[12]) / R_Leg_art) # Abd_A -> Renal_art + Splanchnic_art + Leg_art
+        # F[14] = (T * (x[7] - x[8]) / R_Renal_art) - (T * (x[8] - x[9]) / R_Renal_cap) # Renal_art -> Renal_cap
+        F[14] = (T * (x[8] - x[9]) / R_Renal_cap) - (T * (x[9] - x[14]) / R_Renal_vein) # Renal_cap -> Renal_vein
+        F[15] = (T * (x[7] - x[10]) / R_Splanchnic_art) - (T * (x[10] - x[11]) / R_Splanchnic_cap) # Splanchnic_art -> Splanchnic_cap
+        F[16] = (T * (x[10] - x[11]) / R_Splanchnic_cap) - (T * (x[11] - x[14]) / R_Splanchnic_vein) # Splanchnic_cap -> Splanchnic_vein
+        F[17] = (T * (x[7] - x[12]) / R_Leg_art) - (T * (x[12] - x[13]) / R_Leg_cap) # Leg_art -> Leg_cap
+        F[18] = (T * (x[12] - x[13]) / R_Leg_cap) - (T * (x[13] - x[14]) / R_Leg_vein) # Leg_cap -> Leg_vein
+        F[19] = (T * (x[9] - x[14]) / R_Renal_vein + T * (x[11] - x[14]) / R_Splanchnic_vein + T * (x[13] - x[14]) / R_Leg_vein) - (T * (x[14] - x[15]) / R_Abd_veins) # Renal_vein + Splanchnic_vein + Leg_vein -> Abd_veins
+        F[20] = (T * (x[14] - x[15]) / R_Abd_veins) - (T * (x[15] - x[20]) / R_Thor_IVC) # Abd_veins -> Thor_IVC
+        F[21] = (T * (x[15] - x[20]) / R_Thor_IVC + T * (x[5] - x[20]) / R_SVC + T * (x[29] - x[20]) / Rcv) - (Tdias * (x[20] - x[21]) / sqrt(1/(ρ_b / (2 * Ann_tv^2)))) # Thor_IVC + SVC + Cor_vein -> RA
+        F[22] = (Tdias * (x[20] - x[21]) / sqrt(1/(ρ_b / (2 * Ann_tv^2)))) - (Tsys * (x[22] - x[23]) / Rpa) # RA -> RV
+        F[23] = (Tsys * (x[22] - x[23]) / Rpa) - (T * (x[23] - x[24]) / Rpc) # Pulm_art -> Pulm_cap
+        F[24] = (T * (x[23] - x[24]) / Rpc) - (T * (x[24] - x[25]) / Rpv) # Pulm_cap -> Pulm_vein
+        F[25] = (T * (x[24] - x[25]) / Rpv) - (Tdias * (x[25] - x[26]) / sqrt(1/(ρ_b / (2 * Ann_mv^2)))) # Pulm_vein -> LA
+        F[26] = (Tdias * (x[25] - x[26]) / sqrt(1/(ρ_b / (2 * Ann_mv^2)))) - (Tsys * (x[27] - x[1]) / R_Asc_A) # LA -> LV
+        F[27] = (T * (x[1] - x[28]) / Rca) - (T * (x[28] - x[29]) / Rcc) # Cor_art -> Cor_cap
+        F[28] = (T * (x[28] - x[29]) / Rcc) - (T * (x[29] - x[20]) / Rcv) # Cor_cap -> Cor_vein
         # Equation 29: Total blood volume
-        F[25] = TBV - (
+        F[29] = TBV - (
             (x[1]-p[1])*C_Asc_A + v0_Asc_A +
             (x[2]-p[2])*C_BC_A + v0_BC_A +
             (x[3]-p[3])*C_UpBd_art + v0_UpBd_art +

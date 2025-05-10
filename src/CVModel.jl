@@ -91,8 +91,8 @@ This section of code instances the compartments used in the model, based on the 
 @named Renal_art = Artery(C=C_Renal_art, R=R_Renal_art, V₀=v0_Renal_art, h=h_Renal_art, rad=rad_Abd, L=L_Renal_art)
 @named Splanchnic_art = Artery(C=C_Splanchnic_art, R=R_Splanchnic_art, V₀=v0_Splanchnic_art, h=h_Splanchnic_art, rad=rad_Abd, L=L_Splanchnic_art)
 @named Leg_art = Artery(C=C_Leg_art, R=R_Leg_art, V₀=v0_Leg_art, h=h_Leg_art, con=con_Leg_art, rad=rad_Leg, L=L_Leg_art)
-@named CommonCarotid = Artery(C=C_CCA, R=R_CCA, V₀=v0_CCA, h=h_CCA, rad=rad_neck, L=L_CCA)
-@named Head_art = Artery(C=C_Head_art, R=R_Head_art, V₀=v0_Head_art, h=h_Head_art, rad=rad_head, L=L_Head_art)
+@named CommonCarotid = Artery(C=C_CCA, R=R_CCA, V₀=v0_CCA, h=h_CCA, rad=rad_Neck, L=L_CCA)
+@named Head_art = Artery(C=C_Head_art, R=R_Head_art, V₀=v0_Head_art, h=h_Head_art, rad=rad_Head, L=L_Head_art)
 
 #### Venous Circulation
 @named UpBd_vein = Vein(C=C_UpBd_vein, R=R_UpBd_vein, V₀=v0_UpBd_vein, h=h_UpBd_vein, con=con_UpBd_vein, has_valve=true, has_abr=true, has_cpr=true, rad=rad_UB)
@@ -102,8 +102,8 @@ This section of code instances the compartments used in the model, based on the 
 @named Leg_vein = Vein(C=C_Leg_vein, R=R_Leg_vein, V₀=v0_Leg_vein, h=h_Leg_vein, con=con_Leg_vein, has_valve=true, is_nonlinear=true, Flow_div = Flow_Leg_vein, V_max=vM_Leg_vein, has_abr=true, has_cpr=true, rad=rad_Leg)
 @named Abd_veins = Vein(C=C_Abd_veins, R=R_Abd_veins, V₀=v0_Abd_veins, h=h_Abd_veins, is_nonlinear=true, Flow_div = Flow_Abd_veins, V_max=vM_Abd_vein, rad=rad_Abd)
 @named Thor_IVC = Vein(C=C_Thor_IVC, R=R_Thor_IVC, V₀=v0_Thor_IVC, h=h_Thor_IVC, has_tissue=false)
-@named Head_veins = Vein(C=C_Head_veins, R=R_Head_veins, V₀=v0_Head_veins, h=h_Head_veins, rad=rad_head)
-@named Jugular_vein = Vein(C=C_Jugular_vein, R=R_Jugular_vein, V₀=v0_Jugular_vein, h=h_Jugular_vein, rad=rad_neck)
+@named Head_veins = Vein(C=C_Head_veins, R=R_Head_veins, V₀=v0_Head_veins, h=h_Head_veins, rad=rad_Head)
+@named Jugular_vein = Vein(C=C_Jugular_vein, R=R_Jugular_vein, V₀=v0_Jugular_vein, h=h_Jugular_vein, rad=rad_Neck)
 
 #### Microcirculation
 @named UpBd_cap = VarResistor()
@@ -407,6 +407,8 @@ u0 = [
   Renal_art.L.q => 0.0,
   Splanchnic_art.L.q => 0.0,
   Leg_art.L.q => 0.0,
+  CommonCarotid.L.q => 0.0,
+  Head_art.L.q => 0.0,
   Cor_art.L.q => 0.0,
 
   #### Interstitial Compartment
@@ -488,12 +490,12 @@ u0 = [
   R_aortic.q => 0,
 
   #### Lung Mechanics
-  Lung.p_l => p₀,
-  Lung.p_tr => p₀,
-  Lung.p_b => p₀,
-  Lung.p_A => p₀,
+  Lungs.p_l => p₀,
+  Lungs.p_tr => p₀,
+  Lungs.p_b => p₀,
+  Lungs.p_A => p₀,
   RespMuscles.ϕ => 0.0,
-  Lung.pₚₗ => pₚₗ₀
+  Lungs.pₚₗ => pₚₗ₀
 ]
 
 """
@@ -623,12 +625,15 @@ p3d = plot(beat_times, [SV],
 
 display(plot(p3a, p3b, p3c, p3d, layout=(2,2), size=(900,600), suptitle="Beat-to-Beat Trends"))
 
-display(plot(beat_times, [(UpBd_art_Vmean + UpBd_vein_Vmean),
+display(plot(beat_times, [(Head_art_Vmean + Head_veins_Vmean + Jugular_vein_Vmean + CommonCarotid_Vmean),
+        (UpBd_art_Vmean + UpBd_vein_Vmean),
         (Renal_art_Vmean + Renal_vein_Vmean),
         (Splanchnic_art_Vmean + Splanchnic_vein_Vmean),
         (Leg_art_Vmean + Leg_vein_Vmean),
-        (Cor_art_Vmean + Cor_vein_Vmean)],
-        label = ["Upper Body" "Renal" "Splanchnic" "Leg" "Coronary"],
+        (Cor_art_Vmean + Cor_vein_Vmean),
+        (Asc_A_Vmean + BC_A_Vmean + Thor_A_Vmean + Abd_A_Vmean + Abd_veins_Vmean + Thor_IVC_Vmean + SVC_Vmean),
+        (RA_Vmean + RV_Vmean + Pulm_art_Vmean + Pulm_vein_Vmean + LA_Vmean + LV_Vmean)],
+        label = ["Head" "Upper Body" "Renal" "Splanchnic" "Leg" "Coronary" "Thoracic" "Cardiopulmonary"],
         xlabel = "Time (s)",
         ylabel = "Volume (ml)",
         title = "Average Branch Volumes"))
@@ -641,37 +646,37 @@ p4a = plot(Sol, idxs=[RespMuscles.out.p], xlims = (0, 250),
         ylabel = "Pressure (mmHg)",
         title = "Respiratory Muscle Pressure")
 
-p4b = plot(Sol, idxs=[Lung.pₚₗ], xlims = (0, 250),
+p4b = plot(Sol, idxs=[Lungs.pₚₗ], xlims = (0, 250),
         label = "pₚₗ",
         xlabel = "Time (s)",
         ylabel = "Pressure (mmHg)",
         title = "Pleural Pressure")
 
-p4c = plot(Sol, idxs=[Lung.p_A], xlims = (0, 250),
+p4c = plot(Sol, idxs=[Lungs.p_A], xlims = (0, 250),
         label = "p_A",
         xlabel = "Time (s)",
         ylabel = "Pressure (mmHg)",
         title = "Alveolar Pressure")
 
-p4d = plot(Sol, idxs=[Lung.Vrᵢₙ], xlims = (0, 250),
+p4d = plot(Sol, idxs=[Lungs.Vrᵢₙ], xlims = (0, 250),
         label = "Air Flow",
         xlabel = "Time (s)",
         ylabel = "Flow (ml/s)",
         title = "Air Flow")
 
-p4e = plot(Sol, idxs=[Lung.V_A + Lung.V_D], xlims = (0, 250),
+p4e = plot(Sol, idxs=[Lungs.V_A + Lungs.V_D], xlims = (0, 250),
         label = "V_L",
         xlabel = "Time (s)",
         ylabel = "Volume (ml)",
         title = "Lung Volume")
 
-p4f = plot(Sol, idxs=[Lung.V_A], xlims = (0, 250),
+p4f = plot(Sol, idxs=[Lungs.V_A], xlims = (0, 250),
         label = "V_A",
         xlabel = "Time (s)",
         ylabel = "Volume (ml)",
         title = "Alveolar Volume")
 
-p4g = plot(Sol, idxs=[Lung.V_D], xlims = (0, 250),
+p4g = plot(Sol, idxs=[Lungs.V_D], xlims = (0, 250),
         label = "V_D",
         xlabel = "Time (s)",
         ylabel = "Volume (ml)",
