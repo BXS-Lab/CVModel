@@ -8,7 +8,7 @@
 Dr. Rich Whittle
 Department of Mechanical and Aerospace Engineering
 University of California, Davis
-One Shields Avenue, Davis, CA 95616
+One Shields Avenue, Davis, CA 95616  
 📧 rswhittle@ucdavis.edu
 
 ---
