@@ -1,8 +1,6 @@
 """
 STANDALONE FILE – NOT CONNECTED TO THE MAIN CVModel.jl
 This file is a standalone simulation of the impulse response of each branch of the reflex control system. You can use this to test the impulse response and vary the order of the Pade approximation. The code is structurally identical to the main CVModel.jl file, but it is not connected to the rest of the model.
-
-BXS Lab, UC Davis. Last updated April 30th, 2025.
 """
 
 """

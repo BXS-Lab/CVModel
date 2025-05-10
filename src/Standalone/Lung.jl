@@ -1,8 +1,6 @@
 """
 STANDALONE FILE – NOT CONNECTED TO THE MAIN CVModel.jl
 This file is a standalone simulation of the lung model based on Albanese (2016). This model will be integrated into the main CVModel.jl package in the future.
-
-BXS Lab, UC Davis. Last updated May 9th, 2025.
 """
 
 """

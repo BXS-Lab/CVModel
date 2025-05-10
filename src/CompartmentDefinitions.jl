@@ -1,7 +1,5 @@
 """
 This file contains the definitions of the compartment models used in the simulation. The underlying physiological equations are based on the work of Heldt (2004), with modifications by Zamanian (2007), Diaz Artiles (2015), and Whittle (2023). The Julia ModelingToolkit (MTK) is used to define the models, and the equations are expressed in a form suitable for numerical simulation through the DifferentialEquations.jl package.
-
-BXS Lab, UC Davis. Last updated April 30th, 2025.
 """
 
 """

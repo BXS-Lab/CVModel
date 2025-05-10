@@ -1,7 +1,5 @@
 """
 This file contains the post-processing code for the cardiovascular model. Here some lumped values are calculated along with the beat-to-beat values for important systemic parameters. The beat-averaged compartment volumes are also calculated.
-
-BXS Lab, UC Davis. Last updated May 2nd, 2025.
 """
 
 """

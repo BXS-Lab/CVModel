@@ -1,7 +1,5 @@
 """
 This file determines the initial compartment pressures based on the method developed by Heldt (2004). It is modified to account for external tissue pressures (Whittle, 2023). We also dynamically extract the initial values for the tilt angle, gravity, and LBNP. These are used to set the initial interstitial volume to a steady state value such that Qint = 0.0.
-
-BXS Lab, UC Davis. Last updated May 1st, 2025.
 """
 
 """

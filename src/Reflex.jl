@@ -1,7 +1,5 @@
 """
 This file contains the definition of the reflex model, modified from both Heldt (2004) and Zamanian (2007). The model operates in continuous time to be compatible with the MTK architecture.
-
-BXS Lab, UC Davis. Last updated May 1st, 2025.
 """
 
 """

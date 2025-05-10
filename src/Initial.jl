@@ -131,19 +131,19 @@ x[12] = 90 # Leg_art.C.p
 x[13] = 5 # Leg_vein.C.p
 x[14] = 5 # Abd_veins.C.p
 x[15] = 90 # Thor_IVC.C.p
-x[16] = 5 # CommonCarotid.C.p
-x[17] = 5 # Head_art.C.p
-x[18] = 50 # Head_veins.C.p
-x[19] = 50 # Jugular_vein.C.p
+x[16] = 90 # CommonCarotid.C.p
+x[17] = 90 # Head_art.C.p
+x[18] = 5 # Head_veins.C.p
+x[19] = 5 # Jugular_vein.C.p
 x[20] = 5 # RA.p
 x[21] = 5 # RV.p (Diastole)
-x[22] = 5 # RV.p (End-Systole)
-x[23] = 120 # Pulm_art.C.p
-x[24] = 90 # Pulm_vein.C.p
+x[22] = 50 # RV.p (End-Systole)
+x[23] = 50 # Pulm_art.C.p
+x[24] = 5 # Pulm_vein.C.p
 x[25] = 5 # LA.p
 x[26] = 5 # LV.p (Diastole)
-x[27] = 5 # LV.p (End-Systole)
-x[28] = 5 # Cor_art.C.p
+x[27] = 120 # LV.p (End-Systole)
+x[28] = 90 # Cor_art.C.p
 x[29] = 5 # Cor_vein.C.p
 
 """
@@ -196,7 +196,7 @@ conab = (π*C_Abd_veins)/(2*vM_Abd_vein)
         # Equation 1: Ventricular volume match
         F[1] =((x[26]-p[26])/Ed_lv - (x[27]-p[27])/Ees_lv) - ((x[21]-p[21])/Ed_rv - (x[22]-p[22])/Ees_rv)
         # Equations 2–28: Flows across resistances equal stroke volume (with branch divisions)
-        SV = -(x[26]-p[26])/Ed_lv + (x[27]-p[27])/Ees_lv
+        SV = (x[26]-p[26])/Ed_lv - (x[27]-p[27])/Ees_lv
         F[2]  = SV - Tsys * (x[27] - x[1]) / R_Asc_A # SV -> Asc_A
         F[3]  = (Tsys * (x[1] - x[27]) / R_Asc_A) - (T * (x[1] - x[2]) / R_BC_A + T * (x[1] - x[6]) / R_Thor_A + T * (x[1] - x[28]) / Rca) # Asc_A -> BC_A + Thor_A + Cor_art
         F[4] = (T * (x[2] - x[1]) / R_BC_A) - (T * (x[2] - x[3]) / R_UpBd_art + T * (x[2] - x[16]) / R_CCA) # BC_A -> UpBd_art + CCA

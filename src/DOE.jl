@@ -1,7 +1,5 @@
 """
 This file contains the simulation setup and 'Design of Experiments' (DOE) for the cardiovascular model. It currently allows setup of the simulation time, tilt angle protocol, gravity environment, and lower body negative pressure (LBNP) protocol. The @mtkmodel objects can be used to define a range of scenarios for the simulation.
-
-BXS Lab, UC Davis. Last updated April 30th, 2025.
 """
 
 """

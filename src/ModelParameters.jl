@@ -1,7 +1,5 @@
 """
 This file contains the model parameters for the cardiovascular system simulation. The parameters are organized into different sections, including system parameters, segment pressures, heart parameters, pulmonary system parameters, microvascular resistances, arterial system parameters, venous system parameters, interstitial compartment parameters, carotid sinus parameters, and reflex system parameters.
-
-BXS Lab, UC Davis. Last updated April 30th, 2025.
 """
 
 module ModelParams

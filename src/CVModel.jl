@@ -1,6 +1,6 @@
 """
 Cardiovascular Model
-Version 3.0 (May 3rd, 2025)
+Version 3.1.1 (May 9th, 2025)
 BXS Lab, UC Davis; Authors: RS Whittle, AJ Kondoor, HS Vellore
 Contact info: Dr. Rich Whittle – Department of Mechanical and Aerospace Engineering, UC Davis, One Shields Ave, Davis CA 95616 (rswhittle@ucdavis.edu)
 This model is a simulation of the human cardiovascular system, including a four chamber heart, arteries, veins, and microcirculation. It includes reflex control for the arterial baroreflex (ABR) and cardiopulmonary reflex (CPR), as well as hydrostatic effects, interstitial fluid flow, and external tissue pressures. The model is designed to simulate various physiological scenarios, including a tilt angle protocol, altered-gravity environment, and lower body negative pressure (LBNP) protocol. The underlying equations are based on the work of Heldt (2004), Zamanian (2007), Diaz Artiles (2015), and Whittle (2023). The model is implemented using the ModelingToolkit.jl package in Julia.
@@ -8,7 +8,7 @@ This model is a simulation of the human cardiovascular system, including a four 
 ### TODO: (1) Collapse in vessels (2) Bring Intrathoracic Pressure into Lung Model
 
 module CVModel
-display("Cardiovascular Model v3.0 (May 3rd, 2025) - BXS Lab, UC Davis")
+display("Cardiovascular Model v3.1.1 (May 9th, 2025) - BXS Lab, UC Davis")
 
 """
 Preamble
@@ -548,7 +548,7 @@ p0c = plot(Sol, idxs=[lbnp_driver.p_lbnp],
              title = "Lower Body Negative Pressure",
              ylims = (-50, 0))
 
-display(plot(p0a, p0b, p0c, layout=(2,2), size=(900,600), suptitle="Design of Experiments"))
+p0 = plot(p0a, p0b, p0c, layout=(2,2), size=(900,600), suptitle="Design of Experiments")
 
 p1a = plot(Sol, idxs=[TPR],
              label = "TPR",
@@ -571,7 +571,7 @@ p1d = plot(Sol, idxs=[RV.Eₘₐₓeff, LV.Eₘₐₓeff],
              ylabel = "End-Systolic E (mmHg/ml)",
              title = "Ventricular Contractility")
 
-display(plot(p1a, p1b, p1c, p1d, layout=(2,2), size=(900,600), suptitle="Reflex Action"))
+p1 = plot(p1a, p1b, p1c, p1d, layout=(2,2), size=(900,600), suptitle="Reflex Action")
 
 p2a = plot(Sol, idxs=[Vtotal, Vvessel, Vinterstitial],
              label = ["Vtotal" "Vvessel" "Vinterstitial"],
@@ -597,7 +597,7 @@ p2d = plot(Sol, idxs=[Asc_A.in.q],
              xlims = (50,60),
              title = "Left Ventricular Outflow")
 
-display(plot(p2a, p2b, p2c, p2d, layout=(2,2), size=(900,600), suptitle="Hemodynamics"))
+p2 = plot(p2a, p2b, p2c, p2d, layout=(2,2), size=(900,600), suptitle="Hemodynamics")
 
 #### Beat-to-Beat Plots
 
@@ -623,9 +623,9 @@ p3d = plot(beat_times, [SV],
              ylabel = "SV (ml)",
              title = "Stroke Volume")
 
-display(plot(p3a, p3b, p3c, p3d, layout=(2,2), size=(900,600), suptitle="Beat-to-Beat Trends"))
+p3 = plot(p3a, p3b, p3c, p3d, layout=(2,2), size=(900,600), suptitle="Beat-to-Beat Trends")
 
-display(plot(beat_times, [(Head_art_Vmean + Head_veins_Vmean + Jugular_vein_Vmean + CommonCarotid_Vmean),
+plot(beat_times, [(Head_art_Vmean + Head_veins_Vmean + Jugular_vein_Vmean + CommonCarotid_Vmean),
         (UpBd_art_Vmean + UpBd_vein_Vmean),
         (Renal_art_Vmean + Renal_vein_Vmean),
         (Splanchnic_art_Vmean + Splanchnic_vein_Vmean),
@@ -636,7 +636,7 @@ display(plot(beat_times, [(Head_art_Vmean + Head_veins_Vmean + Jugular_vein_Vmea
         label = ["Head" "Upper Body" "Renal" "Splanchnic" "Leg" "Coronary" "Thoracic" "Cardiopulmonary"],
         xlabel = "Time (s)",
         ylabel = "Volume (ml)",
-        title = "Average Branch Volumes"))
+        title = "Average Branch Volumes")
 
 #### Pulmonary and Respiratory Plots
 
@@ -688,7 +688,7 @@ p4h = plot(Sol, idxs=[Intrathoracic.pth.p], xlims = (0, 250),
       ylabel = "Pressure (mmHg)",
       title = "Intrathoracic Pressure")
 
-display(plot(p4a,p4b,p4c,p4d,p4e,p4f,p4g,p4h, layout=(4,2), size=(900,600), suptitle="Lungs"))
+p4 = plot(p4a,p4b,p4c,p4d,p4e,p4f,p4g,p4h, layout=(4,2), size=(900,600), suptitle="Lungs")
 
 """
 Save Outputs
