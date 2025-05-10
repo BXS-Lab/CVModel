@@ -26,6 +26,7 @@ Segment Pressures
 These parameters define the external static pressures on different segments of the cardiovascular system.
 """
 p_abd = 0.0 # Abdominal Pressure (mmHg)
+p_icp = 10.0 # Intracranial Pressure (mmHg)
 
 con_default = 2.0 # Default hydrostatic conversion factor
 
@@ -35,7 +36,9 @@ These parameters define the tissue properties, including the density of fat-free
 """
 ρ_fft = 1100.0  # Fat Free Tissue Density (kg/m^3)
 
-rad_UB = 8.0 # Radius of the Brachiocephalic Segment (cm)
+rad_head = 10.0 # Radius of the Head Segment (cm)
+rad_neck = 7.0 # Radius of the Neck Segment (cm)
+rad_UB = 7.0 # Radius of the Brachiocephalic Segment (cm)
 rad_Thor = 14.0 # Radius of the Thoracic Segment (cm)
 rad_Abd = 12.0 # Radius of the Abdominal Segment (cm)
 rad_Leg = 10.0 # Radius of the Leg Segment (cm)
@@ -139,7 +142,8 @@ Microvascular Resistances
 These parameters define the baseline microvascular resistances for different compartments of the body, including the upper body, renal, splanchnic, and leg compartments.
 """
 
-R_UpBd_cap = 4.4 # Upper Body microvascular resistance (PRU)
+R_Head_cap = 8.1 # Head microvascular resistance (PRU)
+R_UpBd_cap = 9.7 # Upper Body microvascular resistance (PRU)
 R_Renal_cap = 4.7 # Renal microvascular resistance (PRU)
 R_Splanchnic_cap = 3.1 # Splanchnic microvascular resistance (PRU) (Increased from 2.8 for coronary arteries)
 R_Leg_cap = 4.0 # Leg microvascular resistance (PRU)
@@ -165,9 +169,10 @@ L_BC_A = 0.00008 # Bracehocephalic Artery inductance (mmHg.s^2/ml)
 
 #### Compartment 3: Upper Body Arteries
 R_UpBd_art = 0.014 # Upper Body Artery resistance (PRU)
-C_UpBd_art = 0.42 # Upper Body Artery compliance (ml/mmHg)
-v0_UpBd_art = 200.0 # Upper Body Artery zero pressure volume (ml)
-h_UpBd_art = -20.0 # Upper Body Artery length (cm)
+C_UpBd_art = 0.26 # Upper Body Artery compliance (ml/mmHg)
+v0_UpBd_art = 72.0 # Upper Body Artery zero pressure volume (ml)
+h_UpBd_art = 66.0 # Upper Body Artery length (cm)
+con_UpBd_art = 3.0 # Upper Body Artery hydrostatic conversion
 L_UpBd_art = 0.00141 # Upper Body Artery inductance (mmHg.s^2/ml)
 
 #### Compartment 6: Thoracic Aorta
@@ -206,6 +211,20 @@ h_Leg_art = 105.0 # Leg Artery length (cm)
 con_Leg_art = 3.0 # Leg Artery hydrostatic conversion
 L_Leg_art = 0.00277 # Leg Artery inductance (mmHg.s^2/ml)
 
+#### Compartment H1: Common Carotid Arteries
+R_CCA = 0.014 # Common Carotid Artery resistance (PRU)
+C_CCA = 0.07 # Common Carotid Artery compliance (ml/mmHg)
+v0_CCA = 20.0 # Common Carotid Artery zero pressure volume (ml)
+h_CCA = -20.0 # Common Carotid Artery length (cm)
+L_CCA = 0.0007 # Common Carotid Artery inductance (mmHg.s^2/ml)
+
+#### Compartment H2: Head Arteries
+R_Head_art = 0.014 # Head Artery resistance (PRU)
+C_Head_art = 0.08 # Head Artery compliance (ml/mmHg)
+v0_Head_art = 108.0 # Head Artery zero pressure volume (ml)
+h_Head_art = -20.0 # Head Artery length (cm)
+L_Head_art = 0.0007 # Head Artery inductance (mmHg.s^2/ml)
+
 """
 Venous System Parameters
 These parameters define the properties of the venous system, including the resistances, compliances, zero pressure volumes, and the hydrostatic vertical lengths of different venous compartments. For the nonlinear compartments, the maximum distending volumes are also defined.
@@ -213,9 +232,10 @@ These parameters define the properties of the venous system, including the resis
 
 #### Compartment 4: Upper Body Veins
 R_UpBd_vein = 0.11 # Upper Body Vein resistance (PRU)
-C_UpBd_vein = 7.0 # Upper Body Vein compliance (ml/mmHg)
-v0_UpBd_vein = 645.0 # Upper Body Veins zero pressure volume (ml)
-h_UpBd_vein = 20.0 # Upper Body Veins length (cm)
+C_UpBd_vein = 1.2 # Upper Body Vein compliance (ml/mmHg)
+v0_UpBd_vein = 360.0 # Upper Body Veins zero pressure volume (ml)
+h_UpBd_vein = -66.0 # Upper Body Veins length (cm)
+con_UpBd_vein = 3.0 # Upper Body Veins hydrostatic conversion
 
 #### Compartment 5: Superior Vena Cava
 R_SVC = 0.028 # Superior Vena Cava resistance (PRU)
@@ -258,6 +278,21 @@ R_Thor_IVC = 0.008 # Thoracic IVC resistance (PRU)
 C_Thor_IVC = 0.5 # Thoracic IVC compliance (ml/mmHg)
 v0_Thor_IVC = 33.0 # Thoracic IVC zero pressure volume (ml)
 h_Thor_IVC = -6.0 # Thoracic IVC length (cm)
+
+#### Compartment H3: Head Veins
+R_Head_veins = 0.05 # Head Vein resistance (PRU)
+C_Head_veins = 3.35 # Head Vein compliance (ml/mmHg)
+v0_Head_veins = 250.0 # Head Vein zero pressure volume (ml)
+h_Head_veins = 20.0 # Head Vein length (cm)
+
+#### Compartment H4: Jugular Veins
+R_Jugular_vein = 0.05 # Jugular Vein resistance (PRU)
+C_Jugular_vein = 2.45 # Jugular Vein compliance (ml/mmHg)
+v0_Jugular_vein = 35.0 # Jugular Vein zero pressure volume (ml)
+h_Jugular_vein = 20.0 # Jugular Vein length (cm)
+
+#### Vertebral Plexus
+Rᵥₚ = 0.068 # Vertebral Plexus resistance (PRU)
 
 """
 Interstitial Compartment Parameters
@@ -381,7 +416,7 @@ Gcpr_vlb = 30.0 # CPR Lower Body Volume Gain (ml/mmHg)
 Lung Model
 """
 
-cmH2O2mmHg = 0.73555912 # Conversion factor from cmH2O to mmHg
+#### Respiratory Muscle Parameters
 
 p_musmin = -5.0 * cmH2O2mmHg # Minimum respiratory muscle pressure (mmHg)
 RespRateₙₒₘ = 12.0 # Breathing Rate (breaths/min)
@@ -390,6 +425,8 @@ Tbreath = 60.0 / RespRateₙₒₘ # Total Breathing Cycle Time (s)
 T_E = Tbreath/(1 + IEratio) # Expiratory Time (s)
 T_I = T_E * IEratio # Inspiratory Time (s)
 τ_mus = T_E/5 # Respiratory muscle time constant (s)
+
+#### Lung Parameters
 
 Rml = 1.021 * cmH2O2mmHg /1000 # Mouth-Larynx resistance (mmHg.s/ml: PRU)
 Cl = 1.27 / cmH2O2mmHg # Larynx compliance (ml/mmHg)

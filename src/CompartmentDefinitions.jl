@@ -782,6 +782,23 @@ This model represents the external pressure. It is defined by a baseline pressur
 end
 
 """
+Intracranial Pressure
+This model represents the intracranial pressure. It is defined by a baseline pressure (p_icp) and currently has no time-varying effects.
+"""
+
+@mtkmodel IntracranialPressure begin
+  @components begin
+    picp = Pin()
+  end
+  @parameters begin
+    p_icp = 10.0 # Baseline External pressure (mmHg)
+  end
+  @equations begin
+    picp.p ~ p_icp
+  end
+end
+
+"""
 External Pressure (Lower Body, including LBNP)
 This model represents the external pressure on the legs. It is defined by a baseline external pressure (p_ext) and is connected externally to the LBNP driver.
 """

@@ -85,27 +85,32 @@ This section of code instances the compartments used in the model, based on the 
 #### Arterial Circulation
 @named Asc_A = Artery(C=C_Asc_A, R=R_Asc_A, V₀=v0_Asc_A, h=h_Asc_A, has_tissue=false, has_inertia=false)
 @named BC_A = Artery(C=C_BC_A, R=R_BC_A, V₀=v0_BC_A, h=h_BC_A, has_tissue=false, L=L_BC_A)
-@named UpBd_art = Artery(C=C_UpBd_art, R=R_UpBd_art, V₀=v0_UpBd_art, h=h_UpBd_art, rad=rad_UB, L=L_UpBd_art)
+@named UpBd_art = Artery(C=C_UpBd_art, R=R_UpBd_art, V₀=v0_UpBd_art, h=h_UpBd_art, con=con_UpBd_art, rad=rad_UB, L=L_UpBd_art)
 @named Thor_A = Artery(C=C_Thor_A, R=R_Thor_A, V₀=v0_Thor_A, h=h_Thor_A, has_tissue=false, L=L_Thor_A)
 @named Abd_A = Artery(C=C_Abd_A, R=R_Abd_A, V₀=v0_Abd_A, h=h_Abd_A, rad=rad_Abd, L=L_Abd_A)
 @named Renal_art = Artery(C=C_Renal_art, R=R_Renal_art, V₀=v0_Renal_art, h=h_Renal_art, rad=rad_Abd, L=L_Renal_art)
 @named Splanchnic_art = Artery(C=C_Splanchnic_art, R=R_Splanchnic_art, V₀=v0_Splanchnic_art, h=h_Splanchnic_art, rad=rad_Abd, L=L_Splanchnic_art)
 @named Leg_art = Artery(C=C_Leg_art, R=R_Leg_art, V₀=v0_Leg_art, h=h_Leg_art, con=con_Leg_art, rad=rad_Leg, L=L_Leg_art)
+@named CommonCarotid = Artery(C=C_CCA, R=R_CCA, V₀=v0_CCA, h=h_CCA, rad=rad_neck, L=L_CCA)
+@named Head_art = Artery(C=C_Head_art, R=R_Head_art, V₀=v0_Head_art, h=h_Head_art, rad=rad_head, L=L_Head_art)
 
 #### Venous Circulation
-@named UpBd_vein = Vein(C=C_UpBd_vein, R=R_UpBd_vein, V₀=v0_UpBd_vein, h=h_UpBd_vein, has_valve=true, has_abr=true, has_cpr=true, rad=rad_UB)
+@named UpBd_vein = Vein(C=C_UpBd_vein, R=R_UpBd_vein, V₀=v0_UpBd_vein, h=h_UpBd_vein, con=con_UpBd_vein, has_valve=true, has_abr=true, has_cpr=true, rad=rad_UB)
 @named SVC = Vein(C=C_SVC, R=R_SVC, V₀=v0_SVC, h=h_SVC, has_tissue=false)
 @named Renal_vein = Vein(C=C_Renal_vein, R=R_Renal_vein, V₀=v0_Renal_vein, h=h_Renal_vein, has_abr=true, has_cpr=true, rad=rad_Abd, V_min=vₘᵢₙ_Renal_vein)
 @named Splanchnic_vein = Vein(C=C_Splanchnic_vein, R=R_Splanchnic_vein, V₀=v0_Splanchnic_vein, h=h_Splanchnic_vein, is_nonlinear=true, Flow_div = Flow_Splanchnic_vein, V_max=vM_Splanchnic_vein, has_abr=true, has_cpr=true, rad=rad_Abd)
 @named Leg_vein = Vein(C=C_Leg_vein, R=R_Leg_vein, V₀=v0_Leg_vein, h=h_Leg_vein, con=con_Leg_vein, has_valve=true, is_nonlinear=true, Flow_div = Flow_Leg_vein, V_max=vM_Leg_vein, has_abr=true, has_cpr=true, rad=rad_Leg)
 @named Abd_veins = Vein(C=C_Abd_veins, R=R_Abd_veins, V₀=v0_Abd_veins, h=h_Abd_veins, is_nonlinear=true, Flow_div = Flow_Abd_veins, V_max=vM_Abd_vein, rad=rad_Abd)
 @named Thor_IVC = Vein(C=C_Thor_IVC, R=R_Thor_IVC, V₀=v0_Thor_IVC, h=h_Thor_IVC, has_tissue=false)
+@named Head_veins = Vein(C=C_Head_veins, R=R_Head_veins, V₀=v0_Head_veins, h=h_Head_veins, rad=rad_head)
+@named Jugular_vein = Vein(C=C_Jugular_vein, R=R_Jugular_vein, V₀=v0_Jugular_vein, h=h_Jugular_vein, rad=rad_neck)
 
 #### Microcirculation
 @named UpBd_cap = VarResistor()
 @named Renal_cap = VarResistor()
 @named Splanchnic_cap = VarResistor()
 @named Leg_cap = VarResistor()
+@named Head_cap = VarResistor()
 
 #### Interstitial Compartment
 @named Interstitial = InterstitialCompartment(Vmtilt=Vmax_tilt, Vmlbnp=Vmax_lbnp, τ=τint)
@@ -115,6 +120,7 @@ This section of code instances the compartments used in the model, based on the 
 @named Abdominal = IntraAbdominalPressure(p_abd=p_abd)
 @named External = ExternalPressureUB(p_ext=p₀)
 @named ExternalLBNP = ExternalPressureLB(p_ext=p₀)
+@named Intracranial = IntracranialPressure(p_icp=p_icp)
 
 #### Design of Experiments
 # These are the drivers to implement the protocols defined in the "doe.jl" file.
@@ -136,7 +142,7 @@ This section of code instances the compartments used in the model, based on the 
 
 #### Lung model
 @named RespMuscles = RespiratoryMuscles()
-@named Lung = Lung()
+@named Lungs = Lung()
 
 """
 Structural Connections
@@ -159,9 +165,15 @@ circ_eqs = [
 
   #### Arterial Tree
   connect(Asc_A.out, BC_A.in, Thor_A.in, Cor_art.in),
-  connect(BC_A.out, UpBd_art.in),
+  connect(BC_A.out, UpBd_art.in, CommonCarotid.in),
   connect(Thor_A.out, Abd_A.in),
   connect(Abd_A.out, Renal_art.in, Splanchnic_art.in, Leg_art.in),
+
+  #### Head and Neck Circulation
+  connect(CommonCarotid.out, Head_art.in),
+  connect(Head_art.out, Head_cap.in),
+  connect(Head_cap.out, Head_veins.in),
+  connect(Head_veins.out, Jugular_vein.in),
 
   #### Coronary Circulation
   connect(Cor_art.out, Cor_cap.in),
@@ -184,7 +196,7 @@ circ_eqs = [
   connect(Leg_cap.out, Leg_vein.in),
 
   #### Venous Tree
-  connect(UpBd_vein.out, SVC.in),
+  connect(Jugular_vein.out, UpBd_vein.out, SVC.in),
   connect(Abd_veins.in, Renal_vein.out, Splanchnic_vein.out, Leg_vein.out),
   connect(Abd_veins.out, Thor_IVC.in),
   connect(Thor_IVC.out, SVC.out, Cor_vein.out, RA.in),
@@ -192,13 +204,14 @@ circ_eqs = [
   #### External Pressures
   connect(Intrathoracic.pth, Asc_A.ep, BC_A.ep, Thor_A.ep, SVC.ep, Thor_IVC.ep, RA.ep, RV.ep, Pulm_art.ep, Pulm_vein.ep, LA.ep, LV.ep, Cor_art.ep, Cor_vein.ep),
   connect(Abdominal.pabd, Abd_A.ep, Renal_art.ep, Splanchnic_art.ep, Renal_vein.ep, Splanchnic_vein.ep, Abd_veins.ep),
-  connect(External.pext, UpBd_art.ep, UpBd_vein.ep, Lung.in, RespMuscles.in),
+  connect(External.pext, UpBd_art.ep, UpBd_vein.ep, CommonCarotid.ep, Jugular_vein.ep, Lungs.in, RespMuscles.in),
   connect(ExternalLBNP.pext, Leg_art.ep, Leg_vein.ep),
+  connect(Intracranial.picp, Head_art.ep, Head_veins.ep),
 
-  connect(Lung.chestwall, RespMuscles.out),
+  connect(Lungs.chestwall, RespMuscles.out),
 
-  Pulm_cap.pₐₗᵥ ~ Lung.p_A,
-  Intrathoracic.pₚₗ ~ Lung.pₚₗ,
+  Pulm_cap.pₐₗᵥ ~ Lungs.p_A,
+  Intrathoracic.pₚₗ ~ Lungs.pₚₗ,
 
   #### Interstitial Connections (Direct Connections)
   Splanchnic_vein.C.qint ~ Interstitial.Qint,
@@ -221,12 +234,16 @@ circ_eqs = [
   Leg_vein.α ~ alpha_driver.α,
   Abd_veins.α ~ alpha_driver.α,
   Thor_IVC.α ~ alpha_driver.α,
+  CommonCarotid.α ~ alpha_driver.α,
+  Head_art.α ~ alpha_driver.α,
+  Head_veins.α ~ alpha_driver.α,
+  Jugular_vein.α ~ alpha_driver.α,
   Interstitial.α ~ alpha_driver.α,
   Intrathoracic.α ~ alpha_driver.α,
   Pulm_art.α ~ alpha_driver.α,
   Pulm_vein.α ~ alpha_driver.α,
   Pulm_cap.α ~ alpha_driver.α,
-  Lung.α ~ alpha_driver.α,
+  Lungs.α ~ alpha_driver.α,
 
   #### Gravity Equations (Direct Connections)
   Asc_A.g ~ gravity_driver.g,
@@ -244,12 +261,16 @@ circ_eqs = [
   Leg_vein.g ~ gravity_driver.g,
   Abd_veins.g ~ gravity_driver.g,
   Thor_IVC.g ~ gravity_driver.g,
+  CommonCarotid.g ~ gravity_driver.g,
+  Head_art.g ~ gravity_driver.g,
+  Head_veins.g ~ gravity_driver.g,
+  Jugular_vein.g ~ gravity_driver.g,
   Interstitial.g ~ gravity_driver.g,
   Intrathoracic.g ~ gravity_driver.g,
   Pulm_art.g ~ gravity_driver.g,
   Pulm_vein.g ~ gravity_driver.g,
   Pulm_cap.g ~ gravity_driver.g,
-  Lung.g ~ gravity_driver.g,
+  Lungs.g ~ gravity_driver.g,
 
   #### LBNP Equations (Direct Connections)
   ExternalLBNP.p_lbnp ~ lbnp_driver.p_lbnp,
@@ -272,6 +293,9 @@ circ_eqs = [
 
   # Coronary Resistance
   Cor_cap.R ~ Rcc,
+
+  # Head Resistance
+  Head_cap.R ~ R_Head_cap,
 
   # Arterial Resistance (ABR and CPR)
   UpBd_cap.R ~ R_UpBd_cap + (Gabr_r * abr_αr.y) + (Gcpr_r * cpr_αr.y),
@@ -320,13 +344,14 @@ This section of the code composes the system of ordinary differential equations 
   Cor_art, Cor_cap, Cor_vein, # Coronary Circulation
   Asc_A, BC_A, UpBd_art, Thor_A, Abd_A, Renal_art, Splanchnic_art, Leg_art, # Arterial Tree
   UpBd_vein, SVC, Renal_vein, Splanchnic_vein, Leg_vein, Abd_veins, Thor_IVC, # Venous Tree
-  UpBd_cap, Renal_cap, Splanchnic_cap, Leg_cap, # Microcirculation
+  CommonCarotid, Head_art, Head_veins, Jugular_vein, # Head and Neck Circulation
+  UpBd_cap, Renal_cap, Splanchnic_cap, Leg_cap, Head_cap, # Microcirculation
   Interstitial, # Interstitial Compartment
-  Intrathoracic, Abdominal, External, ExternalLBNP, # External Pressures
+  Intrathoracic, Abdominal, External, ExternalLBNP, Intracranial, # External Pressures
   ABRafferent, abr_αr, abr_αv, abr_β, abr_para, # Arterial Baroreflex
   CPRafferent, cpr_αr, cpr_αv, # Cardiopulmonary Reflex
   alpha_driver, gravity_driver, lbnp_driver, # Design of Experiments Drivers
-  Lung, RespMuscles # Lung Model Breathing ChestWall
+  Lungs, RespMuscles # Lung Model Breathing ChestWall
   ])
 
 circ_sys = structural_simplify(circ_model)
@@ -361,14 +386,18 @@ u0 = [
   Leg_vein.C.p => x[13],
   Abd_veins.C.p => x[14],
   Thor_IVC.C.p => x[15],
-  RA.p => x[16],
-  RV.p => x[17], # x[18] is the RV end-systolic pressure
-  Pulm_art.C.p => x[19],
-  Pulm_vein.C.p => x[20],
-  LA.p => x[21],
-  LV.p => x[22], # x[23] is the LV end-systolic pressure
-  Cor_art.C.p => x[24],
-  Cor_vein.C.p => x[25],
+  CommonCarotid.C.p => x[16],
+  Head_art.C.p => x[17],
+  Head_veins.C.p => x[18],
+  Jugular_vein.C.p => x[19],
+  RA.p => x[20],
+  RV.p => x[21], # x[22] is the RV end-systolic pressure
+  Pulm_art.C.p => x[23],
+  Pulm_vein.C.p => x[24],
+  LA.p => x[25],
+  LV.p => x[26], # x[27] is the LV end-systolic pressure
+  Cor_art.C.p => x[28],
+  Cor_vein.C.p => x[29],
 
   #### Inductance Flows (set to zero for end-diastole)
   BC_A.L.q => 0.0,

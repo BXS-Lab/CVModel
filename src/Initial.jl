@@ -3,7 +3,7 @@ This file determines the initial compartment pressures based on the method devel
 
 BXS Lab, UC Davis. Last updated May 9th, 2025.
 """
-# TODO: Fix slight bug that initial pressures are too high (total blood volume is fine)
+# TODO: Flow in ICs is set by branches, not stroke volume.
 
 """
 Some time constants for later use
@@ -73,6 +73,8 @@ Determine the initial tissue pressures
 Here we use the previously extracted initial angle and gravity to determine the initial segment tissue pressures. These are used to find the initial compartment pressures.
 """
 
+pt0_Head = ρ_fft * gravity_val_numeric * (rad_Head/100) * cos(α_val_numeric) * Pa2mmHg
+pt0_Neck = ρ_fft * gravity_val_numeric * (rad_Neck/100) * cos(α_val_numeric) * Pa2mmHg
 pt0_UB = ρ_fft * gravity_val_numeric * (rad_UB/100) * cos(α_val_numeric) * Pa2mmHg
 # pt0_Thor = ρ_fft * gravity_val_numeric * (rad_Thor/100) * cos(α_val_numeric) * Pa2mmHg
 pt0_Abd = ρ_fft * gravity_val_numeric * (rad_Abd/100) * cos(α_val_numeric) * Pa2mmHg
@@ -84,8 +86,8 @@ Determine the initial hydrostatic pressures
 
 ph0_Asc_A = ρ_b * gravity_val_numeric * (h_Asc_A/100/con_default) * sin(α_val_numeric) * Pa2mmHg
 ph0_BC_A = ρ_b * gravity_val_numeric * (h_BC_A/100/con_default) * sin(α_val_numeric) * Pa2mmHg
-ph0_UpBd_art = ρ_b * gravity_val_numeric * (h_UpBd_art/100/con_default) * sin(α_val_numeric) * Pa2mmHg
-ph0_UpBd_vein = ρ_b * gravity_val_numeric * (h_UpBd_vein/100/con_default) * sin(α_val_numeric) * Pa2mmHg
+ph0_UpBd_art = ρ_b * gravity_val_numeric * (h_UpBd_art/100/con_UpBd_art) * sin(α_val_numeric) * Pa2mmHg
+ph0_UpBd_vein = ρ_b * gravity_val_numeric * (h_UpBd_vein/100/con_UpBd_vein) * sin(α_val_numeric) * Pa2mmHg
 ph0_SVC = ρ_b * gravity_val_numeric * (h_SVC/100/con_default) * sin(α_val_numeric) * Pa2mmHg
 ph0_Thor_A = ρ_b * gravity_val_numeric * (h_Thor_A/100/con_default) * sin(α_val_numeric) * Pa2mmHg
 ph0_Abd_A = ρ_b * gravity_val_numeric * (h_Abd_A/100/con_default) * sin(α_val_numeric) * Pa2mmHg
@@ -97,10 +99,13 @@ ph0_Leg_art = ρ_b * gravity_val_numeric * (h_Leg_art/100/con_Leg_art) * sin(α_
 ph0_Leg_vein = ρ_b * gravity_val_numeric * (h_Leg_vein/100/con_Leg_vein) * sin(α_val_numeric) * Pa2mmHg
 ph0_Abd_veins = ρ_b * gravity_val_numeric * (h_Abd_veins/100/con_default) * sin(α_val_numeric) * Pa2mmHg
 ph0_Thor_IVC = ρ_b * gravity_val_numeric * (h_Thor_IVC/100/con_default) * sin(α_val_numeric) * Pa2mmHg
-
+ph0_CommonCarotid = ρ_b * gravity_val_numeric * (h_CommonCarotid/100/con_default) * sin(α_val_numeric) * Pa2mmHg
+ph0_Head_art = ρ_b * gravity_val_numeric * (h_Head_art/100/con_default) * sin(α_val_numeric) * Pa2mmHg
+ph0_Head_veins = ρ_b * gravity_val_numeric * (h_Head_veins/100/con_default) * sin(α_val_numeric) * Pa2mmHg
+ph0_Jugular_vein = ρ_b * gravity_val_numeric * (h_Jugular_vein/100/con_default) * sin(α_val_numeric) * Pa2mmHg
 
 """
-
+Initial Intrathoracic Pressure
 """
 
 pₜₕ₀ = pₚₗ₀ - 3.5 * (gravity_val_numeric / 9.81) * sin(α_val_numeric)
@@ -109,7 +114,7 @@ pₜₕ₀ = pₚₗ₀ - 3.5 * (gravity_val_numeric / 9.81) * sin(α_val_numeri
 Create Pressure Vector
 """
 
-const N_STATE = 25
+const N_STATE = 29
 x = zeros(N_STATE)
 x[1] = 90 # Asc_A.C.p
 x[2] = 90 # BC_A.C.p
@@ -126,16 +131,20 @@ x[12] = 90 # Leg_art.C.p
 x[13] = 5 # Leg_vein.C.p
 x[14] = 5 # Abd_veins.C.p
 x[15] = 90 # Thor_IVC.C.p
-x[16] = 5 # RA.p
-x[17] = 5 # RV.p (Diastole)
-x[18] = 50 # RV.p (End-Systole)
-x[19] = 50 # Pulm_art.C.p
-x[20] = 5 # Pulm_vein.C.p
-x[21] = 5 # LA.p
-x[22] = 5 # LV.p (Diastole)
-x[23] = 120 # LV.p (End-Systole)
-x[24] = 90 # Cor_art.C.p
-x[25] = 5 # Cor_vein.C.p
+x[16] = 5 # CommonCarotid.C.p
+x[17] = 5 # Head_art.C.p
+x[18] = 50 # Head_veins.C.p
+x[19] = 50 # Jugular_vein.C.p
+x[20] = 5 # RA.p
+x[21] = 5 # RV.p (Diastole)
+x[22] = 5 # RV.p (End-Systole)
+x[23] = 120 # Pulm_art.C.p
+x[24] = 90 # Pulm_vein.C.p
+x[25] = 5 # LA.p
+x[26] = 5 # LV.p (Diastole)
+x[27] = 5 # LV.p (End-Systole)
+x[28] = 5 # Cor_art.C.p
+x[29] = 5 # Cor_vein.C.p
 
 """
 Create External Pressure Vector
@@ -157,16 +166,20 @@ p_rel[12] = pt0_Leg
 p_rel[13] = pt0_Leg
 p_rel[14] = pt0_Abd
 p_rel[15] = pₜₕ₀
-p_rel[16] = pₜₕ₀
-p_rel[17] = pₜₕ₀
-p_rel[18] = pₜₕ₀
-p_rel[19] = pₜₕ₀
+p_rel[16] = pt0_Neck
+p_rel[17] = pt0_Head + p_icp
+p_rel[18] = pt0_Head + p_icp
+p_rel[19] = pt0_Neck
 p_rel[20] = pₜₕ₀
 p_rel[21] = pₜₕ₀
 p_rel[22] = pₜₕ₀
 p_rel[23] = pₜₕ₀
 p_rel[24] = pₜₕ₀
 p_rel[25] = pₜₕ₀
+p_rel[26] = pₜₕ₀
+p_rel[27] = pₜₕ₀
+p_rel[28] = pt0_Head
+p_rel[29] = pt0_Head
 
 """
 Determine the nonlinear effective compliance equations
@@ -182,7 +195,7 @@ conab = (π*C_Abd_veins)/(2*vM_Abd_vein)
 
         # Equation 1: Ventricular volume match
         F[1] =((x[22]-p[22])/Ed_lv - (x[23]-p[23])/Ees_lv) - ((x[17]-p[17])/Ed_rv - (x[18]-p[18])/Ees_rv)
-        # Equations 2–22: Flows across resistances equal stroke volume
+        # Equations 2–28: Flows across resistances equal stroke volume (with branch divisions)
         SV = (x[22]-p[22])/Ed_lv - (x[23]-p[23])/Ees_lv
         F[2]  = SV - Tsys * (x[23] - x[1]) / R_Asc_A
         F[3]  = SV - T * (x[2] - x[1]) / R_BC_A
@@ -210,6 +223,11 @@ conab = (π*C_Abd_veins)/(2*vM_Abd_vein)
         F[22] = SV - Tdias * (x[21] - x[22]) / sqrt(1/(ρ_b / (2 * Ann_mv^2)))
         F[23] = SV - T * (x[24] - x[1]) / Rca
         F[24] = SV - T * (x[25] - x[24]) / Rcc
+        F[25] = SV - T * (x[25] - x[26]) / Rcv
+        F[26] = SV - T * (x[26] - x[27]) / RCor_cap
+        F[27] = SV - T * (x[27] - x[28]) / RCor_vein
+        F[28] = SV - T * (x[28] - x[29]) / RCor_vein
+        # Equation 29: Total blood volume
         F[25] = TBV - (
             (x[1]-p[1])*C_Asc_A + v0_Asc_A +
             (x[2]-p[2])*C_BC_A + v0_BC_A +
@@ -226,14 +244,18 @@ conab = (π*C_Abd_veins)/(2*vM_Abd_vein)
             2 * vM_Leg_vein * atan(conll*(x[13]-p[13])) / π + v0_Leg_vein +
             2 * vM_Abd_vein * atan(conab*(x[14]-p[14])) / π + v0_Abd_veins +
             (x[15]-p[15])*C_Thor_IVC + v0_Thor_IVC +
-            (x[16]-p[16])/Era0 + v0_ra +
-            (x[17]-p[17])/Ed_rv + v0_rv +
-            (x[19]-p[19])*Cpa + v0pa +
-            (x[20]-p[20])*Cpv + v0pv +
-            (x[21]-p[21])/Ela0 + v0_la +
-            (x[22]-p[22])/Ed_lv + v0_lv +
-            (x[24]-p[24])*Cca + v0ca +
-            (x[25]-p[25])*Ccv + v0cv +
+            (x[16]-p[16])*C_CommonCarotid + v0_CommonCarotid +
+            (x[17]-p[17])*C_Head_art + v0_Head_art +
+            (x[18]-p[18])*C_Head_veins + v0_Head_veins +
+            (x[19]-p[19])*C_Jugular_vein + v0_Jugular_vein +
+            (x[20]-p[20])/Era0 + v0_ra +
+            (x[21]-p[21])/Ed_rv + v0_rv +
+            (x[23]-p[23])*Cpa + v0pa +
+            (x[24]-p[24])*Cpv + v0pv +
+            (x[25]-p[25])/Ela0 + v0_la +
+            (x[26]-p[26])/Ed_lv + v0_lv +
+            (x[28]-p[28])*Cca + v0ca +
+            (x[29]-p[29])*Ccv + v0cv +
             VintIC
         )
     end
@@ -259,12 +281,16 @@ x = x_sol
             2 * vM_Leg_vein * atan(conll*(x_sol[13]-p_rel[13])) / π + v0_Leg_vein +
             2 * vM_Abd_vein * atan(conab*(x_sol[14]-p_rel[14])) / π + v0_Abd_veins +
             (x_sol[15]-p_rel[15])*C_Thor_IVC + v0_Thor_IVC +
-            (x_sol[16]-p_rel[16])/Era0 + v0_ra +
-            (x_sol[17]-p_rel[17])/Ed_rv + v0_rv +
-            (x_sol[19]-p_rel[19])*Cpa + v0pa +
-            (x_sol[20]-p_rel[20])*Cpv + v0pv +
-            (x_sol[21]-p_rel[21])/Ela0 + v0_la +
-            (x_sol[22]-p_rel[22])/Ed_lv + v0_lv +
-            (x_sol[24]-p_rel[24])*Cca + v0ca +
-            (x_sol[25]-p_rel[25])*Ccv + v0cv +
+            (x_sol[16]-p_rel[16])*C_CommonCarotid + v0_CommonCarotid +
+            (x_sol[17]-p_rel[17])*C_Head_art + v0_Head_art +
+            (x_sol[18]-p_rel[18])*C_Head_veins + v0_Head_veins +
+            (x_sol[19]-p_rel[19])*C_Jugular_vein + v0_Jugular_vein +
+            (x_sol[20]-p_rel[20])/Era0 + v0_ra +
+            (x_sol[21]-p_rel[21])/Ed_rv + v0_rv +
+            (x_sol[23]-p_rel[23])*Cpa + v0pa +
+            (x_sol[24]-p_rel[24])*Cpv + v0pv +
+            (x_sol[25]-p_rel[25])/Ela0 + v0_la +
+            (x_sol[26]-p_rel[26])/Ed_lv + v0_lv +
+            (x_sol[28]-p_rel[28])*Cca + v0ca +
+            (x_sol[29]-p_rel[29])*Ccv + v0cv +
             VintIC)
