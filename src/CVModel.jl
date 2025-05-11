@@ -505,7 +505,7 @@ This section of the code solves the ODE system. The time span and save interval 
 
 prob = ODEProblem(circ_sys, u0, tspan)
 
-@time Sol = solve(prob, Tsit5(), reltol=1e-10, abstol=1e-12, maxiters=1e8, saveat=Start_time:Time_step:Stop_time, progress = true)
+@time Sol = solve(prob, Tsit5(), reltol=1e-10, abstol=1e-12, maxiters=1e8, saveat=Start_time:Time_step:Stop_time)
 # For a discussion on the solver choice, see: https://docs.sciml.ai/DiffEqDocs/stable/solvers/ode_solve/
 # Previously used KenCarp4() which incorporates a stiffness detection and auto-switching algorithm. Tsit5() is the default choice and faster.
 
