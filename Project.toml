@@ -1,7 +1,7 @@
 name = "CVModel"
 uuid = "2e6b0586-f481-4b92-b543-ac95b8eaa542"
-authors = ["AJKKN "]
-version = "0.1.0"
+authors = ["Richard S. Whittle"]
+version = "3.1.2"
 
 [deps]
 CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"

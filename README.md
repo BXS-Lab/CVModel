@@ -1,15 +1,15 @@
 # Cardiovascular Model
 
-**Version:** 3.1
-**Release Date:** May 9th, 2025
-**Lab:** BXS Lab, UC Davis
-**Authors:** R.S. Whittle, A.J. Kondoor, H.S. Vellore
-**Contact:**
-Dr. Rich Whittle
-Department of Mechanical and Aerospace Engineering
-University of California, Davis
-One Shields Avenue, Davis, CA 95616
-📧 rswhittle@ucdavis.edu
+**Version:** 3.1.2<br>
+**Release Date:** May 11th, 2025<br>
+**Lab:** BXS Lab, UC Davis<br>
+**Authors:** R.S. Whittle, A.J. Kondoor, H.S. Vellore<br>
+**Contact:**<br>
+Dr. Rich Whittle<br>
+Department of Mechanical and Aerospace Engineering<br>
+University of California, Davis<br>
+One Shields Avenue, Davis, CA 95616<br>
+📧 rswhittle@ucdavis.edu<br>
 
 ---
 

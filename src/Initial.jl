@@ -258,7 +258,6 @@ conab = (π*C_Abd_veins)/(2*vM_Abd_vein)
         )
     end
 
-using NLsolve
     sol = nlsolve(residuals!, x)
     x_sol = sol.zero
 x = x_sol
