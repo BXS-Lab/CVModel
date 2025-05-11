@@ -18,8 +18,8 @@ This is a simple pin model with two variables: pressure (p, mmHg) and blood flow
 @connector Pin begin
   p(t)
   q(t), [connect = Flow]
-  cO₂(t), [connect = Stream]
-  cCO₂(t), [connect = Stream]
+  # cO₂(t), [connect = Stream]
+  # cCO₂(t), [connect = Stream]
 end
 
 """
@@ -57,10 +57,10 @@ The One Port is a basic circuit element with an input and output. It has two var
     Δp ~ out.p - in.p
     0 ~ in.q + out.q
     q ~ in.q
-    in.cO₂ ~ instream(in.cO₂)
-    in.cCO₂ ~ instream(in.cCO₂)
-    0 ~ in.cO₂ - out.cO₂
-    0 ~ in.cCO₂ - out.cCO₂
+    # in.cO₂ ~ instream(in.cO₂)
+    # in.cCO₂ ~ instream(in.cCO₂)
+    # 0 ~ in.cO₂ - out.cO₂
+    # 0 ~ in.cCO₂ - out.cCO₂
   end
 end
 
@@ -86,12 +86,12 @@ This model extends the One Port model by adding an external pressure pin (ep). T
     0 ~ ep.q
     q ~ in.q
     pg ~ p - ep.p
-    in.cO₂ ~ instream(in.cO₂)
-    in.cCO₂ ~ instream(in.cCO₂)
-    0 ~ in.cO₂ - out.cO₂
-    0 ~ in.cCO₂ - out.cCO₂
-    0 ~ ep.cO₂
-    0 ~ ep.cCO₂
+    # in.cO₂ ~ instream(in.cO₂)
+    # in.cCO₂ ~ instream(in.cCO₂)
+    # 0 ~ in.cO₂ - out.cO₂
+    # 0 ~ in.cCO₂ - out.cCO₂
+    # 0 ~ ep.cO₂
+    # 0 ~ ep.cCO₂
   end
 end
 
@@ -178,10 +178,10 @@ This model represents the blood flow through the lungs as a series of parallel S
     l₁ ~ clamp((out.p - pₐₗᵥ) / (ρ * safe_gsinα * Pa2mmHg_conv), -(h/100)/5, 4*(h/100)/5)
     l₂ ~ clamp((in.p - pₐₗᵥ) / (ρ * safe_gsinα * Pa2mmHg_conv), -(h/100)/5, 4*(h/100)/5)
     q ~ ((in.p - out.p) / ((h/100) * R) * (l₁ + (h/100) / 5)) + ((in.p - pₐₗᵥ) / ((h/100) * R) * (l₂ - l₁)) - ((ρ * g * Pa2mmHg_conv) / (2 * (h/100) * R) * sin(α) * (l₂^2 - l₁^2))
-    in.cO₂ ~ instream(in.cO₂)
-    in.cCO₂ ~ instream(in.cCO₂)
-    out.cCO₂ ~ 0
-    out.cO₂ ~ ifelse(t < 50, 0, 100)
+    # in.cO₂ ~ instream(in.cO₂)
+    # in.cCO₂ ~ instream(in.cCO₂)
+    # out.cCO₂ ~ 0
+    # out.cO₂ ~ ifelse(t < 50, 0, 100)
   end
 end
 
@@ -263,8 +263,8 @@ Note: due to complexity this is composed as a @component and not a @mtkmodel. It
     append!(eqs, [
       p_rel ~ ep.p + p₀,
       ep.q ~ 0,
-      ep.cO₂ ~ 0,
-      ep.cCO₂ ~ 0
+      # ep.cO₂ ~ 0,
+      # ep.cCO₂ ~ 0
     ])
   elseif has_ep
     push!(ps, (@parameters p₀ = p₀)[1])
@@ -320,26 +320,26 @@ Note: due to complexity this is composed as a @component and not a @mtkmodel. It
   push!(sts, (@variables pₜₘ(t))[1])
   append!(eqs, [pₜₘ ~ p - p_rel])
 
-  if has_gasexchange
-    push!(ps, (@parameters V_tissue = V_tissue)[1])
-    push!(ps, (@parameters MO₂ = MO₂)[1])
-    push!(ps, (@parameters MCO₂ = MCO₂)[1])
-    append!(eqs, [
-      in.cO₂ ~ instream(in.cO₂),
-      in.cCO₂ ~ instream(in.cCO₂),
-      D(out.cO₂) ~ (in.q * (in.cO₂ - out.cO₂) - MO₂) / (V + V_tissue),
-      D(out.cCO₂) ~ (in.q * (in.cCO₂ - out.cCO₂) + MCO₂) / (V + V_tissue),
-    ])
-  else
-    append!(eqs, [
-      in.cO₂ ~ instream(in.cO₂),
-      in.cCO₂ ~ instream(in.cCO₂),
-      D(out.cO₂) ~ in.q * (in.cO₂ - out.cO₂) / V,
-      D(out.cCO₂) ~ in.q * (in.cCO₂ - out.cCO₂) / V,
-    ep.cO₂ ~ 0,
-    ep.cCO₂ ~ 0,
-    ])
-  end
+  # if has_gasexchange
+  #   push!(ps, (@parameters V_tissue = V_tissue)[1])
+  #   push!(ps, (@parameters MO₂ = MO₂)[1])
+  #   push!(ps, (@parameters MCO₂ = MCO₂)[1])
+  #   append!(eqs, [
+  #     in.cO₂ ~ instream(in.cO₂),
+  #     in.cCO₂ ~ instream(in.cCO₂),
+  #     D(out.cO₂) ~ (in.q * (in.cO₂ - out.cO₂) - MO₂) / (V + V_tissue),
+  #     D(out.cCO₂) ~ (in.q * (in.cCO₂ - out.cCO₂) + MCO₂) / (V + V_tissue),
+  #   ])
+  # else
+  #   append!(eqs, [
+  #     in.cO₂ ~ instream(in.cO₂),
+  #     in.cCO₂ ~ instream(in.cCO₂),
+  #     D(out.cO₂) ~ in.q * (in.cO₂ - out.cO₂) / V,
+  #     D(out.cCO₂) ~ in.q * (in.cCO₂ - out.cCO₂) / V,
+  #   ep.cO₂ ~ 0,
+  #   ep.cCO₂ ~ 0,
+  #   ])
+  # end
 
   if has_variable_ep
     compose(ODESystem(eqs, t, sts, ps; name=name), in, out, ep)
@@ -445,12 +445,12 @@ Note: due to complexity this is composed as a @component and not a @mtkmodel. It
     pₜₘ ~ p - p_rel, # Transmural pressure
 
     tᵢ ~ ϕ * τ, # Modulated time within contraction cycle
-    in.cO₂ ~ instream(in.cO₂),
-    in.cCO₂ ~ instream(in.cCO₂),
-    D(out.cO₂) ~ in.q * (in.cO₂ - out.cO₂),
-    D(out.cCO₂) ~ in.q * (in.cCO₂ - out.cCO₂),
-    ep.cO₂ ~ 0,
-    ep.cCO₂ ~ 0,
+    # in.cO₂ ~ instream(in.cO₂),
+    # in.cCO₂ ~ instream(in.cCO₂),
+    # D(out.cO₂) ~ in.q * (in.cO₂ - out.cO₂),
+    # D(out.cCO₂) ~ in.q * (in.cCO₂ - out.cCO₂),
+    # ep.cO₂ ~ 0,
+    # ep.cCO₂ ~ 0,
   ])
 
     if has_abr # If there is ABR control, set the adjusted end-systolic elastance based on the held ABR signal
@@ -787,8 +787,8 @@ This model represents the intrathoracic pressure. It is defined by a baseline pr
   end
   @equations begin
     pth.p ~ pₚₗ - 3.5 * (g / 9.81) * sin(α)
-    pth.cO₂ ~ 0
-    pth.cCO₂ ~ 0
+    # pth.cO₂ ~ 0
+    # pth.cCO₂ ~ 0
   end
 end
 
@@ -806,8 +806,8 @@ This model represents the intra-abdominal pressure. It is defined by a baseline 
   end
   @equations begin
     pabd.p ~ p_abd
-    pabd.cO₂ ~ 0
-    pabd.cCO₂ ~ 0
+    # pabd.cO₂ ~ 0
+    # pabd.cCO₂ ~ 0
   end
 end
 
@@ -825,8 +825,8 @@ This model represents the external pressure. It is defined by a baseline pressur
   end
   @equations begin
     pext.p ~ p_ext
-    pext.cO₂ ~ 0
-    pext.cCO₂ ~ 0
+    # pext.cO₂ ~ 0
+    # pext.cCO₂ ~ 0
   end
 end
 
@@ -844,8 +844,8 @@ This model represents the intracranial pressure. It is defined by a baseline pre
   end
   @equations begin
     picp.p ~ p_icp
-    picp.cO₂ ~ 0
-    picp.cCO₂ ~ 0
+    # picp.cO₂ ~ 0
+    # picp.cCO₂ ~ 0
   end
 end
 
@@ -866,8 +866,8 @@ This model represents the external pressure on the legs. It is defined by a base
   end
   @equations begin
     pext.p ~ p_ext + p_lbnp
-    pext.cO₂ ~ 0
-    pext.cCO₂ ~ 0
+    # pext.cO₂ ~ 0
+    # pext.cCO₂ ~ 0
   end
 end
 
@@ -1068,12 +1068,12 @@ This is a complete model of the lung mechanics, based on the work of Albanese (2
   @equations begin
     in.p ~ pₐₒ
     in.q ~ Vrᵢₙ
-    in.cO₂ ~ 0
-    in.cCO₂ ~ 0
+    # in.cO₂ ~ 0
+    # in.cCO₂ ~ 0
 
     chestwall.q ~ 0
-    chestwall.cO₂ ~ 0
-    chestwall.cCO₂ ~ 0
+    # chestwall.cO₂ ~ 0
+    # chestwall.cCO₂ ~ 0
     chestwall.p ~ pₘᵤₛ
 
     C_l * D(p_l) ~ (pₐₒ - p_l) / R_ml - (p_l - p_tr) / R_lt
