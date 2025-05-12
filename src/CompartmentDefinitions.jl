@@ -19,6 +19,7 @@ This is a simple pin model with two variables: pressure (p, mmHg) and blood flow
   p(t)
   q(t), [connect = Flow]
   cO₂(t), [connect = Stream]
+  cCO₂(t), [connect = Stream]
 end
 
 @connector PresPin begin
@@ -57,6 +58,7 @@ The One Port is a basic circuit element with an input and output. It has two var
     Δp(t)
     q(t)
     cO₂(t)
+    cCO₂(t)
   end
   @equations begin
     Δp ~ out.p - in.p
@@ -65,6 +67,9 @@ The One Port is a basic circuit element with an input and output. It has two var
     cO₂ ~ in.cO₂
     in.cO₂ ~ instream(in.cO₂)
     0 ~ cO₂ - out.cO₂
+    cCO₂ ~ in.cCO₂
+    in.cCO₂ ~ instream(in.cCO₂)
+    0 ~ cCO₂ - out.cCO₂
   end
 end
 
@@ -99,6 +104,8 @@ This model extends the One Port model by adding an external pressure pin (ep). T
     Δp(t)
     q(t)
     pg(t)
+    cO₂(t)
+    cCO₂(t)
   end
   @equations begin
     Δp ~ out.p - in.p
@@ -107,7 +114,11 @@ This model extends the One Port model by adding an external pressure pin (ep). T
     q ~ in.q
     pg ~ p - ep.p
     cO₂ ~ in.cO₂
+    in.cO₂ ~ instream(in.cO₂)
     0 ~ cO₂ - out.cO₂
+    cCO₂ ~ in.cCO₂
+    in.cCO₂ ~ instream(in.cCO₂)
+    0 ~ cCO₂ - out.cCO₂
   end
 end
 
@@ -186,6 +197,7 @@ This model represents the blood flow through the lungs as a series of parallel S
     g(t)
     pₐₗᵥ(t)
     cO₂(t)
+    cCO₂(t)
   end
   @equations begin
     0 ~ in.q + out.q
@@ -196,6 +208,8 @@ This model represents the blood flow through the lungs as a series of parallel S
     q ~ ((in.p - out.p) / ((h/100) * R) * (l₁ + (h/100) / 5)) + ((in.p - pₐₗᵥ) / ((h/100) * R) * (l₂ - l₁)) - ((ρ * g * Pa2mmHg_conv) / (2 * (h/100) * R) * sin(α) * (l₂^2 - l₁^2))
     cO₂ ~ in.cO₂
     out.cO₂ ~ ifelse(t<=50, 0, 1)
+    cCO₂ ~ in.cCO₂
+    out.cCO₂ ~ ifelse(t<=50, 0, 1)
   end
 end
 
@@ -253,6 +267,7 @@ Note: due to complexity this is composed as a @component and not a @mtkmodel. It
     p(t) # Time-varying pressure (mmHg)
     V₀eff(t) # Time-varying Effective zero-pressure volume (ml)
     cO₂(t) # Time-varying oxygen concentration (ml/ml)
+    cCO₂(t) # Time-varying carbon dioxide concentration (ml/ml)
   end
 
   ps = @parameters begin
@@ -337,6 +352,9 @@ Note: due to complexity this is composed as a @component and not a @mtkmodel. It
     cO₂ ~ in.cO₂,
     in.cO₂ ~ instream(in.cO₂),
     D(out.cO₂) ~ in.q * (cO₂ - out.cO₂) / V,
+    cCO₂ ~ in.cCO₂,
+    in.cCO₂ ~ instream(in.cCO₂),
+    D(out.cCO₂) ~ in.q * (cCO₂ - out.cCO₂) / V,
   ])
 
   if has_variable_ep
@@ -422,6 +440,7 @@ Note: due to complexity this is composed as a @component and not a @mtkmodel. It
     Eabr_held(t) # ABR ventricular contractility
     Eₘₐₓeff(t) # Beat-to-Beat end-systolic elastance (mmHg/ml)
     cO₂(t)
+    cCO₂(t)
   end
 
   ps = @parameters begin
@@ -489,6 +508,9 @@ Note: due to complexity this is composed as a @component and not a @mtkmodel. It
     cO₂ ~ in.cO₂,
     in.cO₂ ~ instream(in.cO₂),
     D(out.cO₂) ~ in.q * (cO₂ - out.cO₂) / V,
+    cCO₂ ~ in.cCO₂,
+    in.cCO₂ ~ instream(in.cCO₂),
+    D(out.cCO₂) ~ in.q * (cCO₂ - out.cCO₂) / V,
   ])
 
 
@@ -571,6 +593,7 @@ This model represents an arterial compartment. It is a lumped compartment consis
     Δp_R(t)      # pressure drop across resistor
     pₜₘ(t)     # transmural pressure
     cO₂(t)
+    cCO₂(t)
   end
 
   @components begin
@@ -599,6 +622,7 @@ This model represents an arterial compartment. It is a lumped compartment consis
     Δp ~ out.p - in.p
     q ~ in.q
     in.cO₂ ~ cO₂
+    in.cCO₂ ~ cCO₂
     if has_inertia
       connect(in, L.in)
       connect(L.out, R.in)
@@ -669,6 +693,7 @@ This model represents a venous compartment. It is a lumped compartment consistin
     Δp_R(t)
     pₜₘ(t)
     cO₂(t)
+    cCO₂(t)
     if has_cpr
       Vcpr(t)
     end
@@ -703,6 +728,7 @@ This model represents a venous compartment. It is a lumped compartment consistin
     Δp ~ out.p - in.p
     q ~ in.q
     cO₂ ~ in.cO₂
+    cCO₂ ~ in.cCO₂
     connect(in, C.in)
     connect(C.out, has_hydrostatic ? Ph.in : R.in)
 
@@ -1094,6 +1120,8 @@ end
     0 ~ in.q + out1.q + out2.q
     out1.cO₂ ~ instream(in.cO₂)
     out2.cO₂ ~ instream(in.cO₂)
+    out1.cCO₂ ~ instream(in.cCO₂)
+    out2.cCO₂ ~ instream(in.cCO₂)
   end
 end
 
@@ -1112,5 +1140,8 @@ end
     out1.cO₂ ~ instream(in.cO₂)
     out2.cO₂ ~ instream(in.cO₂)
     out3.cO₂ ~ instream(in.cO₂)
+    out1.cCO₂ ~ instream(in.cCO₂)
+    out2.cCO₂ ~ instream(in.cCO₂)
+    out3.cCO₂ ~ instream(in.cCO₂)
   end
 end

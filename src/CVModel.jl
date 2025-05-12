@@ -509,7 +509,7 @@ u0 = [
   RespMuscles.ϕ => 0.0,
   Lungs.pₚₗ => pₚₗ₀,
 
-  #### Blood Gas
+  #### Blood Gas O₂
   RA.out.cO₂ => 0.0,
   RV.out.cO₂ => 0.0,
   Pulm_art.C.out.cO₂ => 0.0,
@@ -536,7 +536,36 @@ u0 = [
   CommonCarotid.C.out.cO₂ => 0.0,
   Head_art.C.out.cO₂ => 0.0,
   Head_veins.C.out.cO₂ => 0.0,
-  Jugular_vein.C.out.cO₂ => 0.0
+  Jugular_vein.C.out.cO₂ => 0.0,
+
+  #### Blood Gas CO₂
+  RA.out.cCO₂ => 0.0,
+  RV.out.cCO₂ => 0.0,
+  Pulm_art.C.out.cCO₂ => 0.0,
+  Pulm_vein.C.out.cCO₂ => 0.0,
+  LA.out.cCO₂ => 0.0,
+  LV.out.cCO₂ => 0.0,
+  Cor_art.C.out.cCO₂ => 0.0,
+  Cor_vein.C.out.cCO₂ => 0.0,
+  Asc_A.C.out.cCO₂ => 0.0,
+  BC_A.C.out.cCO₂ => 0.0,
+  UpBd_art.C.out.cCO₂ => 0.0,
+  Thor_A.C.out.cCO₂ => 0.0,
+  Abd_A.C.out.cCO₂ => 0.0,
+  Renal_art.C.out.cCO₂ => 0.0,
+  Splanchnic_art.C.out.cCO₂ => 0.0,
+  Leg_art.C.out.cCO₂ => 0.0,
+  UpBd_vein.C.out.cCO₂ => 0.0,
+  SVC.C.out.cCO₂ => 0.0,
+  Renal_vein.C.out.cCO₂ => 0.0,
+  Splanchnic_vein.C.out.cCO₂ => 0.0,
+  Leg_vein.C.out.cCO₂ => 0.0,
+  Abd_veins.C.out.cCO₂ => 0.0,
+  Thor_IVC.C.out.cCO₂ => 0.0,
+  CommonCarotid.C.out.cCO₂ => 0.0,
+  Head_art.C.out.cCO₂ => 0.0,
+  Head_veins.C.out.cCO₂ => 0.0,
+  Jugular_vein.C.out.cCO₂ => 0.0,
 ]
 
 """
