@@ -20,6 +20,11 @@ This is a simple pin model with two variables: pressure (p, mmHg) and blood flow
   q(t), [connect = Flow]
 end
 
+@connector PresPin begin
+  p(t)
+  q(t), [connect = Flow]
+end
+
 """
 Ground
 Ground is a single pin model that serves as a reference point for pressure. It has a single parameter P (mmHg), which represents the pressure at the ground node.
@@ -58,6 +63,22 @@ The One Port is a basic circuit element with an input and output. It has two var
   end
 end
 
+@mtkmodel OnePortPres begin
+  @components begin
+    out = PresPin()
+    in = PresPin()
+  end
+  @variables begin
+    Δp(t)
+    q(t)
+  end
+  @equations begin
+    Δp ~ out.p - in.p
+    0 ~ in.q + out.q
+    q ~ in.q
+  end
+end
+
 """
 One Port with External Pressure
 This model extends the One Port model by adding an external pressure pin (ep). The (variable) external pressure is connected to the output pin, and no flow is allowed through the external pressure pin.
@@ -67,7 +88,7 @@ This model extends the One Port model by adding an external pressure pin (ep). T
   @components begin
     out = Pin()
     in = Pin()
-    ep = Pin()
+    ep = PresPin()
   end
   @variables begin
     Δp(t)
@@ -214,7 +235,7 @@ Note: due to complexity this is composed as a @component and not a @mtkmodel. It
   @named out = Pin() # Output pin
 
   if has_variable_ep
-    @named ep = Pin() # If has_variable_ep, adds an external pressure pin
+    @named ep = PresPin() # If has_variable_ep, adds an external pressure pin
   end
 
   sts = @variables begin
@@ -366,7 +387,7 @@ Note: due to complexity this is composed as a @component and not a @mtkmodel. It
 
   @named in = Pin()
   @named out = Pin()
-  @named ep = Pin()
+  @named ep = PresPin()
 
   sts = @variables begin
     V(t) # Volume (ml)
@@ -478,7 +499,7 @@ This model represents the tissue pressure on a fluid column. It has a static par
 """
 
 @mtkmodel TissuePressure begin
-  @extend OnePort()
+  @extend OnePortPres()
   @variables begin
     α(t)  # time-varying angle input (radians, to be connected externally)
     g(t)  # time-varying gravity input (m/s^2, to be connected externally)
@@ -530,7 +551,7 @@ This model represents an arterial compartment. It is a lumped compartment consis
   @components begin
     in = Pin()
     out = Pin()
-    ep = Pin()
+    ep = PresPin()
 
     if has_valve
       R = ResistorDiode(R=R)
@@ -632,7 +653,7 @@ This model represents a venous compartment. It is a lumped compartment consistin
   @components begin
     in = Pin()
     out = Pin()
-    ep = Pin()
+    ep = PresPin()
 
     C = Compliance(V₀=V₀, C=C, inP=true, has_ep=true, has_variable_ep=true, p₀=p₀, is_nonlinear=is_nonlinear, V_max=V_max, V_min=V_min, Flow_div=Flow_div, has_cpr=has_cpr, has_abr=has_abr)
 
@@ -730,7 +751,7 @@ This model represents the intrathoracic pressure. It is defined by a baseline pr
 
 @mtkmodel IntrathoracicPressure begin
   @components begin
-    pth = Pin()
+    pth = PresPin()
   end
   # @parameters begin
   #   pₜₕ = -4.0 # Baseline intrathoracic pressure (mmHg)
@@ -752,7 +773,7 @@ This model represents the intra-abdominal pressure. It is defined by a baseline 
 
 @mtkmodel IntraAbdominalPressure begin
   @components begin
-    pabd = Pin()
+    pabd = PresPin()
   end
   @parameters begin
     p_abd = 0.0 # Baseline IntraAbdominal pressure (mmHg)
@@ -769,7 +790,7 @@ This model represents the external pressure. It is defined by a baseline pressur
 
 @mtkmodel ExternalPressureUB begin
   @components begin
-    pext = Pin()
+    pext = PresPin()
   end
   @parameters begin
     p_ext = 0.0 # Baseline External pressure (mmHg)
@@ -786,7 +807,7 @@ This model represents the intracranial pressure. It is defined by a baseline pre
 
 @mtkmodel IntracranialPressure begin
   @components begin
-    picp = Pin()
+    picp = PresPin()
   end
   @parameters begin
     p_icp = 10.0 # Baseline External pressure (mmHg)
@@ -803,7 +824,7 @@ This model represents the external pressure on the legs. It is defined by a base
 
 @mtkmodel ExternalPressureLB begin
   @components begin
-    pext = Pin()
+    pext = PresPin()
   end
   @variables begin
     p_lbnp(t)
@@ -945,7 +966,7 @@ This model represents the action of the respiratory muscles during breathing.
 """
 
 @mtkmodel RespiratoryMuscles begin
-  @extend OnePort()
+  @extend OnePortPres()
   @parameters begin
     p = p_musmin
     TI = T_I
@@ -974,8 +995,8 @@ This is a complete model of the lung mechanics, based on the work of Albanese (2
 
 @mtkmodel Lung begin
   @components begin
-    in = Pin()
-    chestwall = Pin()
+    in = PresPin()
+    chestwall = PresPin()
   end
   @parameters begin
     R_ml = Rml # Mouth-Larynx resistance (mmHg.s/ml: PRU)
