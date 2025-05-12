@@ -207,9 +207,11 @@ This model represents the blood flow through the lungs as a series of parallel S
     l₂ ~ clamp((in.p - pₐₗᵥ) / (ρ * safe_gsinα * Pa2mmHg_conv), -(h/100)/5, 4*(h/100)/5)
     q ~ ((in.p - out.p) / ((h/100) * R) * (l₁ + (h/100) / 5)) + ((in.p - pₐₗᵥ) / ((h/100) * R) * (l₂ - l₁)) - ((ρ * g * Pa2mmHg_conv) / (2 * (h/100) * R) * sin(α) * (l₂^2 - l₁^2))
     cO₂ ~ in.cO₂
-    out.cO₂ ~ ifelse(t<=50, 0, 1)
+    in.cO₂ ~ instream(in.cO₂)
+    0 ~ cO₂ - out.cO₂
     cCO₂ ~ in.cCO₂
-    out.cCO₂ ~ ifelse(t<=50, 0, 1)
+    in.cCO₂ ~ instream(in.cCO₂)
+    0 ~ cCO₂ - out.cCO₂
   end
 end
 
@@ -254,7 +256,7 @@ The has_abr and has_cpr flags introduce extra variables Vabr and Vcpr, which rep
 Note: due to complexity this is composed as a @component and not a @mtkmodel. It makes no difference to the user.
 """
 
-@component function Compliance(; name, V₀=0.0, C=1.0, inP=false, has_ep=false, has_variable_ep=false, p₀=0.0, is_nonlinear=false, Flow_div = 1/3, V_max=1.0, V_min=0.0, has_abr=false, has_cpr=false, has_gasexchange=false, Vₜ=0.0, MO₂=0.0, MCO₂=0.0)
+@component function Compliance(; name, V₀=0.0, C=1.0, inP=false, has_ep=false, has_variable_ep=false, p₀=0.0, is_nonlinear=false, Flow_div = 1/3, V_max=1.0, V_min=0.0, has_abr=false, has_cpr=false, has_gasexchange=false, Vₜ=0.0, MO₂=0.0, MCO₂=0.0, is_pulmonary=false)
   @named in = Pin() # Input pin
   @named out = Pin() # Output pin
 
@@ -359,6 +361,17 @@ Note: due to complexity this is composed as a @component and not a @mtkmodel. It
       cCO₂ ~ in.cCO₂,
       in.cCO₂ ~ instream(in.cCO₂),
       D(out.cCO₂) ~ (in.q * (cCO₂ - out.cCO₂) + MCO₂) / (V + Vₜ),
+    ])
+  elseif is_pulmonary
+    push!(sts, (@variables cvO₂(t))[1])
+    push!(sts, (@variables cvCO₂(t))[1])
+    push!(sts, (@variables caO₂(t))[1])
+    push!(sts, (@variables caCO₂(t))[1])
+    append!(eqs, [
+      cvO₂ ~ in.cO₂,
+      cvCO₂ ~ in.cCO₂,
+      out.cO₂ ~ caO₂,
+      out.cCO₂ ~ caCO₂,
     ])
   else
     append!(eqs, [
@@ -600,6 +613,7 @@ This model represents an arterial compartment. It is a lumped compartment consis
     Vₜ=0.0
     MO₂=0.0
     MCO₂=0.0
+    is_pulmonary=false
   end
 
   @variables begin
@@ -625,7 +639,7 @@ This model represents an arterial compartment. It is a lumped compartment consis
     else
       R = Resistor(R=R)
     end
-    C = Compliance(V₀=V₀, C=C, inP=true, has_ep=true, has_variable_ep=true, p₀=p₀, is_nonlinear=false, has_gasexchange=has_gasexchange, Vₜ=Vₜ, MO₂=MO₂, MCO₂=MCO₂)
+    C = Compliance(V₀=V₀, C=C, inP=true, has_ep=true, has_variable_ep=true, p₀=p₀, is_nonlinear=false, has_gasexchange=has_gasexchange, Vₜ=Vₜ, MO₂=MO₂, MCO₂=MCO₂, is_pulmonary=is_pulmonary)
     if has_hydrostatic
       Ph = HydrostaticPressure(ρ=ρ, g=g, h=h, con=con)
     end
@@ -1232,6 +1246,13 @@ end
     caO₂(t) # O₂ concentration in the arterial blood (ml/ml) (output)
     caCO₂(t) # CO₂ concentration in the arterial blood (ml/ml) (output)
 
+    XaO₂(t) # O₂ saturation in the arterial blood (ml/ml)
+    XaCO₂(t) # CO₂ saturation in the arterial blood (ml/ml)
+    paO₂(t) # O₂ partial pressure in the arterial blood (mmHg)
+    paCO₂(t) # CO₂ partial pressure in the arterial blood (mmHg)
+
+    SaO₂(t) # O₂ saturation in the arterial blood (%)
+
 
   end
   @equations begin
@@ -1266,12 +1287,10 @@ end
     qps ~ qpa * sh
 
     #### O₂ saturation in arterial blood
-    SaO₂ ~ (caO₂ - paO₂ * sol_O₂) / (Hgb * Hgb_O₂_binding) * 100 # O₂ saturation in arterial blood (%) # TODO: What is paO₂?
-
+    caO₂ ~ CₛₐₜO₂ * (XaO₂)^(1/h₁)/(1 + (XaO₂)^(1/h₁))
+    XaO₂ ~ paO₂ * (1 + β₁ * paCO₂) / (K₁ * (1 + α₁ * paCO₂))
+    caCO₂ ~ CₛₐₜCO₂ * (XaCO₂)^(1/h₂)/(1 + (XaCO₂)^(1/h₂))
+    XaCO₂ ~ paCO₂ * (1 + β₂ * paO₂) / (K₂ * (1 + α₂ * paO₂))
+    SaO₂ ~ (caO₂ - paO₂ * sol_O₂) / (Hgb * Hgb_O₂_binding) * 100 # O₂ saturation in arterial blood (%)
   end
 end
-
-α₁ = 0.03198 # (/mmHg)
-β₁ = 0.008275 # (/mmHg)
-K₁ = 14.99 # (mmHg)
-sol_O₂ = 0.003/100 # Solubility of O₂ in blood (ml O₂/ml blood/mmHg)
