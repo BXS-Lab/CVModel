@@ -498,7 +498,43 @@ u0 = [
   Lungs.p_b => p₀,
   Lungs.p_A => p₀,
   RespMuscles.ϕ => 0.0,
-  Lungs.pₚₗ => pₚₗ₀
+  Lungs.pₚₗ => pₚₗ₀,
+
+  #### Blood Gas
+  RA.out.cO₂ => 0.0,
+  RV.out.cO₂ => 0.0,
+  Pulm_art.C.out.cO₂ => 0.0,
+  Pulm_vein.C.out.cO₂ => 0.0,
+  LA.out.cO₂ => 0.0,
+  LV.out.cO₂ => 0.0,
+  Cor_art.C.out.cO₂ => 0.0,
+  Cor_vein.C.out.cO₂ => 0.0,
+  Asc_A.C.out.cO₂ => 0.0,
+  BC_A.C.out.cO₂ => 0.0,
+  UpBd_art.C.out.cO₂ => 0.0,
+  Thor_A.C.out.cO₂ => 0.0,
+  Abd_A.C.out.cO₂ => 0.0,
+  Renal_art.C.out.cO₂ => 0.0,
+  Splanchnic_art.C.out.cO₂ => 0.0,
+  Leg_art.C.out.cO₂ => 0.0,
+  UpBd_vein.C.out.cO₂ => 0.0,
+  SVC.C.out.cO₂ => 0.0,
+  Renal_vein.C.out.cO₂ => 0.0,
+  Splanchnic_vein.C.out.cO₂ => 0.0,
+  Leg_vein.C.out.cO₂ => 0.0,
+  Abd_veins.C.out.cO₂ => 0.0,
+  Thor_IVC.C.out.cO₂ => 0.0,
+  CommonCarotid.C.out.cO₂ => 0.0,
+  Head_art.C.out.cO₂ => 0.0,
+  Head_veins.C.out.cO₂ => 0.0,
+  Jugular_vein.C.out.cO₂ => 0.0,
+
+  #### Extra
+  BC_A.in.cO₂ => 0.0,
+  Thor_A.C.cO₂ => 0.0,
+  Splanchnic_art.in.cO₂ => 0.0,
+  Leg_art.C.cO₂ => 0.0,
+  CommonCarotid.C.cO₂ => 0.0
 ]
 
 """
