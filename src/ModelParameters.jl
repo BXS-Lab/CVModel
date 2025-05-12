@@ -442,6 +442,44 @@ FRC = 2400 # Functional Residual Capacity (ml)
 
 V₀A = FRC + (CA * pₚₗ₀) - (V₀l) - (Ctr * (p₀ - pₚₗ₀) + V₀tr) - (Cb * (p₀ - pₚₗ₀) + V₀b) # Alveolar zero pressure volume (ml)
 
+"""
+Tissue Gas Exchange Model
+"""
+
+#### Tissue Volumes
+Vₜ_brain = 1300 # Brain tissue volume (ml)
+Vₜ_heart = 284 # Heart tissue volume (ml)
+Vₜ_splanchnic = 2673 # Lung tissue volume (ml)
+Vₜ_renal = 262 # Renal tissue volume (ml)
+Vₜ_sm = 31200 # Skeletal muscle tissue volume (ml)
+ub_mass_frac = 0.429 # Fraction of skeletal muscle in the upper body (Jansen 2000, https://journals.physiology.org/doi/full/10.1152/jappl.2000.89.1.81)
+Vₜ_ub = Vₜ_sm * ub_mass_frac # Upper body (skeletal muscle) tissue volume (ml)
+Vₜ_legs = Vₜ_sm * (1-ub_mass_frac) # Leg (skeletal muscle) tissue volume (ml)
+
+#### Tissue O₂ Consumption Rate
+MO₂_total = 250 # Total O₂ consumption rate (ml/min)
+MO₂_spes_rat = 7.384 # Splanchnic to extrasplanchnic O₂ consumption rate ratio (Albanese, 2016)
+
+MO₂_brain = 47.502/60 # Brain O₂ consumption rate (ml/s)
+MO₂_heart = 24/60 # Heart O₂ consumption rate (ml/s)
+MO₂_sm = 51.6/60 # Skeletal muscle O₂ consumption rate (ml/s)
+MO₂_ub = MO₂_sm * ub_mass_frac # Upper body (skeletal muscle) O₂ consumption rate (ml/s)
+MO₂_legs = MO₂_sm * (1-ub_mass_frac) # Leg (skeletal muscle) O₂ consumption rate (ml/s)
+MO₂_rem = MO₂_total/60 - (MO₂_brain + MO₂_heart + MO₂_ub + MO₂_legs) # Remaining O₂ consumption rate (ml/min)
+MO₂_renal = MO₂_rem / (1 + MO₂_spes_rat) # Renal O₂ consumption rate (ml/s)
+MO₂_splanchnic = MO₂_renal * MO₂_spes_rat # Splanchnic O₂ consumption rate (ml/s)
+
+#### Tissue CO₂ Production Rate
+RQ = 0.84 # Respiratory Quotient (CO₂ produced / O₂ consumed)
+MCO₂_total = MO₂_total * RQ # Total CO₂ production rate (ml/min)
+
+MCO₂_brain = MO₂_brain * RQ # Brain CO₂ production rate (ml/s)
+MCO₂_heart = MO₂_heart * RQ # Heart CO₂ production rate (ml/s)
+MCO₂_splanchnic = MO₂_splanchnic * RQ # Splanchnic CO₂ production rate (ml/s)
+MCO₂_renal = MO₂_renal * RQ # Renal CO₂ production rate (ml/s)
+MCO₂_ub = MO₂_ub * RQ # Upper body (skeletal muscle) CO₂ production rate (ml/s)
+MCO₂_legs = MO₂_legs * RQ # Leg (skeletal muscle) CO₂ production rate (ml/s)
+
 for name in names(@__MODULE__; all=true, imported=false)
   # Only export if it's not a function or macro and is defined
   if isdefined(@__MODULE__, name) && !(name in (:eval, :include, :__doc__)) && !(name in names(Base))

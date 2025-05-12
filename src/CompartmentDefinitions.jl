@@ -254,7 +254,7 @@ The has_abr and has_cpr flags introduce extra variables Vabr and Vcpr, which rep
 Note: due to complexity this is composed as a @component and not a @mtkmodel. It makes no difference to the user.
 """
 
-@component function Compliance(; name, V₀=0.0, C=1.0, inP=false, has_ep=false, has_variable_ep=false, p₀=0.0, is_nonlinear=false, Flow_div = 1/3, V_max=1.0, V_min=0.0, has_abr=false, has_cpr=false)
+@component function Compliance(; name, V₀=0.0, C=1.0, inP=false, has_ep=false, has_variable_ep=false, p₀=0.0, is_nonlinear=false, Flow_div = 1/3, V_max=1.0, V_min=0.0, has_abr=false, has_cpr=false, has_gasexchange=false, Vₜ=0.0, MO₂=0.0, MCO₂=0.0)
   @named in = Pin() # Input pin
   @named out = Pin() # Output pin
 
@@ -348,14 +348,29 @@ Note: due to complexity this is composed as a @component and not a @mtkmodel. It
   push!(sts, (@variables pₜₘ(t))[1])
   append!(eqs, [pₜₘ ~ p - p_rel])
 
-  append!(eqs, [
-    cO₂ ~ in.cO₂,
-    in.cO₂ ~ instream(in.cO₂),
-    D(out.cO₂) ~ in.q * (cO₂ - out.cO₂) / V,
-    cCO₂ ~ in.cCO₂,
-    in.cCO₂ ~ instream(in.cCO₂),
-    D(out.cCO₂) ~ in.q * (cCO₂ - out.cCO₂) / V,
-  ])
+  if has_gasexchange
+    push!(ps, (@parameters Vₜ = Vₜ)[1])
+    push!(ps, (@parameters MO₂ = MO₂)[1])
+    push!(ps, (@parameters MCO₂ = MCO₂)[1])
+    append!(eqs, [
+      cO₂ ~ in.cO₂,
+      in.cO₂ ~ instream(in.cO₂),
+      D(out.cO₂) ~ (in.q * (cO₂ - out.cO₂) - MO₂) / (V + Vₜ),
+      cCO₂ ~ in.cCO₂,
+      in.cCO₂ ~ instream(in.cCO₂),
+      D(out.cCO₂) ~ (in.q * (cCO₂ - out.cCO₂) + MCO₂) / (V + Vₜ),
+    ])
+  else
+    append!(eqs, [
+      cO₂ ~ in.cO₂,
+      in.cO₂ ~ instream(in.cO₂),
+      D(out.cO₂) ~ in.q * (cO₂ - out.cO₂) / V,
+      cCO₂ ~ in.cCO₂,
+      in.cCO₂ ~ instream(in.cCO₂),
+      D(out.cCO₂) ~ in.q * (cCO₂ - out.cCO₂) / V,
+    ])
+  end
+
 
   if has_variable_ep
     compose(ODESystem(eqs, t, sts, ps; name=name), in, out, ep)
@@ -581,6 +596,10 @@ This model represents an arterial compartment. It is a lumped compartment consis
     ρt = ρ_fft
     rad = 10.0
     L = 1.0
+    has_gasexchange=false
+    Vₜ=0.0
+    MO₂=0.0
+    MCO₂=0.0
   end
 
   @variables begin
@@ -606,7 +625,7 @@ This model represents an arterial compartment. It is a lumped compartment consis
     else
       R = Resistor(R=R)
     end
-    C = Compliance(V₀=V₀, C=C, inP=true, has_ep=true, has_variable_ep=true, p₀=p₀, is_nonlinear=false)
+    C = Compliance(V₀=V₀, C=C, inP=true, has_ep=true, has_variable_ep=true, p₀=p₀, is_nonlinear=false, has_gasexchange=has_gasexchange, Vₜ=Vₜ, MO₂=MO₂, MCO₂=MCO₂)
     if has_hydrostatic
       Ph = HydrostaticPressure(ρ=ρ, g=g, h=h, con=con)
     end

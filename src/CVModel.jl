@@ -79,21 +79,21 @@ This section of code instances the compartments used in the model, based on the 
 @named R_aortic = MynardValve_SemiLunar(Leff=Leff_av, Ann=Ann_av, Kvc=Kvc_av, Kvo=Kvo_av)
 
 #### Coronary Circulation
-@named Cor_art = Artery(C=Cca, R=Rca, V₀=v0ca, has_hydrostatic=false, has_tissue=false)
+@named Cor_art = Artery(C=Cca, R=Rca, V₀=v0ca, has_hydrostatic=false, has_tissue=false, has_gasexchange=true, Vₜ=Vₜ_heart, MO₂=MO₂_heart, MCO₂=MCO₂_heart)
 @named Cor_cap = VarResistor()
 @named Cor_vein = Vein(C=Ccv, R=Rcv, V₀=v0cv, has_hydrostatic=false, has_tissue=false)
 
 #### Arterial Circulation
 @named Asc_A = Artery(C=C_Asc_A, R=R_Asc_A, V₀=v0_Asc_A, h=h_Asc_A, has_tissue=false, has_inertia=false)
 @named BC_A = Artery(C=C_BC_A, R=R_BC_A, V₀=v0_BC_A, h=h_BC_A, has_tissue=false, L=L_BC_A)
-@named UpBd_art = Artery(C=C_UpBd_art, R=R_UpBd_art, V₀=v0_UpBd_art, h=h_UpBd_art, con=con_UpBd_art, rad=rad_UB, L=L_UpBd_art)
+@named UpBd_art = Artery(C=C_UpBd_art, R=R_UpBd_art, V₀=v0_UpBd_art, h=h_UpBd_art, con=con_UpBd_art, rad=rad_UB, L=L_UpBd_art, has_gasexchange=true, Vₜ=Vₜ_ub, MO₂=MO₂_ub, MCO₂=MCO₂_ub)
 @named Thor_A = Artery(C=C_Thor_A, R=R_Thor_A, V₀=v0_Thor_A, h=h_Thor_A, has_tissue=false, L=L_Thor_A)
 @named Abd_A = Artery(C=C_Abd_A, R=R_Abd_A, V₀=v0_Abd_A, h=h_Abd_A, rad=rad_Abd, L=L_Abd_A)
-@named Renal_art = Artery(C=C_Renal_art, R=R_Renal_art, V₀=v0_Renal_art, h=h_Renal_art, rad=rad_Abd, L=L_Renal_art)
-@named Splanchnic_art = Artery(C=C_Splanchnic_art, R=R_Splanchnic_art, V₀=v0_Splanchnic_art, h=h_Splanchnic_art, rad=rad_Abd, L=L_Splanchnic_art)
-@named Leg_art = Artery(C=C_Leg_art, R=R_Leg_art, V₀=v0_Leg_art, h=h_Leg_art, con=con_Leg_art, rad=rad_Leg, L=L_Leg_art)
+@named Renal_art = Artery(C=C_Renal_art, R=R_Renal_art, V₀=v0_Renal_art, h=h_Renal_art, rad=rad_Abd, L=L_Renal_art, has_gasexchange=true, Vₜ=Vₜ_renal, MO₂=MO₂_renal, MCO₂=MCO₂_renal)
+@named Splanchnic_art = Artery(C=C_Splanchnic_art, R=R_Splanchnic_art, V₀=v0_Splanchnic_art, h=h_Splanchnic_art, rad=rad_Abd, L=L_Splanchnic_art, has_gasexchange=true, Vₜ=Vₜ_splanchnic, MO₂=MO₂_splanchnic, MCO₂=MCO₂_splanchnic)
+@named Leg_art = Artery(C=C_Leg_art, R=R_Leg_art, V₀=v0_Leg_art, h=h_Leg_art, con=con_Leg_art, rad=rad_Leg, L=L_Leg_art, has_gasexchange=true, Vₜ=Vₜ_legs, MO₂=MO₂_legs, MCO₂=MCO₂_legs)
 @named CommonCarotid = Artery(C=C_CCA, R=R_CCA, V₀=v0_CCA, h=h_CCA, rad=rad_Neck, L=L_CCA)
-@named Head_art = Artery(C=C_Head_art, R=R_Head_art, V₀=v0_Head_art, h=h_Head_art, rad=rad_Head, L=L_Head_art)
+@named Head_art = Artery(C=C_Head_art, R=R_Head_art, V₀=v0_Head_art, h=h_Head_art, rad=rad_Head, L=L_Head_art, has_gasexchange=true, Vₜ=Vₜ_brain, MO₂=MO₂_brain, MCO₂=MCO₂_brain)
 
 #### Venous Circulation
 @named UpBd_vein = Vein(C=C_UpBd_vein, R=R_UpBd_vein, V₀=v0_UpBd_vein, h=h_UpBd_vein, con=con_UpBd_vein, has_valve=true, has_abr=true, has_cpr=true, rad=rad_UB)
