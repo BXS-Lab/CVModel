@@ -376,10 +376,6 @@ equations(expand(circ_sys))
 unknowns(circ_sys)
 equations(expand(circ_model))
 
-for u in unknowns(circ_sys) # Debuggine
-    println(u)
-end
-
 """
 Initial Conditions
 This section of the code sets the initial conditions for the model. The initial pressures are taken from the vector output of the "initial.jl" file, while the initial interstitial volume is set to a steady-state value. The initial conditions for the reflex arcs are also set here to zero, along with the initial conditions for the sino-atrial node. There will be the same number of initial conditions as there are unknowns, however some of the reflex transfer function ICs are vectorized so the number may not match.
@@ -541,13 +537,6 @@ u0 = [
   Head_art.C.out.cO₂ => 0.0,
   Head_veins.C.out.cO₂ => 0.0,
   Jugular_vein.C.out.cO₂ => 0.0
-
-  #### Extra
-#   BC_A.in.cO₂ => 0.0,
-#   Thor_A.C.cO₂ => 0.0,
-#   Splanchnic_art.in.cO₂ => 0.0,
-#   Leg_art.C.cO₂ => 0.0,
-#   CommonCarotid.C.cO₂ => 0.0
 ]
 
 """
