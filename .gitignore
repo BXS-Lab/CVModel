@@ -1,2 +1,57 @@
+# Julia specific files
+*.jl.cov
+*.jl.*.cov
+*.jl.mem
+*.jl.*.mem
+deps/deps.jl
+docs/build/
+docs/site/
+
+# Manifest files (consider if you want these versioned or not)
+Manifest.toml
+# Uncomment if you don't want to version lock Project.toml
+# Project.toml
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Generated documentation
+/docs/build/
+
+# Package development files
+/dev/
+
+# Compiled libraries
+*.so
+*.dylib
+*.dll
+*.a
+*.lib
+
+# Julia packages and environments
+.julia/
+
+# Build artifacts
+*.o
+*.ji
+
+# Simulation output/data files
+*.csv
+*.dat
+*.txt
+*.pdf
+*.png
+*.gif
+*.mp4
+*.h5
+*.jld
+*.jld2
+*.bson
+
+# Editor specific files
 .vscode/
+.idea/
+*.swp
+*~
+\#*\#
 .DS_Store
