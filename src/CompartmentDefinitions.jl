@@ -195,7 +195,7 @@ This model represents the blood flow through the lungs as a series of parallel S
     l₂ ~ clamp((in.p - pₐₗᵥ) / (ρ * safe_gsinα * Pa2mmHg_conv), -(h/100)/5, 4*(h/100)/5)
     q ~ ((in.p - out.p) / ((h/100) * R) * (l₁ + (h/100) / 5)) + ((in.p - pₐₗᵥ) / ((h/100) * R) * (l₂ - l₁)) - ((ρ * g * Pa2mmHg_conv) / (2 * (h/100) * R) * sin(α) * (l₂^2 - l₁^2))
     cO₂ ~ in.cO₂
-    out.cO₂ ~ ifelse(t<=50, 0, 100)
+    out.cO₂ ~ ifelse(t<=50, 0, 1)
   end
 end
 
@@ -598,7 +598,6 @@ This model represents an arterial compartment. It is a lumped compartment consis
   @equations begin
     Δp ~ out.p - in.p
     q ~ in.q
-    # in.cO₂ ~ instream(in.cO₂)
     in.cO₂ ~ cO₂
     if has_inertia
       connect(in, L.in)
@@ -703,9 +702,7 @@ This model represents a venous compartment. It is a lumped compartment consistin
   @equations begin
     Δp ~ out.p - in.p
     q ~ in.q
-    # in.cO₂ ~ instream(in.cO₂)
-    in.cO₂ ~ cO₂
-
+    cO₂ ~ in.cO₂
     connect(in, C.in)
     connect(C.out, has_hydrostatic ? Ph.in : R.in)
 
@@ -1082,5 +1079,38 @@ This is a complete model of the lung mechanics, based on the work of Albanese (2
     V_b ~ C_b * (p_b - pₚₗ) + V₀_b
     V_A ~ C_A * (p_A - pₚₗ) + V₀_A
     V_D ~ V_l + V_tr + V_b
+  end
+end
+
+@mtkmodel Junction2 begin
+  @components begin
+    in = Pin()
+    out1 = Pin()
+    out2 = Pin()
+  end
+  @equations begin
+    in.p ~ out1.p
+    in.p ~ out2.p
+    0 ~ in.q + out1.q + out2.q
+    out1.cO₂ ~ instream(in.cO₂)
+    out2.cO₂ ~ instream(in.cO₂)
+  end
+end
+
+@mtkmodel Junction3 begin
+  @components begin
+    in = Pin()
+    out1 = Pin()
+    out2 = Pin()
+    out3 = Pin()
+  end
+  @equations begin
+    in.p ~ out1.p
+    in.p ~ out2.p
+    in.p ~ out3.p
+    0 ~ in.q + out1.q + out2.q + out3.q
+    out1.cO₂ ~ instream(in.cO₂)
+    out2.cO₂ ~ instream(in.cO₂)
+    out3.cO₂ ~ instream(in.cO₂)
   end
 end

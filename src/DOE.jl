@@ -8,7 +8,7 @@ Simulation Time (seconds)
 
 Start_time = 0.0
 Time_step = 0.01
-Stop_time = 250.0
+Stop_time = 100.0
 tspan = (Start_time, Stop_time)
 
 """

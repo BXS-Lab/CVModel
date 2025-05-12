@@ -145,6 +145,10 @@ This section of code instances the compartments used in the model, based on the 
 @named RespMuscles = RespiratoryMuscles()
 @named Lungs = Lung()
 
+@named Asc_A_Junc = Junction3()
+@named BC_A_Junc = Junction2()
+@named Abd_A_Junc = Junction3()
+
 """
 Structural Connections
 This section of code connects the instanced compartments together to form the cardiovascular system. The hemodynamic connections are made using the "connect" function, which connects pins linked in pressure and flow via Kirchhoff's laws. The DOE integrations and reflex connections are just included as direct signal connections to the respective compartments.
@@ -165,10 +169,18 @@ circ_eqs = [
   connect(R_aortic.out, Asc_A.in),
 
   #### Arterial Tree
-  connect(Asc_A.out, BC_A.in, Thor_A.in, Cor_art.in),
-  connect(BC_A.out, UpBd_art.in, CommonCarotid.in),
+  connect(Asc_A.out, Asc_A_Junc.in),
+  connect(Asc_A_Junc.out1, BC_A.in),
+  connect(Asc_A_Junc.out2, Thor_A.in),
+  connect(Asc_A_Junc.out3, Cor_art.in),
+  connect(BC_A.out, BC_A_Junc.in),
+  connect(BC_A_Junc.out1, UpBd_art.in),
+  connect(BC_A_Junc.out2, CommonCarotid.in),
   connect(Thor_A.out, Abd_A.in),
-  connect(Abd_A.out, Renal_art.in, Splanchnic_art.in, Leg_art.in),
+  connect(Abd_A.out, Abd_A_Junc.in),
+  connect(Abd_A_Junc.out1, Renal_art.in),
+  connect(Abd_A_Junc.out2, Splanchnic_art.in),
+  connect(Abd_A_Junc.out3, Leg_art.in),
 
   #### Head and Neck Circulation
   connect(CommonCarotid.out, Head_art.in),
@@ -346,6 +358,7 @@ This section of the code composes the system of ordinary differential equations 
   Asc_A, BC_A, UpBd_art, Thor_A, Abd_A, Renal_art, Splanchnic_art, Leg_art, # Arterial Tree
   UpBd_vein, SVC, Renal_vein, Splanchnic_vein, Leg_vein, Abd_veins, Thor_IVC, # Venous Tree
   CommonCarotid, Head_art, Head_veins, Jugular_vein, # Head and Neck Circulation
+  Asc_A_Junc, BC_A_Junc, Abd_A_Junc, # Junctions
   UpBd_cap, Renal_cap, Splanchnic_cap, Leg_cap, Head_cap, # Microcirculation
   Interstitial, # Interstitial Compartment
   Intrathoracic, Abdominal, External, ExternalLBNP, Intracranial, # External Pressures
@@ -527,14 +540,14 @@ u0 = [
   CommonCarotid.C.out.cO₂ => 0.0,
   Head_art.C.out.cO₂ => 0.0,
   Head_veins.C.out.cO₂ => 0.0,
-  Jugular_vein.C.out.cO₂ => 0.0,
+  Jugular_vein.C.out.cO₂ => 0.0
 
   #### Extra
-  BC_A.in.cO₂ => 0.0,
-  Thor_A.C.cO₂ => 0.0,
-  Splanchnic_art.in.cO₂ => 0.0,
-  Leg_art.C.cO₂ => 0.0,
-  CommonCarotid.C.cO₂ => 0.0
+#   BC_A.in.cO₂ => 0.0,
+#   Thor_A.C.cO₂ => 0.0,
+#   Splanchnic_art.in.cO₂ => 0.0,
+#   Leg_art.C.cO₂ => 0.0,
+#   CommonCarotid.C.cO₂ => 0.0
 ]
 
 """
@@ -565,6 +578,20 @@ display(plot(Sol, idxs=[Vtotal],
         xlabel = "Time (s)",
         ylabel = "Volume (ml)",
         title = "Total Blood Volume")) # Debugging plot to quickly check volume conservation
+
+display(plot(Sol, idxs=[Pulm_cap.out.cO₂, Renal_vein.out.cO₂, Splanchnic_vein.out.cO₂, Leg_vein.out.cO₂, Abd_veins.out.cO₂],
+        label = ["Driver" "Renal" "Splanchnic" "Leg" "Abdomen"],
+        xlabel = "Time (s)",
+        ylabel = "cO₂ (ml/ml)",
+        title = "Oxygen Extraction",
+        ylims = (0, 1)))
+
+display(plot(Sol, idxs=[Pulm_cap.out.cO₂, UpBd_vein.out.cO₂, Jugular_vein.out.cO₂, SVC.out.cO₂],
+        label = ["Driver" "UpBd" "Jugular" "SVC"],
+        xlabel = "Time (s)",
+        ylabel = "cO₂ (ml/ml)",
+        title = "Oxygen Extraction",
+        ylims = (0, 1)))
 
 #### Direct from Solution Plots
 
