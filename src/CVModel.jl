@@ -363,7 +363,9 @@ equations(expand(circ_sys))
 unknowns(circ_sys)
 equations(expand(circ_model))
 
-# include("InitialUpdate.jl")
+for u in unknowns(circ_sys) # Debuggine
+    println(u)
+end
 
 """
 Initial Conditions

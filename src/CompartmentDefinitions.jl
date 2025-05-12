@@ -18,6 +18,7 @@ This is a simple pin model with two variables: pressure (p, mmHg) and blood flow
 @connector Pin begin
   p(t)
   q(t), [connect = Flow]
+  cO₂(t), [connect = Stream]
 end
 
 @connector PresPin begin
@@ -55,11 +56,15 @@ The One Port is a basic circuit element with an input and output. It has two var
   @variables begin
     Δp(t)
     q(t)
+    cO₂(t)
   end
   @equations begin
     Δp ~ out.p - in.p
     0 ~ in.q + out.q
     q ~ in.q
+    cO₂ ~ in.cO₂
+    in.cO₂ ~ instream(in.cO₂)
+    0 ~ cO₂ - out.cO₂
   end
 end
 
@@ -101,6 +106,8 @@ This model extends the One Port model by adding an external pressure pin (ep). T
     0 ~ ep.q
     q ~ in.q
     pg ~ p - ep.p
+    cO₂ ~ in.cO₂
+    0 ~ cO₂ - out.cO₂
   end
 end
 
@@ -178,6 +185,7 @@ This model represents the blood flow through the lungs as a series of parallel S
     α(t)
     g(t)
     pₐₗᵥ(t)
+    cO₂(t)
   end
   @equations begin
     0 ~ in.q + out.q
@@ -186,6 +194,8 @@ This model represents the blood flow through the lungs as a series of parallel S
     l₁ ~ clamp((out.p - pₐₗᵥ) / (ρ * safe_gsinα * Pa2mmHg_conv), -(h/100)/5, 4*(h/100)/5)
     l₂ ~ clamp((in.p - pₐₗᵥ) / (ρ * safe_gsinα * Pa2mmHg_conv), -(h/100)/5, 4*(h/100)/5)
     q ~ ((in.p - out.p) / ((h/100) * R) * (l₁ + (h/100) / 5)) + ((in.p - pₐₗᵥ) / ((h/100) * R) * (l₂ - l₁)) - ((ρ * g * Pa2mmHg_conv) / (2 * (h/100) * R) * sin(α) * (l₂^2 - l₁^2))
+    cO₂ ~ in.cO₂
+    out.cO₂ ~ ifelse(t<=50, 0, 100)
   end
 end
 
@@ -242,6 +252,7 @@ Note: due to complexity this is composed as a @component and not a @mtkmodel. It
     V(t) # Time-varying volume (ml)
     p(t) # Time-varying pressure (mmHg)
     V₀eff(t) # Time-varying Effective zero-pressure volume (ml)
+    cO₂(t) # Time-varying oxygen concentration (ml/ml)
   end
 
   ps = @parameters begin
@@ -321,6 +332,12 @@ Note: due to complexity this is composed as a @component and not a @mtkmodel. It
 
   push!(sts, (@variables pₜₘ(t))[1])
   append!(eqs, [pₜₘ ~ p - p_rel])
+
+  append!(eqs, [
+    cO₂ ~ in.cO₂,
+    in.cO₂ ~ instream(in.cO₂),
+    D(out.cO₂) ~ in.q * (cO₂ - out.cO₂) / V,
+  ])
 
   if has_variable_ep
     compose(ODESystem(eqs, t, sts, ps; name=name), in, out, ep)
@@ -404,6 +421,7 @@ Note: due to complexity this is composed as a @component and not a @mtkmodel. It
     p_rel(t) # Time varying external pressure (mmHg)
     Eabr_held(t) # ABR ventricular contractility
     Eₘₐₓeff(t) # Beat-to-Beat end-systolic elastance (mmHg/ml)
+    cO₂(t)
   end
 
   ps = @parameters begin
@@ -467,6 +485,12 @@ Note: due to complexity this is composed as a @component and not a @mtkmodel. It
       D(V) ~ in.q + out.q,
     ])
   end
+  append!(eqs, [
+    cO₂ ~ in.cO₂,
+    in.cO₂ ~ instream(in.cO₂),
+    D(out.cO₂) ~ in.q * (cO₂ - out.cO₂) / V,
+  ])
+
 
   compose(ODESystem(eqs, t, sts, ps; name=name), in, out, ep)
 end
@@ -546,6 +570,7 @@ This model represents an arterial compartment. It is a lumped compartment consis
     Δp_Pt(t)      # pressure drop across tissue pressure (set to 0 if not used)
     Δp_R(t)      # pressure drop across resistor
     pₜₘ(t)     # transmural pressure
+    cO₂(t)
   end
 
   @components begin
@@ -573,6 +598,8 @@ This model represents an arterial compartment. It is a lumped compartment consis
   @equations begin
     Δp ~ out.p - in.p
     q ~ in.q
+    # in.cO₂ ~ instream(in.cO₂)
+    in.cO₂ ~ cO₂
     if has_inertia
       connect(in, L.in)
       connect(L.out, R.in)
@@ -642,6 +669,7 @@ This model represents a venous compartment. It is a lumped compartment consistin
     Δp_Pt(t)      # pressure drop across tissue pressure (set to 0 if not used)
     Δp_R(t)
     pₜₘ(t)
+    cO₂(t)
     if has_cpr
       Vcpr(t)
     end
@@ -675,6 +703,8 @@ This model represents a venous compartment. It is a lumped compartment consistin
   @equations begin
     Δp ~ out.p - in.p
     q ~ in.q
+    # in.cO₂ ~ instream(in.cO₂)
+    in.cO₂ ~ cO₂
 
     connect(in, C.in)
     connect(C.out, has_hydrostatic ? Ph.in : R.in)
