@@ -8,7 +8,7 @@ docs/build/
 docs/site/
 
 # Manifest files (consider if you want these versioned or not)
-Manifest.toml
+# Manifest.toml
 # Uncomment if you don't want to version lock Project.toml
 # Project.toml
 
