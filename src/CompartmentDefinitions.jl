@@ -1033,6 +1033,49 @@ q is calculated in cm^3/s (ml/s)
 end
 
 """
+Junctions
+These models represent branches in the arterial network. They are required for the blood gas split.
+"""
+
+@mtkmodel Junction2 begin
+  @components begin
+    in = Pin()
+    out1 = Pin()
+    out2 = Pin()
+  end
+  @equations begin
+    in.p ~ out1.p
+    in.p ~ out2.p
+    0 ~ in.q + out1.q + out2.q
+    out1.cO₂ ~ instream(in.cO₂)
+    out2.cO₂ ~ instream(in.cO₂)
+    out1.cCO₂ ~ instream(in.cCO₂)
+    out2.cCO₂ ~ instream(in.cCO₂)
+  end
+end
+
+@mtkmodel Junction3 begin
+  @components begin
+    in = Pin()
+    out1 = Pin()
+    out2 = Pin()
+    out3 = Pin()
+  end
+  @equations begin
+    in.p ~ out1.p
+    in.p ~ out2.p
+    in.p ~ out3.p
+    0 ~ in.q + out1.q + out2.q + out3.q
+    out1.cO₂ ~ instream(in.cO₂)
+    out2.cO₂ ~ instream(in.cO₂)
+    out3.cO₂ ~ instream(in.cO₂)
+    out1.cCO₂ ~ instream(in.cCO₂)
+    out2.cCO₂ ~ instream(in.cCO₂)
+    out3.cCO₂ ~ instream(in.cCO₂)
+  end
+end
+
+"""
 Respiratory Muscles
 This model represents the action of the respiratory muscles during breathing.
 """
@@ -1127,40 +1170,108 @@ This is a complete model of the lung mechanics, based on the work of Albanese (2
   end
 end
 
-@mtkmodel Junction2 begin
-  @components begin
-    in = Pin()
-    out1 = Pin()
-    out2 = Pin()
+
+
+@mtkmodel LungGasExchange begin
+  @parameters begin
+    FIO₂ = FIO₂ # Fractional concentration of O₂ in the inspired air (%)
+    FICO₂ = FICO₂ # Fractional concentration of CO₂ in the inspired air (%)
+    sh = sh # Shunt fraction
+    v0pa = v0pa # Unstressed volume of the pulmonary arterial blood (ml)
+    K = K # Proportionality constant that allows convertion of volumes from body temperature pressure saturated to standard temperature pressure dry conditions
+    CₛₐₜO₂ = CₛₐₜO₂ # O₂ saturation constant (ml/ml)
+    CₛₐₜCO₂ = CₛₐₜCO₂ # CO₂ saturation constant (ml/ml)
+    h₁ = h₁ # O₂ saturation exponent
+    h₂ = h₂ # CO₂ saturation exponent
+    K₁ = K₁ # O₂ saturation constant (mmHg)
+    K₂ = K₂ # CO₂ saturation constant (mmHg)
+    α₁ = α₁ # O₂ saturation constant (/mmHg)
+    α₂ = α₂ # CO₂ saturation constant (/mmHg)
+    β₁ = β₁ # O₂ saturation constant (/mmHg)
+    β₂ = β₂ # CO₂ saturation constant (/mmHg)
+    pₐₜₘ = pₐₜₘ # Absolute Atmospheric pressure (mmHg)
+    p_ws = p_ws # Water vapor pressure (mmHg)
+    sol_O₂ = sol_O₂ # Solubility of O₂ in blood (ml O₂/ml blood/mmHg)
+    Hgb_O₂_binding = Hgb_O₂_binding # Hemoglobin O₂ binding constant (ml O₂/ml blood/mmHg)
+    Hgb = Hgb # Hemoglobin concentration (g/dl)
+  end
+  @variables begin
+
+    #### Connected from Lung Model
+    Vrᵢₙ(t) # Flow rate (ml/s), must be connected externally
+    Vr_A(t) # Alveolar flow rate (ml/s), must be connected externally
+    V_D(t) # Dead space volume (ml), must be connected externally
+    V_A(t) # Alveolar volume (ml), must be connected externally
+
+    #### Connected from Pulmonary Artery
+    qpa(t) # Pulmonary blood flow (ml/s), must be connected externally
+    Vpa(t) # Pulmonary arterial blood volume (ml), must be connected externally
+    cvO₂(t) # O₂ concentration in the deoxygenated blood (ml/ml), must be connected externally
+    cvCO₂(t) # CO₂ concentration in the deoxygenated blood (ml/ml), must be connected externally
+
+
+    FDO₂(t) # Fractional concentration of O₂ in the dead space (%)
+    FDCO₂(t) # Fractional concentration of CO₂ in the dead space (%)
+    FAO₂(t) # Fractional concentration of O₂ in the alveolar space (%)
+    FACO₂(t) # Fractional concentration of CO₂ in the alveolar space (%)
+
+    qpp(t) # Pulmonary blood flow (ml/s)
+    qps(t) # Pulmonary shunted blood flow (ml/s)
+    Vpp(t) # Pulmonary peripheral blood volume (ml)
+
+    cppO₂(t) # O₂ concentration in the pulmonary blood (ml/ml)
+    cppCO₂(t) # CO₂ concentration in the pulmonary blood (ml/ml)
+    XppO₂(t) # O₂ partial pressure
+    XppCO₂(t) # CO₂ partial pressure
+    pppO₂(t) # O₂ partial pressure in pulmonary blood (mmHg)
+    pppCO₂(t) # CO₂ partial pressure in pulmonary blood (mmHg)
+
+    p_AO₂(t) # O₂ partial pressure in the alveolar space (mmHg)
+    p_ACO₂(t) # CO₂ partial pressure in the alveolar space (mmHg)
+
+    caO₂(t) # O₂ concentration in the arterial blood (ml/ml) (output)
+    caCO₂(t) # CO₂ concentration in the arterial blood (ml/ml) (output)
+
+
   end
   @equations begin
-    in.p ~ out1.p
-    in.p ~ out2.p
-    0 ~ in.q + out1.q + out2.q
-    out1.cO₂ ~ instream(in.cO₂)
-    out2.cO₂ ~ instream(in.cO₂)
-    out1.cCO₂ ~ instream(in.cCO₂)
-    out2.cCO₂ ~ instream(in.cCO₂)
+
+    #### Conservation of mass equations
+    D(FDO₂) ~ ifelse(Vrᵢₙ > 0, Vrᵢₙ * (FIO₂ - FDO₂), Vr_A * (FDO₂ - FAO₂)) / V_D
+    D(FDCO₂) ~ ifelse(Vrᵢₙ > 0, Vrᵢₙ * (FICO₂ - FDCO₂), Vr_A * (FDCO₂ - FACO₂)) / V_D
+    D(FAO₂) ~ (ifelse(Vrᵢₙ > 0, Vr_A * (FDO₂ - FAO₂), 0) - K * (qpa * (1 - sh) * (cppO₂ - cvO₂) + Vpp * D(cppO₂))) / V_A
+    D(FACO₂) ~ (ifelse(Vrᵢₙ > 0, Vr_A * (FDCO₂ - FACO₂), 0) - K * (qpa * (1 - sh) * (cppCO₂ - cvCO₂) + Vpp * D(cppCO₂))) / V_A
+    Vpp ~ (Vpa - v0pa) * (1 - sh) + v0pa
+
+
+    #### Dissociation equations
+    cppO₂ ~ CₛₐₜO₂ * (XppO₂)^(1/h₁)/(1 + (XppO₂)^(1/h₁))
+    XppO₂ ~ pppO₂ * (1 + β₁ * pppCO₂) / (K₁ * (1 + α₁ * pppCO₂))
+    cppCO₂ ~ CₛₐₜCO₂ * (XppCO₂)^(1/h₂)/(1 + (XppCO₂)^(1/h₂))
+    XppCO₂ ~ pppCO₂ * (1 + β₂ * pppO₂) / (K₂ * (1 + α₂ * pppO₂))
+
+    #### Instantaneous equilibrium equations
+    pppO₂ ~ p_AO₂
+    pppCO₂ ~ p_ACO₂
+
+    #### Gas fraction to partial pressure relationships
+    p_AO₂ ~ FAO₂ * (pₐₜₘ - p_ws)
+    p_ACO₂ ~ FACO₂ * (pₐₜₘ - p_ws)
+
+    #### Mixing between capillary and shunted blood
+    caO₂ ~ (qpp * cppO₂ + qps * cvO₂) / (qpp + qps)
+    caCO₂ ~ (qpp * cppCO₂ + qps * cvCO₂) / (qpp + qps)
+
+    qpp ~ qpa * (1 - sh)
+    qps ~ qpa * sh
+
+    #### O₂ saturation in arterial blood
+    SaO₂ ~ (caO₂ - paO₂ * sol_O₂) / (Hgb * Hgb_O₂_binding) * 100 # O₂ saturation in arterial blood (%) # TODO: What is paO₂?
+
   end
 end
 
-@mtkmodel Junction3 begin
-  @components begin
-    in = Pin()
-    out1 = Pin()
-    out2 = Pin()
-    out3 = Pin()
-  end
-  @equations begin
-    in.p ~ out1.p
-    in.p ~ out2.p
-    in.p ~ out3.p
-    0 ~ in.q + out1.q + out2.q + out3.q
-    out1.cO₂ ~ instream(in.cO₂)
-    out2.cO₂ ~ instream(in.cO₂)
-    out3.cO₂ ~ instream(in.cO₂)
-    out1.cCO₂ ~ instream(in.cCO₂)
-    out2.cCO₂ ~ instream(in.cCO₂)
-    out3.cCO₂ ~ instream(in.cCO₂)
-  end
-end
+α₁ = 0.03198 # (/mmHg)
+β₁ = 0.008275 # (/mmHg)
+K₁ = 14.99 # (mmHg)
+sol_O₂ = 0.003/100 # Solubility of O₂ in blood (ml O₂/ml blood/mmHg)

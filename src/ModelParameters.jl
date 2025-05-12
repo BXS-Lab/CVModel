@@ -480,6 +480,39 @@ MCO₂_renal = MO₂_renal * RQ # Renal CO₂ production rate (ml/s)
 MCO₂_ub = MO₂_ub * RQ # Upper body (skeletal muscle) CO₂ production rate (ml/s)
 MCO₂_legs = MO₂_legs * RQ # Leg (skeletal muscle) CO₂ production rate (ml/s)
 
+"""
+Lung Gas Exchange Model
+"""
+#### Environmental Conditions
+FIO₂ = 21.0379 # Fraction of O₂ in the inspired air (%)
+FICO₂ = 0.0421 # Fraction of CO₂ in the inspired air (%)
+K = 1.2103 # Proportionality constant that allows convertion of volumes from body temperature pressure saturated to standard temperature pressure dry conditions
+pₐₜₘ = 760.0 # Atmospheric pressure (mmHg)
+p_ws = 47.0 # Water vapor pressure (mmHg)
+
+#### O₂ Dissociation Curve
+CₛₐₜO₂ = 9.0 # Saturation of O₂ in the lungs (mmol/l)
+h₁ = 0.3836
+α₁ = 0.03198 # (/mmHg)
+β₁ = 0.008275 # (/mmHg)
+K₁ = 14.99 # (mmHg)
+
+#### CO₂ Dissociation Curve
+CₛₐₜCO₂ = 86.11 # Saturation of CO₂ in the lungs (mmol/l)
+h₂ = 1.819
+α₂ = 0.05591 # (/mmHg)
+β₂ = 0.03255 # (/mmHg)
+K₂ = 194.4 # (mmHg)
+
+#### Physiological Status
+Hgb = 15.0 # Hemoglobin concentration (g/dl)
+sh = 0.017 # Pulmonary shunt fraction (fraction of blood that bypasses the lungs)
+
+#### Constants
+Hgb_O₂_binding = 1.34 # O₂ capacity (ml O₂/g Hgb), 1.34
+sol_O₂ = 0.003/100 # Solubility of O₂ in blood (ml O₂/ml blood/mmHg)
+
+
 for name in names(@__MODULE__; all=true, imported=false)
   # Only export if it's not a function or macro and is defined
   if isdefined(@__MODULE__, name) && !(name in (:eval, :include, :__doc__)) && !(name in names(Base))
