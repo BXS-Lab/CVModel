@@ -391,12 +391,25 @@ end
 
 
     #### Dissociation equations
-    cppO₂ ~ _CₛₐₜO₂ * (FAO₂ * (_pₐₜₘ - _p_ws) * (1 + _β₁ * FACO₂ * (_pₐₜₘ - _p_ws)) / (_K₁ * (1 + _α₁ * FACO₂ * (_pₐₜₘ - _p_ws))))^(1/_h₁)/(1 + (FAO₂ * (_pₐₜₘ - _p_ws) * (1 + _β₁ * FACO₂ * (_pₐₜₘ - _p_ws)) / (_K₁ * (1 + _α₁ * FACO₂ * (_pₐₜₘ - _p_ws))))^(1/_h₁))
-    cppCO₂ ~ _CₛₐₜCO₂ * (FACO₂ * (_pₐₜₘ - _p_ws) * (1 + _β₂ * FAO₂ * (_pₐₜₘ - _p_ws)) / (_K₂ * (1 + _α₂ * FAO₂ * (_pₐₜₘ - _p_ws))))^(1/_h₂)/(1 + (FACO₂ * (_pₐₜₘ - _p_ws) * (1 + _β₂ * FAO₂ * (_pₐₜₘ - _p_ws)) / (_K₂ * (1 + _α₂ * FAO₂ * (_pₐₜₘ - _p_ws))))^(1/_h₂))
+    cppO₂ ~ _CₛₐₜO₂ * (XppO₂)^(1/_h₁)/(1 + (XppO₂)^(1/_h₁))
+    XppO₂ ~ pppO₂ * (1 + _β₁ * pppCO₂) / (_K₁ * (1 + _α₁ * pppCO₂))
+    cppCO₂ ~ _CₛₐₜCO₂ * (XppCO₂)^(1/_h₂)/(1 + (XppCO₂)^(1/_h₂))
+    XppCO₂ ~ pppCO₂ * (1 + _β₂ * pppO₂) / (_K₂ * (1 + _α₂ * pppO₂))
+
+    #### Instantaneous equilibrium equations
+    p_AO₂ ~ pppO₂
+    p_ACO₂ ~ pppCO₂
+
+    #### Gas fraction to partial pressure relationships
+    p_AO₂ ~ FAO₂ * (_pₐₜₘ - _p_ws)
+    p_ACO₂ ~ FACO₂ * (_pₐₜₘ - _p_ws)
 
     #### Mixing between capillary and shunted blood
-    caO₂ ~ (qpa * (1 - _sh) * cppO₂ + qpa * _sh * cvO₂) / (qpa)
-    caCO₂ ~ (qpa * (1 - _sh) * cppCO₂ + qpa * _sh * cvCO₂) / (qpa)
+    caO₂ ~ (qpp * cppO₂ + qps * cvO₂) / (qpp + qps)
+    caCO₂ ~ (qpp * cppCO₂ + qps * cvCO₂) / (qpp + qps)
+
+    qpp ~ qpa * (1 - _sh)
+    qps ~ qpa * _sh
 
     #### O₂ saturation in arterial blood
     # caO₂ ~ CₛₐₜO₂ * (XaO₂)^(1/h₁)/(1 + (XaO₂)^(1/h₁))

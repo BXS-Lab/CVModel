@@ -1188,26 +1188,26 @@ end
 
 @mtkmodel LungGasExchange begin
   @parameters begin
-    FIO₂ = FIO₂ # Fractional concentration of O₂ in the inspired air (%)
-    FICO₂ = FICO₂ # Fractional concentration of CO₂ in the inspired air (%)
-    sh = sh # Shunt fraction
-    v0pa = v0pa # Unstressed volume of the pulmonary arterial blood (ml)
-    K = K # Proportionality constant that allows convertion of volumes from body temperature pressure saturated to standard temperature pressure dry conditions
-    CₛₐₜO₂ = CₛₐₜO₂ # O₂ saturation constant (ml/ml)
-    CₛₐₜCO₂ = CₛₐₜCO₂ # CO₂ saturation constant (ml/ml)
-    h₁ = h₁ # O₂ saturation exponent
-    h₂ = h₂ # CO₂ saturation exponent
-    K₁ = K₁ # O₂ saturation constant (mmHg)
-    K₂ = K₂ # CO₂ saturation constant (mmHg)
-    α₁ = α₁ # O₂ saturation constant (/mmHg)
-    α₂ = α₂ # CO₂ saturation constant (/mmHg)
-    β₁ = β₁ # O₂ saturation constant (/mmHg)
-    β₂ = β₂ # CO₂ saturation constant (/mmHg)
-    pₐₜₘ = pₐₜₘ # Absolute Atmospheric pressure (mmHg)
-    p_ws = p_ws # Water vapor pressure (mmHg)
-    sol_O₂ = sol_O₂ # Solubility of O₂ in blood (ml O₂/ml blood/mmHg)
-    Hgb_O₂_binding = Hgb_O₂_binding # Hemoglobin O₂ binding constant (ml O₂/ml blood/mmHg)
-    Hgb = Hgb # Hemoglobin concentration (g/dl)
+    _FIO₂ = FIO₂ # Fractional concentration of O₂ in the inspired air (%)
+    _FICO₂ = FICO₂ # Fractional concentration of CO₂ in the inspired air (%)
+    _sh = sh # Shunt fraction
+    _v0pa = v0pa # Unstressed volume of the pulmonary arterial blood (ml)
+    _K = K # Proportionality constant that allows convertion of volumes from body temperature pressure saturated to standard temperature pressure dry conditions
+    _CₛₐₜO₂ = CₛₐₜO₂ # O₂ saturation constant (ml/ml)
+    _CₛₐₜCO₂ = CₛₐₜCO₂ # CO₂ saturation constant (ml/ml)
+    _h₁ = h₁ # O₂ saturation exponent
+    _h₂ = h₂ # CO₂ saturation exponent
+    _K₁ = K₁ # O₂ saturation constant (mmHg)
+    _K₂ = K₂ # CO₂ saturation constant (mmHg)
+    _α₁ = α₁ # O₂ saturation constant (/mmHg)
+    _α₂ = α₂ # CO₂ saturation constant (/mmHg)
+    _β₁ = β₁ # O₂ saturation constant (/mmHg)
+    _β₂ = β₂ # CO₂ saturation constant (/mmHg)
+    _pₐₜₘ = pₐₜₘ # Absolute Atmospheric pressure (mmHg)
+    _p_ws = p_ws # Water vapor pressure (mmHg)
+    _sol_O₂ = sol_O₂ # Solubility of O₂ in blood (ml O₂/ml blood/mmHg)
+    _Hgb_O₂_binding = Hgb_O₂_binding # Hemoglobin O₂ binding constant (ml O₂/ml blood/mmHg)
+    _Hgb = Hgb # Hemoglobin concentration (g/dl)
   end
   @variables begin
 
@@ -1246,47 +1246,49 @@ end
     caO₂(t) # O₂ concentration in the arterial blood (ml/ml) (output)
     caCO₂(t) # CO₂ concentration in the arterial blood (ml/ml) (output)
 
-    XaO₂(t) # O₂ saturation in the arterial blood (ml/ml)
-    XaCO₂(t) # CO₂ saturation in the arterial blood (ml/ml)
-    paO₂(t) # O₂ partial pressure in the arterial blood (mmHg)
-    paCO₂(t) # CO₂ partial pressure in the arterial blood (mmHg)
+    # XaO₂(t) # O₂ saturation in the arterial blood (ml/ml)
+    # XaCO₂(t) # CO₂ saturation in the arterial blood (ml/ml)
+    # paO₂(t) # O₂ partial pressure in the arterial blood (mmHg)
+    # paCO₂(t) # CO₂ partial pressure in the arterial blood (mmHg)
 
-    SaO₂(t) # O₂ saturation in the arterial blood (%)
+    # SaO₂(t) # O₂ saturation in the arterial blood (%)
 
 
   end
   @equations begin
 
     #### Conservation of mass equations
-    D(FDO₂) ~ ifelse(Vrᵢₙ > 0, Vrᵢₙ * (FIO₂ - FDO₂), Vr_A * (FDO₂ - FAO₂)) / V_D
-    D(FDCO₂) ~ ifelse(Vrᵢₙ > 0, Vrᵢₙ * (FICO₂ - FDCO₂), Vr_A * (FDCO₂ - FACO₂)) / V_D
-    D(FAO₂) ~ (ifelse(Vrᵢₙ > 0, Vr_A * (FDO₂ - FAO₂), 0) - K * (qpa * (1 - sh) * (cppO₂ - cvO₂) + Vpp * D(cppO₂))) / V_A
-    D(FACO₂) ~ (ifelse(Vrᵢₙ > 0, Vr_A * (FDCO₂ - FACO₂), 0) - K * (qpa * (1 - sh) * (cppCO₂ - cvCO₂) + Vpp * D(cppCO₂))) / V_A
+    D(FDO₂) ~ (0.5 * (1 + tanh(100 * Vrᵢₙ)) * Vrᵢₙ * (_FIO₂ - FDO₂) +
+           0.5 * (1 - tanh(100 * Vrᵢₙ)) * Vr_A * (FDO₂ - FAO₂)) / V_D
+    D(FDCO₂) ~ (0.5 * (1 + tanh(100 * Vrᵢₙ)) * Vrᵢₙ * (_FICO₂ - FDCO₂) +
+           0.5 * (1 - tanh(100 * Vrᵢₙ)) * Vr_A * (FDCO₂ - FACO₂)) / V_D
+    D(FAO₂) ~ (0.5 * (1 + tanh(100 * Vrᵢₙ)) * Vr_A * (FDO₂ - FAO₂) - _K * (qpa * (1 - _sh) * (cppO₂ - cvO₂) + Vpp * D(cppO₂))) / V_A
+    D(FACO₂) ~ (0.5 * (1 + tanh(100 * Vrᵢₙ)) * Vr_A * (FDCO₂ - FACO₂) - _K * (qpa * (1 - _sh) * (cppCO₂ - cvCO₂) + Vpp * D(cppCO₂))) / V_A
     Vpp ~ (Vpa - v0pa) * (1 - sh) + v0pa
 
 
     #### Dissociation equations
-    cppO₂ ~ CₛₐₜO₂ * (XppO₂)^(1/h₁)/(1 + (XppO₂)^(1/h₁))
-    XppO₂ ~ pppO₂ * (1 + β₁ * pppCO₂) / (K₁ * (1 + α₁ * pppCO₂))
-    cppCO₂ ~ CₛₐₜCO₂ * (XppCO₂)^(1/h₂)/(1 + (XppCO₂)^(1/h₂))
-    XppCO₂ ~ pppCO₂ * (1 + β₂ * pppO₂) / (K₂ * (1 + α₂ * pppO₂))
+    cppO₂ ~ _CₛₐₜO₂ * (XppO₂)^(1/_h₁)/(1 + (XppO₂)^(1/_h₁))
+    XppO₂ ~ pppO₂ * (1 + _β₁ * pppCO₂) / (_K₁ * (1 + _α₁ * pppCO₂))
+    cppCO₂ ~ _CₛₐₜCO₂ * (XppCO₂)^(1/_h₂)/(1 + (XppCO₂)^(1/_h₂))
+    XppCO₂ ~ pppCO₂ * (1 + _β₂ * pppO₂) / (_K₂ * (1 + _α₂ * pppO₂))
 
     #### Instantaneous equilibrium equations
-    pppO₂ ~ p_AO₂
-    pppCO₂ ~ p_ACO₂
+    p_AO₂ ~ pppO₂
+    p_ACO₂ ~ pppCO₂
 
     #### Gas fraction to partial pressure relationships
-    p_AO₂ ~ FAO₂ * (pₐₜₘ - p_ws)
-    p_ACO₂ ~ FACO₂ * (pₐₜₘ - p_ws)
+    p_AO₂ ~ FAO₂ * (_pₐₜₘ - _p_ws)
+    p_ACO₂ ~ FACO₂ * (_pₐₜₘ - _p_ws)
 
     #### Mixing between capillary and shunted blood
     caO₂ ~ (qpp * cppO₂ + qps * cvO₂) / (qpp + qps)
     caCO₂ ~ (qpp * cppCO₂ + qps * cvCO₂) / (qpp + qps)
 
-    qpp ~ qpa * (1 - sh)
-    qps ~ qpa * sh
+    qpp ~ qpa * (1 - _sh)
+    qps ~ qpa * _sh
 
-    # #### O₂ saturation in arterial blood
+    #### O₂ saturation in arterial blood
     # caO₂ ~ CₛₐₜO₂ * (XaO₂)^(1/h₁)/(1 + (XaO₂)^(1/h₁))
     # XaO₂ ~ paO₂ * (1 + β₁ * paCO₂) / (K₁ * (1 + α₁ * paCO₂))
     # caCO₂ ~ CₛₐₜCO₂ * (XaCO₂)^(1/h₂)/(1 + (XaCO₂)^(1/h₂))

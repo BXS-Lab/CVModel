@@ -389,6 +389,9 @@ circ_sys = structural_simplify(circ_model)
 equations(expand(circ_sys))
 unknowns(circ_sys)
 equations(expand(circ_model))
+for eq in unknowns(circ_sys)
+  println(eq)
+end
 
 """
 Initial Conditions
@@ -526,7 +529,7 @@ u0 = [
   #### Blood Gas O₂
   RA.out.cO₂ => 0.0,
   RV.out.cO₂ => 0.0,
-  Pulm_art.C.out.cO₂ => 0.0,
+#   Pulm_art.C.out.cO₂ => 0.0,
   Pulm_vein.C.out.cO₂ => 0.0,
   LA.out.cO₂ => 0.0,
   LV.out.cO₂ => 0.0,
@@ -555,7 +558,7 @@ u0 = [
   #### Blood Gas CO₂
   RA.out.cCO₂ => 0.0,
   RV.out.cCO₂ => 0.0,
-  Pulm_art.C.out.cCO₂ => 0.0,
+#   Pulm_art.C.out.cCO₂ => 0.0,
   Pulm_vein.C.out.cCO₂ => 0.0,
   LA.out.cCO₂ => 0.0,
   LV.out.cCO₂ => 0.0,
@@ -580,6 +583,11 @@ u0 = [
   Head_art.C.out.cCO₂ => 0.0,
   Head_veins.C.out.cCO₂ => 0.0,
   Jugular_vein.C.out.cCO₂ => 0.0,
+
+  LungGE.FDO₂ => FIO₂,
+  LungGE.FDCO₂ => FICO₂,
+  LungGE.FAO₂ => FIO₂,
+  LungGE.FACO₂ => FICO₂,
 ]
 
 """
