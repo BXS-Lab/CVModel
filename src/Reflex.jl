@@ -171,3 +171,39 @@ end
     D(y_f) ~ (-y_f + Gain_cf * (delay.y - set_point)) / time_cf
   end
 end
+
+@mtkmodel PeripheralChemoreceptors1stStage begin
+  @parameters begin
+    _Ap = Ap
+    _Bp = Bp
+    _KO₂ = KO₂
+    _KCO₂ = KCO₂ # (/s)
+    _Cₜ = Cₜ # (ml/ml)
+    _Kstat = Kstat # (/s)
+    _τ_ph = τ_ph # (s)
+    _τ_zh = τ_zh # (s)
+    _τ_pl = τ_pl # (s)
+    _Kdyn = Kdyn # (/s)
+  end
+  @variables begin
+    uSaO₂(t)
+    xO₂(t)
+    ϕO₂(t)
+    ϕCO₂(t)
+    Phi(t)
+    ϕCO₂dyn(t)
+    ϕbarc(t)
+    ϕc(t)
+    fc(t)
+  end
+  @equations begin
+    xO₂ ~ _Ap * (1 - uSaO₂) + _Bp
+    ϕO₂ ~ _KO₂ * (1 - exp(-xO₂ / _KO₂))
+    ϕCO₂ ~ _KCO₂ * (ucaCO₂ - _Cₜ)
+    Phi ~ ϕO₂ * ϕCO₂
+    D(ϕCO₂dyn) ~ (_τ_zh * D(ucaCO₂) - ϕCO₂dyn) / _τ_ph
+    ϕbarc ~ _Kstat * (1 - exp(-Phi / _Kstat)) + _Kdyn * (1 - exp(-ϕCO₂dyn / _Kdyn))
+    D(ϕc) ~ (ϕbarc - ϕc) / _τ_pl
+    fc ~ ifelse(ϕc > 0, ϕc, 0.0)
+  end
+end
