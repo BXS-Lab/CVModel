@@ -391,9 +391,6 @@ circ_sys = structural_simplify(circ_model)
 equations(expand(circ_sys))
 unknowns(circ_sys)
 equations(expand(circ_model))
-for eq in defaults(circ_model)
-  println(eq)
-end
 
 """
 Initial Conditions
@@ -589,7 +586,9 @@ u0 = [
   LungGE.FDO₂ => FIO₂,
   LungGE.FDCO₂ => FICO₂,
   LungGE.FAO₂ => FIO₂,
-  LungGE.FACO₂ => FICO₂,
+  LungGE.FACO₂ => FICO₂
+#   LungGE.pppO₂ => FIO₂ * (pₐₜₘ - p_ws),
+#   LungGE.pppCO₂ => FICO₂ * (pₐₜₘ - p_ws)
 ]
 
 """
@@ -622,12 +621,11 @@ display(plot(Sol, idxs=[Vtotal],
         ylabel = "Volume (ml)",
         title = "Total Blood Volume")) # Debugging plot to quickly check volume conservation
 
-display(plot(Sol, idxs=[Pulm_cap.out.cO₂, Splanchnic_art.cO₂, Splanchnic_vein.cO₂],
+display(plot(Sol, idxs=[Pulm_cap.out.cO₂, Cor_art.cO₂, Cor_vein.cO₂],
         label = ["Driver" "art" "vein" "Leg" "Abdomen"],
         xlabel = "Time (s)",
         ylabel = "cO₂ (ml/ml)",
-        title = "Oxygen Extraction",
-        ylims = (0, 1)))
+        title = "Oxygen Extraction"))
 
 display(plot(Sol, idxs=[LungGE.FACO₂, LungGE.FDCO₂],
         xlabel = "Time (s)",

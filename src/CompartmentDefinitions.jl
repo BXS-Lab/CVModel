@@ -1269,8 +1269,8 @@ end
     #### Conservation of mass equations
     D(FDO₂) ~ ifelse(Vrᵢₙ >= 0, Vrᵢₙ * (_FIO₂ - FDO₂), Vr_A * (FDO₂ - FAO₂)) / V_D
     D(FDCO₂) ~ ifelse(Vrᵢₙ >= 0, Vrᵢₙ * (_FICO₂ - FDCO₂), Vr_A * (FDCO₂ - FACO₂)) / V_D
-    D(FAO₂) ~ (ifelse(Vrᵢₙ >= 0, Vr_A * (FDO₂ - FAO₂),0) - VrO₂) / V_A
-    D(FACO₂) ~ (ifelse(Vrᵢₙ >= 0, Vr_A * (FDCO₂ - FACO₂),0) - VrCO₂) / V_A
+    D(FAO₂) ~ (ifelse(Vrᵢₙ >= 0, Vr_A * (FDO₂ - FAO₂),0) - VrO₂p) / V_A
+    D(FACO₂) ~ (ifelse(Vrᵢₙ >= 0, Vr_A * (FDCO₂ - FACO₂),0) - VrCO₂p) / V_A
     Vpp ~ (Vpa - v0pa) * (1 - sh) + v0pa
 
 
@@ -1286,11 +1286,11 @@ end
 
     VrO₂p ~ qpp * (cppO₂ - cvO₂)
     VrCO₂p ~ qpp * (cppCO₂ - cvCO₂)
-    VrO₂d ~ _DlO₂ * (p_AO₂ - pppO₂)
-    VrCO₂d ~ _DlCO₂ * (p_ACO₂ - pppCO₂)
+    # VrO₂d ~ _DlO₂ * (p_AO₂ - pppO₂)
+    # VrCO₂d ~ _DlCO₂ * (p_ACO₂ - pppCO₂)
 
-    VrO₂ ~ min(VrO₂p, VrO₂d)
-    VrCO₂ ~ min(VrCO₂p, VrCO₂d)
+    # VrO₂ ~ min(VrO₂p, VrO₂d)
+    # VrCO₂ ~ min(VrCO₂p, VrCO₂d)
 
     #### Gas fraction to partial pressure relationships
     p_AO₂ ~ FAO₂ * (_pₐₜₘ - _p_ws)
