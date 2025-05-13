@@ -1311,6 +1311,6 @@ end
 
     paCO₂ ~ (-1 + √(1 + 2*_K₁*XaO₂*_β₂ + 2*_K₂*XaCO₂*_β₁ + (_K₁^2)*(XaO₂^2)*(_β₂^2) - 2*_K₁*_K₂*XaCO₂*XaO₂*_α₁*_α₂ + 4*_K₁*_K₂*XaCO₂*XaO₂*_α₁*_β₂ + 4*_K₁*_K₂*XaCO₂*XaO₂*_α₂*_β₁ - 2*_K₁*_K₂*XaCO₂*XaO₂*_β₁*_β₂ + (_K₂^2)*(XaCO₂^2)*(_β₁^2) + 2(_K₁^2)*_K₂*XaCO₂*(XaO₂^2)*_α₁*_α₂*_β₂ + 2*_K₁*(_K₂^2)*(XaCO₂^2)*XaO₂*_α₁*_α₂*_β₁ + (_K₁^2)*(_K₂^2)*(XaCO₂^2)*(XaO₂^2)*(_α₁^2)*(_α₂^2)) - _K₁*XaO₂*_β₂ + _K₂*XaCO₂*_β₁ + _K₁*_K₂*XaCO₂*XaO₂*_α₁*_α₂) / (2*_β₁ + 2*_K₁*XaO₂*_α₁*_β₂)
 
-    SaO₂ ~ (caO₂ - paO₂ * sol_O₂) / (Hgb * Hgb_O₂_binding) * 10000 # O₂ saturation in arterial blood (%)
+    SaO₂ ~ (caO₂ - paO₂ * sol_O₂) / (Hgb * Hgb_O₂_binding) * 100 # O₂ saturation in arterial blood (%)
   end
 end

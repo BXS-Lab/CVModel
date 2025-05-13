@@ -523,6 +523,30 @@ paCO₂_set = 40.0 # Set point for paCO₂ (mmHg)
 τ_cA = 105 # Amplitude time constant for central chemoreceptors (s)
 τ_cf = 400 # Frequency time constant for central chemoreceptors (s)
 
+"""
+Peripheral Chemoreceptors
+"""
+
+#### Stage 1
+Ap = 600
+Bp = 10.18
+KO₂ = 200
+KCO₂ = 1 # (/s)
+Cₜ = 0.36 # (l/l)
+Kstat = 20 # (/s)
+τ_ph = 3.5 # (s)
+τ_zh = 600 # (s)
+τ_pl = 3.5 # (s)
+Kdyn = 45 # (/s)
+
+#### Stage 2
+Dp = 7.0 # Peripheral chemoreceptor delay (s)
+G_pA = 1310 * cmH2O2mmHg # Peripheral chemoreceptor amplitude gain (mmHg/ν)
+G_pf = 0.8735 # Peripheral chemoreceptor frequency gain (breaths/min/ν)
+fapc_set = 3.7 # Set point for fapc (spikes/s)
+τ_pA = 83 # Amplitude time constant for peripheral chemoreceptors (s)
+τ_pf = 147.78 # Frequency time constant for peripheral chemoreceptors (s)
+
 for name in names(@__MODULE__; all=true, imported=false)
   # Only export if it's not a function or macro and is defined
   if isdefined(@__MODULE__, name) && !(name in (:eval, :include, :__doc__)) && !(name in names(Base))
