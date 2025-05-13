@@ -632,7 +632,7 @@ display(plot(Sol, idxs=[LungGE.FACO₂, LungGE.FDCO₂],
         ylabel = "Fractional Concentration",
         title = "Lung Gas Exchange"))
 
-display(plot(Sol, idxs=[LungGE.SppO₂]))
+display(plot(Sol, idxs=[LungGE.SaO₂]))
 
 #### Direct from Solution Plots
 

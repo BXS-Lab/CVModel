@@ -1255,12 +1255,12 @@ end
     VrO₂(t) # O₂ uptake (ml/s)
     VrCO₂(t) # CO₂ uptake (ml/s)
 
-    # XaO₂(t) # O₂ saturation in the arterial blood (ml/ml)
-    # XaCO₂(t) # CO₂ saturation in the arterial blood (ml/ml)
-    # paO₂(t) # O₂ partial pressure in the arterial blood (mmHg)
-    # paCO₂(t) # CO₂ partial pressure in the arterial blood (mmHg)
+    XaO₂(t) # O₂ saturation in the arterial blood (ml/ml)
+    XaCO₂(t) # CO₂ saturation in the arterial blood (ml/ml)
+    paO₂(t) # O₂ partial pressure in the arterial blood (mmHg)
+    paCO₂(t) # CO₂ partial pressure in the arterial blood (mmHg)
 
-    SppO₂(t) # O₂ saturation in the arterial blood (%)
+    SaO₂(t) # O₂ saturation in the arterial blood (%)
 
 
   end
@@ -1304,13 +1304,13 @@ end
     qps ~ qpa * _sh
 
     #### O₂ saturation in arterial blood
-    # XaO₂ ~ (caO₂ / (CₛₐₜO₂ - caO₂))^h₁
-    # # XaO₂ ~ paO₂ * (1 + β₁ * paCO₂) / (K₁ * (1 + α₁ * paCO₂))
-    # XaCO₂ ~ (caCO₂ / (CₛₐₜCO₂ - caCO₂))^h₂
-    # # caCO₂ ~ CₛₐₜCO₂ * (XaCO₂)^(1/h₂)/(1 + (XaCO₂)^(1/h₂))
+    XaO₂ ~ ((caO₂ / _CₛₐₜO₂) / (1 - (caO₂ / _CₛₐₜO₂)))^_h₁
+    XaCO₂ ~ ((caCO₂ / _CₛₐₜCO₂) / (1 - (caCO₂ / _CₛₐₜCO₂)))^_h₂
 
-    # XaCO₂ ~ paCO₂ * (1 + β₂ * paO₂) / (K₂ * (1 + α₂ * paO₂))
-    # XaO₂ ~ paO₂ * (1 + β₁ * paCO₂) / (K₁ * (1 + α₁ * paCO₂))
-    SppO₂ ~ (cppO₂ - pppO₂ * sol_O₂) / (Hgb * Hgb_O₂_binding) * 100 # O₂ saturation in arterial blood (%)
+    paO₂ ~ (-1 + √(1 + 2*_K₁*XaO₂*_β₂ + 2*_K₂*XaCO₂*_β₁ + (_K₁^2)*(XaO₂^2)*(_β₂^2) - 2*_K₁*_K₂*XaCO₂*XaO₂*_α₁*_α₂ + 4*_K₁*_K₂*XaCO₂*XaO₂*_α₁*_β₂ + 4*_K₁*_K₂*XaCO₂*XaO₂*_α₂*_β₁ - 2*_K₁*_K₂*XaCO₂*XaO₂*_β₁*_β₂ + (_K₂^2)*(XaCO₂^2)*(_β₁^2) + 2(_K₁^2)*_K₂*XaCO₂*(XaO₂^2)*_α₁*_α₂*_β₂ + 2*_K₁*(_K₂^2)*(XaCO₂^2)*XaO₂*_α₁*_α₂*_β₁ + (_K₁^2)*(_K₂^2)*(XaCO₂^2)*(XaO₂^2)*(_α₁^2)*(_α₂^2)) + _K₁*XaO₂*_β₂ - _K₂*XaCO₂*_β₁ + _K₁*_K₂*XaCO₂*XaO₂*_α₁*_α₂) / (2*_β₂ + 2*_K₂*XaCO₂*_α₂*_β₁)
+
+    paCO₂ ~ (-1 + √(1 + 2*_K₁*XaO₂*_β₂ + 2*_K₂*XaCO₂*_β₁ + (_K₁^2)*(XaO₂^2)*(_β₂^2) - 2*_K₁*_K₂*XaCO₂*XaO₂*_α₁*_α₂ + 4*_K₁*_K₂*XaCO₂*XaO₂*_α₁*_β₂ + 4*_K₁*_K₂*XaCO₂*XaO₂*_α₂*_β₁ - 2*_K₁*_K₂*XaCO₂*XaO₂*_β₁*_β₂ + (_K₂^2)*(XaCO₂^2)*(_β₁^2) + 2(_K₁^2)*_K₂*XaCO₂*(XaO₂^2)*_α₁*_α₂*_β₂ + 2*_K₁*(_K₂^2)*(XaCO₂^2)*XaO₂*_α₁*_α₂*_β₁ + (_K₁^2)*(_K₂^2)*(XaCO₂^2)*(XaO₂^2)*(_α₁^2)*(_α₂^2)) - _K₁*XaO₂*_β₂ + _K₂*XaCO₂*_β₁ + _K₁*_K₂*XaCO₂*XaO₂*_α₁*_α₂) / (2*_β₁ + 2*_K₁*XaO₂*_α₁*_β₂)
+
+    SaO₂ ~ (caO₂ - paO₂ * sol_O₂) / (Hgb * Hgb_O₂_binding) * 10000 # O₂ saturation in arterial blood (%)
   end
 end
