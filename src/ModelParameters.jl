@@ -507,11 +507,17 @@ K₂ = 194.4 # (mmHg)
 #### Physiological Status
 Hgb = 15.0 # Hemoglobin concentration (g/dl)
 sh = 0.017 # Pulmonary shunt fraction (fraction of blood that bypasses the lungs)
+DO₂ = 0.00139 # O₂ diffusion coefficient (cm^2/s)
+DCO₂ = 0.00139 # CO₂ diffusion coefficient (cm^2/s)
 
 #### Constants
 Hgb_O₂_binding = 1.34 # O₂ capacity (ml O₂/g Hgb), 1.34
 sol_O₂ = 0.003/100 # Solubility of O₂ in blood (ml O₂/ml blood/mmHg)
 
+DmO₂ = 22.7 * 22.7/60*1000/Pa2mmHg# Diffusion coefficient of O₂ in blood (mmol/min/kPa) -> ml/s/mmHg
+DmCO₂ =  20 * DmO₂# CO₂ diffusion coefficient ml/s/mmHg
+DlCO₂ = DmCO₂
+DlO₂ = DmO₂
 
 for name in names(@__MODULE__; all=true, imported=false)
   # Only export if it's not a function or macro and is defined

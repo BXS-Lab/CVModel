@@ -610,6 +610,7 @@ This section calculates the beat-to-beat values, along with some global values (
 
 include("PostSolve.jl")
 
+
 """
 Plots
 This section of the code generates some useful plots. Note: all variables in the model can be interrogated.
@@ -628,12 +629,12 @@ display(plot(Sol, idxs=[Pulm_cap.out.cO₂, Splanchnic_art.cO₂, Splanchnic_vei
         title = "Oxygen Extraction",
         ylims = (0, 1)))
 
-display(plot(Sol, idxs=[Pulm_cap.out.cO₂, UpBd_vein.out.cO₂, Jugular_vein.out.cO₂, SVC.out.cO₂],
-        label = ["Driver" "UpBd" "Jugular" "SVC"],
+display(plot(Sol, idxs=[LungGE.FACO₂, LungGE.FDCO₂],
         xlabel = "Time (s)",
-        ylabel = "cO₂ (ml/ml)",
-        title = "Oxygen Extraction",
-        ylims = (0, 1)))
+        ylabel = "Fractional Concentration",
+        title = "Lung Gas Exchange"))
+
+display(plot(Sol, idxs=[Pulm_art.C.cO₂, Pulm_art.C.caO₂]))
 
 #### Direct from Solution Plots
 

@@ -1208,6 +1208,8 @@ end
     _sol_O₂ = sol_O₂ # Solubility of O₂ in blood (ml O₂/ml blood/mmHg)
     _Hgb_O₂_binding = Hgb_O₂_binding # Hemoglobin O₂ binding constant (ml O₂/ml blood/mmHg)
     _Hgb = Hgb # Hemoglobin concentration (g/dl)
+    _DlO₂ = DlO₂ # Diffusion coefficient of O₂ in blood (ml O₂/ml blood/mmHg)
+    _DlCO₂ = DlCO₂ # Diffusion coefficient of CO₂ in blood (ml CO₂/ml blood/mmHg)
   end
   @variables begin
 
@@ -1246,6 +1248,13 @@ end
     caO₂(t) # O₂ concentration in the arterial blood (ml/ml) (output)
     caCO₂(t) # CO₂ concentration in the arterial blood (ml/ml) (output)
 
+    VrO₂p(t) # O₂ uptake (ml/s)
+    VrCO₂p(t) # CO₂ uptake (ml/s)
+    VrO₂d(t) # O₂ diffusion (ml/s)
+    VrCO₂d(t) # CO₂ diffusion (ml/s)
+    VrO₂(t) # O₂ uptake (ml/s)
+    VrCO₂(t) # CO₂ uptake (ml/s)
+
     # XaO₂(t) # O₂ saturation in the arterial blood (ml/ml)
     # XaCO₂(t) # CO₂ saturation in the arterial blood (ml/ml)
     # paO₂(t) # O₂ partial pressure in the arterial blood (mmHg)
@@ -1260,28 +1269,36 @@ end
     #### Conservation of mass equations
     D(FDO₂) ~ ifelse(Vrᵢₙ >= 0, Vrᵢₙ * (_FIO₂ - FDO₂), Vr_A * (FDO₂ - FAO₂)) / V_D
     D(FDCO₂) ~ ifelse(Vrᵢₙ >= 0, Vrᵢₙ * (_FICO₂ - FDCO₂), Vr_A * (FDCO₂ - FACO₂)) / V_D
-    D(FAO₂) ~ (ifelse(Vrᵢₙ >= 0, Vr_A * (FDO₂ - FAO₂),0) - _K * (qpa * (1 - _sh) * (cppO₂ - cvO₂) + Vpp * D(cppO₂))) / V_A
-    D(FACO₂) ~ (ifelse(Vrᵢₙ >= 0, Vr_A * (FDCO₂ - FACO₂),0) - _K * (qpa * (1 - _sh) * (cppCO₂ - cvCO₂) + Vpp * D(cppCO₂))) / V_A
+    D(FAO₂) ~ (ifelse(Vrᵢₙ >= 0, Vr_A * (FDO₂ - FAO₂),0) - VrO₂) / V_A
+    D(FACO₂) ~ (ifelse(Vrᵢₙ >= 0, Vr_A * (FDCO₂ - FACO₂),0) - VrCO₂) / V_A
     Vpp ~ (Vpa - v0pa) * (1 - sh) + v0pa
 
 
-    #### Dissociation equations
+    # #### Dissociation equations
     cppO₂ ~ _CₛₐₜO₂ * (XppO₂)^(1/_h₁)/(1 + (XppO₂)^(1/_h₁))
     XppO₂ ~ pppO₂ * (1 + _β₁ * pppCO₂) / (_K₁ * (1 + _α₁ * pppCO₂))
     cppCO₂ ~ _CₛₐₜCO₂ * (XppCO₂)^(1/_h₂)/(1 + (XppCO₂)^(1/_h₂))
     XppCO₂ ~ pppCO₂ * (1 + _β₂ * pppO₂) / (_K₂ * (1 + _α₂ * pppO₂))
 
-    #### Instantaneous equilibrium equations
+    # #### Instantaneous equilibrium equations
     p_AO₂ ~ pppO₂
     p_ACO₂ ~ pppCO₂
+
+    VrO₂p ~ qpp * (cppO₂ - cvO₂)
+    VrCO₂p ~ qpp * (cppCO₂ - cvCO₂)
+    VrO₂d ~ _DlO₂ * (p_AO₂ - pppO₂)
+    VrCO₂d ~ _DlCO₂ * (p_ACO₂ - pppCO₂)
+
+    VrO₂ ~ min(VrO₂p, VrO₂d)
+    VrCO₂ ~ min(VrCO₂p, VrCO₂d)
 
     #### Gas fraction to partial pressure relationships
     p_AO₂ ~ FAO₂ * (_pₐₜₘ - _p_ws)
     p_ACO₂ ~ FACO₂ * (_pₐₜₘ - _p_ws)
 
     #### Mixing between capillary and shunted blood
-    caO₂ ~ (qpp * cppO₂ + qps * cvO₂) / (qpp + qps)
-    caCO₂ ~ (qpp * cppCO₂ + qps * cvCO₂) / (qpp + qps)
+    caO₂ ~ (1 - _sh) * cppO₂ + _sh * cvO₂
+    caCO₂ ~ (1 - _sh) * cppCO₂ + _sh * cvCO₂
 
     qpp ~ qpa * (1 - _sh)
     qps ~ qpa * _sh
