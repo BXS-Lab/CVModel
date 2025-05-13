@@ -363,13 +363,13 @@ Note: due to complexity this is composed as a @component and not a @mtkmodel. It
       D(out.cCO₂) ~ (in.q * (cCO₂ - out.cCO₂) + MCO₂) / (V + Vₜ),
     ])
   elseif is_pulmonary
-    push!(sts, (@variables cvO₂(t))[1])
-    push!(sts, (@variables cvCO₂(t))[1])
     push!(sts, (@variables caO₂(t))[1])
     push!(sts, (@variables caCO₂(t))[1])
     append!(eqs, [
-      cvO₂ ~ in.cO₂,
-      cvCO₂ ~ in.cCO₂,
+      in.cO₂ ~ instream(in.cO₂),
+      cO₂ ~ in.cO₂,
+      in.cCO₂ ~ instream(in.cCO₂),
+      cCO₂ ~ in.cCO₂,
       out.cO₂ ~ caO₂,
       out.cCO₂ ~ caCO₂,
     ])
@@ -1286,11 +1286,11 @@ end
     qpp ~ qpa * (1 - sh)
     qps ~ qpa * sh
 
-    #### O₂ saturation in arterial blood
-    caO₂ ~ CₛₐₜO₂ * (XaO₂)^(1/h₁)/(1 + (XaO₂)^(1/h₁))
-    XaO₂ ~ paO₂ * (1 + β₁ * paCO₂) / (K₁ * (1 + α₁ * paCO₂))
-    caCO₂ ~ CₛₐₜCO₂ * (XaCO₂)^(1/h₂)/(1 + (XaCO₂)^(1/h₂))
-    XaCO₂ ~ paCO₂ * (1 + β₂ * paO₂) / (K₂ * (1 + α₂ * paO₂))
-    SaO₂ ~ (caO₂ - paO₂ * sol_O₂) / (Hgb * Hgb_O₂_binding) * 100 # O₂ saturation in arterial blood (%)
+    # #### O₂ saturation in arterial blood
+    # caO₂ ~ CₛₐₜO₂ * (XaO₂)^(1/h₁)/(1 + (XaO₂)^(1/h₁))
+    # XaO₂ ~ paO₂ * (1 + β₁ * paCO₂) / (K₁ * (1 + α₁ * paCO₂))
+    # caCO₂ ~ CₛₐₜCO₂ * (XaCO₂)^(1/h₂)/(1 + (XaCO₂)^(1/h₂))
+    # XaCO₂ ~ paCO₂ * (1 + β₂ * paO₂) / (K₂ * (1 + α₂ * paO₂))
+    # SaO₂ ~ (caO₂ - paO₂ * sol_O₂) / (Hgb * Hgb_O₂_binding) * 100 # O₂ saturation in arterial blood (%)
   end
 end

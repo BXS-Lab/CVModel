@@ -227,16 +227,18 @@ circ_eqs = [
   Pulm_cap.pₐₗᵥ ~ Lungs.p_A,
   Intrathoracic.pₚₗ ~ Lungs.pₚₗ,
 
-  LungGE.Vrᵢₙ ~ Lungs.Vrᵢₙ,
-  LungGE.Vr_A ~ Lungs.Vr_A,
-  LungGE.V_D ~ Lungs.V_D,
-  LungGE.V_A ~ Lungs.V_A,
-  LungGE.qpa ~ Pulm_art.q,
-  LungGE.Vpa ~ Pulm_art.C.V,
-  LungGE.cvO₂ ~ Pulm_art.C.cvO₂,
-  LungGE.cvCO₂ ~ Pulm_art.C.cvCO₂,
-  LungGE.caO₂ ~ Pulm_art.C.caO₂,
-  LungGE.caCO₂ ~ Pulm_art.C.caCO₂,
+#   LungGE.Vrᵢₙ ~ Lungs.Vrᵢₙ,
+#   LungGE.Vr_A ~ Lungs.Vr_A,
+#   LungGE.V_D ~ Lungs.V_D,
+#   LungGE.V_A ~ Lungs.V_A,
+#   LungGE.qpa ~ Pulm_art.q,
+#   LungGE.Vpa ~ Pulm_art.C.V,
+#   LungGE.cvO₂ ~ Pulm_art.C.in.cO₂,
+#   LungGE.cvCO₂ ~ Pulm_art.C.in.cCO₂,
+#   LungGE.caO₂ ~ Pulm_art.C.out.cO₂,
+#   LungGE.caCO₂ ~ Pulm_art.C.out.cCO₂,
+  Pulm_art.C.cO₂ ~ Pulm_art.C.caO₂,
+  Pulm_art.C.cCO₂ ~ Pulm_art.C.caCO₂,
 
   #### Interstitial Connections (Direct Connections)
   Splanchnic_vein.C.qint ~ Interstitial.Qint,
@@ -377,7 +379,7 @@ This section of the code composes the system of ordinary differential equations 
   ABRafferent, abr_αr, abr_αv, abr_β, abr_para, # Arterial Baroreflex
   CPRafferent, cpr_αr, cpr_αv, # Cardiopulmonary Reflex
   alpha_driver, gravity_driver, lbnp_driver, # Design of Experiments Drivers
-  Lungs, RespMuscles, LungGE # Lung Model Breathing ChestWall
+  Lungs, RespMuscles#, LungGE # Lung Model Breathing ChestWall
   ])
 
 circ_sys = structural_simplify(circ_model)
