@@ -5,7 +5,13 @@ BXS Lab, UC Davis; Authors: RS Whittle, AJ Kondoor, HS Vellore
 Contact info: Dr. Rich Whittle – Department of Mechanical and Aerospace Engineering, UC Davis, One Shields Ave, Davis CA 95616 (rswhittle@ucdavis.edu)
 This model is a simulation of the human cardiovascular system, including a four chamber heart, arteries, veins, and microcirculation. It includes reflex control for the arterial baroreflex (ABR) and cardiopulmonary reflex (CPR), as well as hydrostatic effects, interstitial fluid flow, and external tissue pressures. The model is designed to simulate various physiological scenarios, including a tilt angle protocol, altered-gravity environment, and lower body negative pressure (LBNP) protocol. The underlying equations are based on the work of Heldt (2004), Zamanian (2007), Diaz Artiles (2015), and Whittle (2023). The model is implemented using the ModelingToolkit.jl package in Julia.
 """
-### TODO: (1) Collapse in vessels (2) Bring Intrathoracic Pressure into Lung Model
+### TODO: CV Model:            (1) Collapse in vessels, (2) Vertebral Plexus
+### TODO: Pulmonary Mechanics: (1) Bring Intrathoracic Pressure into Lung Model
+### TODO: Lung Gas Exchange:   (1) Improve fidelity (https://github.com/baillielab/oxygen_delivery/blob/master/oxygen_delivery.py)
+### TODO: Tissue Gas Exchange: (1) Check values
+### TODO: Respiratory Control: (1) Central Chemoreceptors, (2) Peripheral Chemoreceptors
+### TODO: CV Control:          (1) Autoregulation, (2) CNS Ischemic Response, (3) Peripheral Chemoreceptors, (4) Lung Stretch Receptors
+### TODO: Simulation:          (1) Exercise Model, (2) Other blood parameters (e.g., pH etc.), (3) Altitude, pressure, temperature driver; water vapor etc.
 
 module CVModel
 display("Cardiovascular Model v3.1.2 (May 11th, 2025) - BXS Lab, UC Davis")
@@ -149,6 +155,8 @@ This section of code instances the compartments used in the model, based on the 
 @named Asc_A_Junc = Junction3()
 @named BC_A_Junc = Junction2()
 @named Abd_A_Junc = Junction3()
+
+@named CentralResp = CentralChemoreceptors(Delay = Dc, Gain_cA = G_cA, Gain_cf = G_cf, set_point = paCO₂_set, time_cA = τ_cA, time_cf = τ_cf, delay_order = reflex_delay_order)
 
 """
 Structural Connections
@@ -360,7 +368,10 @@ circ_eqs = [
   RA.τ ~ SA.RR_held,
   RV.τ ~ SA.RR_held,
   LA.τ ~ SA.RR_held,
-  LV.τ ~ SA.RR_held
+  LV.τ ~ SA.RR_held,
+
+  #### Respiratory Reflex Afferents (Sensed Pressures)
+  CentralResp.u ~ LungGE.paCO₂
 ]
 
 """
@@ -381,7 +392,8 @@ This section of the code composes the system of ordinary differential equations 
   ABRafferent, abr_αr, abr_αv, abr_β, abr_para, # Arterial Baroreflex
   CPRafferent, cpr_αr, cpr_αv, # Cardiopulmonary Reflex
   alpha_driver, gravity_driver, lbnp_driver, # Design of Experiments Drivers
-  Lungs, RespMuscles, LungGE # Lung Model Breathing ChestWall
+  Lungs, RespMuscles, LungGE, # Lung Model Breathing ChestWall
+  CentralResp
   ])
 
 circ_sys = structural_simplify(circ_model)
@@ -585,12 +597,16 @@ u0 = [
   RA.out.cCO₂ => 0.514,
   RV.out.cCO₂ => 0.514,
 
+  #### Lung Fractional Concentrations
   LungGE.FDO₂ => FIO₂,
   LungGE.FDCO₂ => FICO₂,
   LungGE.FAO₂ => FIO₂,
-  LungGE.FACO₂ => FICO₂
-#   LungGE.pppO₂ => FIO₂ * (pₐₜₘ - p_ws),
-#   LungGE.pppCO₂ => FICO₂ * (pₐₜₘ - p_ws)
+  LungGE.FACO₂ => FICO₂,
+
+  #### Respiratory Control
+  CentralResp.delay.x => reflex_delay_init,
+  CentralResp.y_A => 0.0,
+  CentralResp.y_f => 0.0,
 ]
 
 """
@@ -634,7 +650,7 @@ display(plot(Sol, idxs=[LungGE.p_ACO₂, LungGE.paCO₂, LungGE.cvCO₂],
         ylabel = "Fractional Concentration",
         title = "Lung Gas Exchange"))
 
-display(plot(Sol, idxs=[LungGE.paCO₂, LungGE.paO₂]))
+display(plot(Sol, idxs=[CentralResp.y_f]))
 
 #### Direct from Solution Plots
 
