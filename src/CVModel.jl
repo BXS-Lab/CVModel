@@ -156,7 +156,8 @@ This section of code instances the compartments used in the model, based on the 
 @named BC_A_Junc = Junction2()
 @named Abd_A_Junc = Junction3()
 
-@named CentralResp = CentralChemoreceptors(Delay = Dc, Gain_cA = G_cA, Gain_cf = G_cf, set_point = paCO₂_set, time_cA = τ_cA, time_cf = τ_cf, delay_order = reflex_delay_order)
+@named CentralResp = CentralChemoreceptors()
+@named PeripheralResp = PeripheralChemoreceptors1stStage()
 
 """
 Structural Connections
@@ -371,7 +372,9 @@ circ_eqs = [
   LV.τ ~ SA.RR_held,
 
   #### Respiratory Reflex Afferents (Sensed Pressures)
-  CentralResp.u ~ LungGE.paCO₂
+  CentralResp.u ~ LungGE.paCO₂,
+  PeripheralResp.uSaO₂ ~ LungGE.SaO₂,
+  PeripheralResp.ucaCO₂ ~ LungGE.caCO₂
 ]
 
 """
@@ -393,7 +396,7 @@ This section of the code composes the system of ordinary differential equations 
   CPRafferent, cpr_αr, cpr_αv, # Cardiopulmonary Reflex
   alpha_driver, gravity_driver, lbnp_driver, # Design of Experiments Drivers
   Lungs, RespMuscles, LungGE, # Lung Model Breathing ChestWall
-  CentralResp
+  CentralResp, PeripheralResp
   ])
 
 circ_sys = structural_simplify(circ_model)
@@ -607,6 +610,8 @@ u0 = [
   CentralResp.delay.x => reflex_delay_init,
   CentralResp.y_A => 0.0,
   CentralResp.y_f => 0.0,
+  PeripheralResp.ϕCO₂dyn => 0.0,
+  PeripheralResp.ϕc => 0.0,
 ]
 
 """
@@ -650,7 +655,7 @@ display(plot(Sol, idxs=[LungGE.p_ACO₂, LungGE.paCO₂, LungGE.cvCO₂],
         ylabel = "Fractional Concentration",
         title = "Lung Gas Exchange"))
 
-display(plot(Sol, idxs=[CentralResp.y_f]))
+display(plot(Sol, idxs=[PeripheralResp.fc]))
 
 #### Direct from Solution Plots
 

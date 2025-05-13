@@ -147,15 +147,15 @@ end
 
 @mtkmodel CentralChemoreceptors begin
   @parameters begin
-    Delay = 1.0
-    Gain_cA = 1.0
-    Gain_cf = 1.0
-    set_point = 1.0
-    time_cA = 1.0
-    time_cf = 1.0
+    Delay = Dc
+    Gain_cA = G_cA
+    Gain_cf = G_cf
+    set_point = paCO₂_set
+    time_cA = τ_cA
+    time_cf = τ_cf
   end
   @structural_parameters begin
-    delay_order = 5
+    delay_order = reflex_delay_order
   end
   @variables begin
     u(t)
@@ -187,6 +187,7 @@ end
   end
   @variables begin
     uSaO₂(t)
+    ucaCO₂(t)
     xO₂(t)
     ϕO₂(t)
     ϕCO₂(t)
