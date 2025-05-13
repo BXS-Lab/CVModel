@@ -1260,7 +1260,7 @@ end
     # paO₂(t) # O₂ partial pressure in the arterial blood (mmHg)
     # paCO₂(t) # CO₂ partial pressure in the arterial blood (mmHg)
 
-    # SaO₂(t) # O₂ saturation in the arterial blood (%)
+    SppO₂(t) # O₂ saturation in the arterial blood (%)
 
 
   end
@@ -1304,10 +1304,13 @@ end
     qps ~ qpa * _sh
 
     #### O₂ saturation in arterial blood
-    # caO₂ ~ CₛₐₜO₂ * (XaO₂)^(1/h₁)/(1 + (XaO₂)^(1/h₁))
-    # XaO₂ ~ paO₂ * (1 + β₁ * paCO₂) / (K₁ * (1 + α₁ * paCO₂))
-    # caCO₂ ~ CₛₐₜCO₂ * (XaCO₂)^(1/h₂)/(1 + (XaCO₂)^(1/h₂))
+    # XaO₂ ~ (caO₂ / (CₛₐₜO₂ - caO₂))^h₁
+    # # XaO₂ ~ paO₂ * (1 + β₁ * paCO₂) / (K₁ * (1 + α₁ * paCO₂))
+    # XaCO₂ ~ (caCO₂ / (CₛₐₜCO₂ - caCO₂))^h₂
+    # # caCO₂ ~ CₛₐₜCO₂ * (XaCO₂)^(1/h₂)/(1 + (XaCO₂)^(1/h₂))
+
     # XaCO₂ ~ paCO₂ * (1 + β₂ * paO₂) / (K₂ * (1 + α₂ * paO₂))
-    # SaO₂ ~ (caO₂ - paO₂ * sol_O₂) / (Hgb * Hgb_O₂_binding) * 100 # O₂ saturation in arterial blood (%)
+    # XaO₂ ~ paO₂ * (1 + β₁ * paCO₂) / (K₁ * (1 + α₁ * paCO₂))
+    SppO₂ ~ (cppO₂ - pppO₂ * sol_O₂) / (Hgb * Hgb_O₂_binding) * 100 # O₂ saturation in arterial blood (%)
   end
 end
