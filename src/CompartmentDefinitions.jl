@@ -1258,12 +1258,10 @@ end
   @equations begin
 
     #### Conservation of mass equations
-    D(FDO₂) ~ (0.5 * (1 + tanh(100 * Vrᵢₙ)) * Vrᵢₙ * (_FIO₂ - FDO₂) +
-           0.5 * (1 - tanh(100 * Vrᵢₙ)) * Vr_A * (FDO₂ - FAO₂)) / V_D
-    D(FDCO₂) ~ (0.5 * (1 + tanh(100 * Vrᵢₙ)) * Vrᵢₙ * (_FICO₂ - FDCO₂) +
-           0.5 * (1 - tanh(100 * Vrᵢₙ)) * Vr_A * (FDCO₂ - FACO₂)) / V_D
-    D(FAO₂) ~ (0.5 * (1 + tanh(100 * Vrᵢₙ)) * Vr_A * (FDO₂ - FAO₂) - _K * (qpa * (1 - _sh) * (cppO₂ - cvO₂) + Vpp * D(cppO₂))) / V_A
-    D(FACO₂) ~ (0.5 * (1 + tanh(100 * Vrᵢₙ)) * Vr_A * (FDCO₂ - FACO₂) - _K * (qpa * (1 - _sh) * (cppCO₂ - cvCO₂) + Vpp * D(cppCO₂))) / V_A
+    D(FDO₂) ~ ifelse(Vrᵢₙ >= 0, Vrᵢₙ * (_FIO₂ - FDO₂), Vr_A * (FDO₂ - FAO₂)) / V_D
+    D(FDCO₂) ~ ifelse(Vrᵢₙ >= 0, Vrᵢₙ * (_FICO₂ - FDCO₂), Vr_A * (FDCO₂ - FACO₂)) / V_D
+    D(FAO₂) ~ (ifelse(Vrᵢₙ >= 0, Vr_A * (FDO₂ - FAO₂),0) - _K * (qpa * (1 - _sh) * (cppO₂ - cvO₂) + Vpp * D(cppO₂))) / V_A
+    D(FACO₂) ~ (ifelse(Vrᵢₙ >= 0, Vr_A * (FDCO₂ - FACO₂),0) - _K * (qpa * (1 - _sh) * (cppCO₂ - cvCO₂) + Vpp * D(cppCO₂))) / V_A
     Vpp ~ (Vpa - v0pa) * (1 - sh) + v0pa
 
 
