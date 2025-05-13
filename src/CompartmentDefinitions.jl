@@ -256,7 +256,7 @@ The has_abr and has_cpr flags introduce extra variables Vabr and Vcpr, which rep
 Note: due to complexity this is composed as a @component and not a @mtkmodel. It makes no difference to the user.
 """
 
-@component function Compliance(; name, V₀=0.0, C=1.0, inP=false, has_ep=false, has_variable_ep=false, p₀=0.0, is_nonlinear=false, Flow_div = 1/3, V_max=1.0, V_min=0.0, has_abr=false, has_cpr=false, has_gasexchange=false, Vₜ=0.0, MO₂=0.0, MCO₂=0.0, is_pulmonary=false)
+@component function Compliance(; name, V₀=0.0, C=1.0, inP=false, has_ep=false, has_variable_ep=false, p₀=0.0, is_nonlinear=false, Flow_div = 1/3, V_max=1.0, V_min=0.0, has_abr=false, has_cpr=false, has_gasexchange=false, Vₜ=0.0, MO₂=0.0, RQ=0.84, is_pulmonary=false)
   @named in = Pin() # Input pin
   @named out = Pin() # Output pin
 
@@ -353,14 +353,14 @@ Note: due to complexity this is composed as a @component and not a @mtkmodel. It
   if has_gasexchange
     push!(ps, (@parameters Vₜ = Vₜ)[1])
     push!(ps, (@parameters MO₂ = MO₂)[1])
-    push!(ps, (@parameters MCO₂ = MCO₂)[1])
+    push!(ps, (@parameters RQ = RQ)[1])
     append!(eqs, [
       cO₂ ~ in.cO₂,
       in.cO₂ ~ instream(in.cO₂),
       D(out.cO₂) ~ (in.q * (cO₂ - out.cO₂) - MO₂) / (V + Vₜ),
       cCO₂ ~ in.cCO₂,
       in.cCO₂ ~ instream(in.cCO₂),
-      D(out.cCO₂) ~ (in.q * (cCO₂ - out.cCO₂) + MCO₂) / (V + Vₜ),
+      D(out.cCO₂) ~ (in.q * (cCO₂ - out.cCO₂) + MO₂ * RQ) / (V + Vₜ),
     ])
   elseif is_pulmonary
     push!(sts, (@variables caO₂(t))[1])
@@ -612,7 +612,7 @@ This model represents an arterial compartment. It is a lumped compartment consis
     has_gasexchange=false
     Vₜ=0.0
     MO₂=0.0
-    MCO₂=0.0
+    RQ=RQ₀
     is_pulmonary=false
   end
 
@@ -639,7 +639,7 @@ This model represents an arterial compartment. It is a lumped compartment consis
     else
       R = Resistor(R=R)
     end
-    C = Compliance(V₀=V₀, C=C, inP=true, has_ep=true, has_variable_ep=true, p₀=p₀, is_nonlinear=false, has_gasexchange=has_gasexchange, Vₜ=Vₜ, MO₂=MO₂, MCO₂=MCO₂, is_pulmonary=is_pulmonary)
+    C = Compliance(V₀=V₀, C=C, inP=true, has_ep=true, has_variable_ep=true, p₀=p₀, is_nonlinear=false, has_gasexchange=has_gasexchange, Vₜ=Vₜ, MO₂=MO₂, RQ=RQ, is_pulmonary=is_pulmonary)
     if has_hydrostatic
       Ph = HydrostaticPressure(ρ=ρ, g=g, h=h, con=con)
     end

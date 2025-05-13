@@ -470,15 +470,8 @@ MO₂_renal = MO₂_rem / (1 + MO₂_spes_rat) # Renal O₂ consumption rate (ml
 MO₂_splanchnic = MO₂_renal * MO₂_spes_rat # Splanchnic O₂ consumption rate (ml/s)
 
 #### Tissue CO₂ Production Rate
-RQ = 0.84 # Respiratory Quotient (CO₂ produced / O₂ consumed)
-MCO₂_total = MO₂_total * RQ # Total CO₂ production rate (ml/min)
-
-MCO₂_brain = MO₂_brain * RQ # Brain CO₂ production rate (ml/s)
-MCO₂_heart = MO₂_heart * RQ # Heart CO₂ production rate (ml/s)
-MCO₂_splanchnic = MO₂_splanchnic * RQ # Splanchnic CO₂ production rate (ml/s)
-MCO₂_renal = MO₂_renal * RQ # Renal CO₂ production rate (ml/s)
-MCO₂_ub = MO₂_ub * RQ # Upper body (skeletal muscle) CO₂ production rate (ml/s)
-MCO₂_legs = MO₂_legs * RQ # Leg (skeletal muscle) CO₂ production rate (ml/s)
+RQ₀ = 0.84 # Respiratory Quotient (CO₂ produced / O₂ consumed)
+MCO₂_total = MO₂_total * RQ₀ # Total CO₂ production rate (ml/min)
 
 """
 Lung Gas Exchange Model
