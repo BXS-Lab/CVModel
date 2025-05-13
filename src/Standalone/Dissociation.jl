@@ -76,7 +76,7 @@ function pressure2conc(pO₂, pCO₂; CₛₐₜO₂=(9*0.0227), CₛₐₜCO₂
 end
 
 # Example usage:
-a, b = pressure2conc(75, 45)
+a, b = pressure2conc(40, 45)
 println("cO₂: ", a)
 println("cCO₂: ", b)
 
