@@ -144,3 +144,30 @@ The TransferFunction component implements a transfer function that models the re
     y ~ tfdelay.y + tfpeak.y + tfend.y
   end
 end
+
+@mtkmodel CentralChemoreceptors begin
+  @parameters begin
+    Delay = 1.0
+    Gain_cA = 1.0
+    Gain_cf = 1.0
+    set_point = 1.0
+    time_cA = 1.0
+    time_cf = 1.0
+  end
+  @structural_parameters begin
+    delay_order = 5
+  end
+  @variables begin
+    u(t)
+    y_A(t)
+    y_f(t)
+  end
+  @components begin
+    delay = PadeDelay(τ=Delay, n=delay_order)
+  end
+  @equations begin
+    u ~ delay.u
+    D(y_A) ~ (-y_A + Gain_cA * (delay.y - set_point)) / time_cA
+    D(y_f) ~ (-y_f + Gain_cf * (delay.y - set_point)) / time_cf
+  end
+end

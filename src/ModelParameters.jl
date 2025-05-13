@@ -512,6 +512,17 @@ DmCO₂ =  20 * DmO₂# CO₂ diffusion coefficient ml/s/mmHg
 DlCO₂ = DmCO₂
 DlO₂ = DmO₂
 
+"""
+Central Chemoreceptors
+"""
+
+Dc = 8.0 # Central chemoreceptor delay (s)
+G_cA = 850 * cmH2O2mmHg # Central chemoreceptor amplitude gain (mmHg/mmHg)
+G_cf = 0.9 # Central chemoreceptor frequency gain (breaths/min/mmHg)
+paCO₂_set = 40.0 # Set point for paCO₂ (mmHg)
+τ_cA = 105 # Amplitude time constant for central chemoreceptors (s)
+τ_cf = 400 # Frequency time constant for central chemoreceptors (s)
+
 for name in names(@__MODULE__; all=true, imported=false)
   # Only export if it's not a function or macro and is defined
   if isdefined(@__MODULE__, name) && !(name in (:eval, :include, :__doc__)) && !(name in names(Base))
