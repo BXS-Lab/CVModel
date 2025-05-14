@@ -19,6 +19,8 @@ cmH2O2mmHg = 0.73555912 # Conversion factor from cmH2O to mmHg
 p₀ = 0.0 # Atmospheric pressure (mmHg)
 pₚₗ₀ = -5.0 * cmH2O2mmHg # Initial Pleural pressure (mmHg)
 
+p_col = 5.0 # Vascular Collapsing Pressure (negative) (mmHg)
+
 """
 Segment Pressures
 These parameters define the external static pressures on different segments of the cardiovascular system.

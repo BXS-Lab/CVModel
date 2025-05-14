@@ -28,11 +28,11 @@ Tilt Angle Protocol (α in radians)
   end
 
   @equations begin
-    α ~ 0.0
-    # α ~ ifelse(t < t_ramp_start, α_min,
-    #      ifelse(t < t_ramp_end,
-    #      α_min + (α_max - α_min) * (t - t_ramp_start) / (t_ramp_end - t_ramp_start),
-    #        α_max))
+    # α ~ 0.0
+    α ~ ifelse(t < t_ramp_start, α_min,
+         ifelse(t < t_ramp_end,
+         α_min + (α_max - α_min) * (t - t_ramp_start) / (t_ramp_end - t_ramp_start),
+           α_max))
   end
 end
 

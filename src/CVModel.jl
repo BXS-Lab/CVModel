@@ -112,7 +112,7 @@ This section of code instances the compartments used in the model, based on the 
 @named Abd_veins = Vein(C=C_Abd_veins, R=R_Abd_veins, V₀=v0_Abd_veins, h=h_Abd_veins, is_nonlinear=true, Flow_div = Flow_Abd_veins, V_max=vM_Abd_vein, rad=rad_Abd)
 @named Thor_IVC = Vein(C=C_Thor_IVC, R=R_Thor_IVC, V₀=v0_Thor_IVC, h=h_Thor_IVC, has_tissue=false)
 @named Head_veins = Vein(C=C_Head_veins, R=R_Head_veins, V₀=v0_Head_veins, h=h_Head_veins, rad=rad_Head)
-@named Jugular_vein = Vein(C=C_Jugular_vein, R=R_Jugular_vein, V₀=v0_Jugular_vein, h=h_Jugular_vein, rad=rad_Neck)
+@named Jugular_vein = Vein(C=C_Jugular_vein, R=R_Jugular_vein, V₀=v0_Jugular_vein, h=h_Jugular_vein, has_tissue=false)
 
 #### Microcirculation
 @named UpBd_cap = VarResistor()
@@ -652,13 +652,7 @@ This section of the code solves the ODE system. The time span and save interval 
 
 prob = ODEProblem(circ_sys, u0, tspan)
 
-function terminate_on_nan(u, t, integrator)
-    any(x -> !isfinite(x), u)
-end
-
-cb = DiscreteCallback(terminate_on_nan, terminate!)
-
-@time Sol = solve(prob, Tsit5(), callback=cb, reltol=1e-10, abstol=1e-12, maxiters=1e8)#, saveat=Start_time:Time_step:Stop_time)
+@time Sol = solve(prob, Tsit5(), reltol=1e-10, abstol=1e-12, maxiters=1e8, saveat=Start_time:Time_step:Stop_time)
 # For a discussion on the solver choice, see: https://docs.sciml.ai/DiffEqDocs/stable/solvers/ode_solve/
 # Previously used KenCarp4() which incorporates a stiffness detection and auto-switching algorithm. Tsit5() is the default choice and faster.
 
@@ -704,12 +698,12 @@ display(plot(Sol, idxs=[Head_cap.R],
         ylabel = "Fractional Concentration",
         title = "Lung Gas Exchange"))
 
-display(plot(Sol, idxs=[Jugular_vein.C.V],
+display(plot(Sol, idxs=[Jugular_vein.pₜₘ, Jugular_vein.C.V],
         xlims = (110, 130),
-        label = ["cO₂"],
+        label = ["JV Transmural Pressure" "JV Volume"],
         xlabel = "Time (s)",
-        ylabel = "Fractional Concentration",
-        title = "Lung Gas Exchange"))
+        ylabel = "Pressure (mmHg), Volume (ml)",
+        title = "Jugular Vein Hemodynamics"))
 
 display(plot(Sol, idxs=[(60/RespMuscles.BreathInt_held)]))
 

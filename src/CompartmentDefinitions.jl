@@ -256,7 +256,7 @@ The has_abr and has_cpr flags introduce extra variables Vabr and Vcpr, which rep
 Note: due to complexity this is composed as a @component and not a @mtkmodel. It makes no difference to the user.
 """
 
-@component function Compliance(; name, V₀=0.0, C=1.0, inP=false, has_ep=false, has_variable_ep=false, p₀=0.0, is_nonlinear=false, Flow_div = 1/3, V_max=1.0, V_min=0.0, has_abr=false, has_cpr=false, has_gasexchange=false, Vₜ=0.0, MO₂=0.0, RQ=0.84, is_pulmonary=false)
+@component function Compliance(; name, V₀=0.0, C=1.0, inP=false, has_ep=false, has_variable_ep=false, p₀=0.0, is_nonlinear=false, Flow_div = 1/3, V_max=1.0, V_min=0.0, has_abr=false, has_cpr=false, has_gasexchange=false, Vₜ=0.0, MO₂=0.0, RQ=0.84, is_pulmonary=false, pcol=p_col)
   @named in = Pin() # Input pin
   @named out = Pin() # Output pin
 
@@ -316,6 +316,9 @@ Note: due to complexity this is composed as a @component and not a @mtkmodel. It
   else
     append!(eqs, [V₀eff ~ V₀])
   end
+
+  push!(sts, (@variables Cneg(t))[1])
+append!(eqs, [Cneg ~ V₀eff / pcol])
 
   if is_nonlinear # Here are the nonlinear versions of the equations (including Qint)
     push!(sts, (@variables qint(t))[1])
