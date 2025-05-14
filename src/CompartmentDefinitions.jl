@@ -698,8 +698,6 @@ This model represents an arterial compartment. It is a lumped compartment consis
     out = Pin()
     ep = PresPin()
 
-    # Rc1 = VesselCollapse()
-
     if has_valve
       R = VesselCollapseDiode(R₀=R)
     else
@@ -739,11 +737,7 @@ This model represents an arterial compartment. It is a lumped compartment consis
       Δp_Ph ~ 0  # no pressure drop if Ph is disabled
     end
     connect(C.out, out)
-    # connect(C.out, Rc1.in)
-    # connect(Rc1.out, out)
-    # Rc1.V ~ C.V
     R.V ~ C.V
-    # Rc1.V₀ ~ C.V₀eff
     R.V₀ ~ C.V₀eff
     if has_tissue
       connect(C.ep, Pt.out)
@@ -811,7 +805,6 @@ This model represents a venous compartment. It is a lumped compartment consistin
     in = Pin()
     out = Pin()
     ep = PresPin()
-    # Rc1 = VesselCollapse()
 
     C = Compliance(V₀=V₀, C=C, inP=true, has_ep=true, has_variable_ep=true, p₀=p₀, is_nonlinear=is_nonlinear, V_max=V_max, V_min=V_min, Flow_div=Flow_div, has_cpr=has_cpr, has_abr=has_abr)
 
@@ -836,8 +829,6 @@ This model represents a venous compartment. It is a lumped compartment consistin
     cO₂ ~ in.cO₂
     cCO₂ ~ in.cCO₂
     connect(in, C.in)
-    # connect(in, Rc1.in)
-    # connect(Rc1.out, C.in)
     connect(C.out, has_hydrostatic ? Ph.in : R.in)
 
     if has_tissue
@@ -868,9 +859,7 @@ This model represents a venous compartment. It is a lumped compartment consistin
     end
 
     connect(R.out, out)
-    # Rc1.V ~ C.V
     R.V ~ C.V
-    # Rc1.V₀ ~ C.V₀eff
     R.V₀ ~ C.V₀eff
     Δp_R ~ R.Δp
     pₜₘ ~ C.pₜₘ
