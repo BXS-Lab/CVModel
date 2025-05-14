@@ -398,14 +398,14 @@ append!(eqs, [Cneg ~ V₀eff / pcol])
     if inP # Linear in pressure
       append!(eqs, [
         # Cvar ~ C,
-        # Cvar ~ ifelse((p - p_rel) > 0, C, Cneg),
-        V ~ (p - p_rel) * C + V₀eff,
-        D(p) ~ (in.q + out.q - D(V₀eff)) * 1 / C + D(p_rel)
+        Cvar ~ ifelse((p - p_rel) > 0, C, Cneg),
+        V ~ (p - p_rel) * Cvar + V₀eff,
+        D(p) ~ (1 / Cvar) * (in.q + out.q - D(V₀eff)) + D(p_rel) - 1/Cvar^2 * D(Cvar) * (V - V₀eff)
       ])
     else # Linear in volume
       append!(eqs, [
-        # Cvar ~ ifelse((V - V₀eff) > 0, C, Cneg),
-        p ~ (V - V₀eff) / C + p_rel,
+        Cvar ~ ifelse((V - V₀eff) > 0, C, Cneg),
+        p ~ (V - V₀eff) / Cvar + p_rel,
         D(V) ~ in.q + out.q
       ])
     end
