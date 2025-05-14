@@ -138,6 +138,7 @@ The Resistor model extends the One Port model and represents a simple resistive 
   end
 end
 
+
 """
 Variable Resistor
 The Variable Resistor model extends the One Port model and represents a resistive element with a time-varying resistance. The resistance (mmHg*s/ml = PRU) is defined as a function of time, R(t), and can be externally controlled. Note that the equation is reversed such that q is the dependent variable and Δp is the independent variable. This is done to avoid difficulties with the structural simplify during implementation.
@@ -155,6 +156,45 @@ The Variable Resistor model extends the One Port model and represents a resistiv
   end
 end
 
+@mtkmodel VesselCollapseVein begin
+  @extend OnePort()
+  @parameters begin
+    R₀ = 1e-6
+    ε = 1e-5
+    Rₕᵢ = 1000
+  end
+  @variables begin
+    R(t) # Time-varying resistance
+    V(t) # Time-varying volume
+    V₀(t)
+  end
+
+  @equations begin
+    R ~ R₀ + Rₕᵢ * exp(log(ε/Rₕᵢ)*(V/V₀))
+    q ~ -Δp / R
+  end
+end
+
+@mtkmodel VesselCollapseArtery begin
+  @extend OnePort()
+  @parameters begin
+    R₀ = 1e-6
+    ε = 1e-5
+    Rₕᵢ = 1000
+  end
+  @variables begin
+    R(t) # Time-varying resistance
+    V(t) # Time-varying volume
+    V₀(t)
+  end
+
+  @equations begin
+    R ~ R₀ + Rₕᵢ * exp(log(ε/Rₕᵢ)*(V/V₀))
+    Δp ~ -q * R
+  end
+end
+
+
 """
 Resistor Diode
 The Resistor Diode model extends the One Port model and represents a resistive element with a diode-like behavior (e.g., a valve). The resistance (mmHg*s/ml = PRU) is defined as a static parameter R, and the flow set to zero when the pressure difference is negative.
@@ -169,6 +209,26 @@ The Resistor Diode model extends the One Port model and represents a resistive e
     q ~ -Δp / R * (Δp < 0)
   end
 end
+
+@mtkmodel VesselCollapseDiode begin
+  @extend OnePort()
+  @parameters begin
+    R₀ = 1e-6
+    ε = 1e-5
+    Rₕᵢ = 1000
+  end
+  @variables begin
+    R(t) # Time-varying resistance
+    V(t) # Time-varying volume
+    V₀(t)
+  end
+
+  @equations begin
+    R ~ R₀ + Rₕᵢ * exp(log(ε/Rₕᵢ)*(V/V₀))
+    q ~ -Δp / R * (Δp < 0)
+  end
+end
+
 
 """
 Starling Lung Resistor
@@ -638,9 +698,9 @@ This model represents an arterial compartment. It is a lumped compartment consis
     ep = PresPin()
 
     if has_valve
-      R = ResistorDiode(R=R)
+      R = VesselCollapseDiode(R₀=R)
     else
-      R = Resistor(R=R)
+      R = VesselCollapseArtery(R₀=R)
     end
     C = Compliance(V₀=V₀, C=C, inP=true, has_ep=true, has_variable_ep=true, p₀=p₀, is_nonlinear=false, has_gasexchange=has_gasexchange, Vₜ=Vₜ, MO₂=MO₂, RQ=RQ, is_pulmonary=is_pulmonary)
     if has_hydrostatic
@@ -688,6 +748,8 @@ This model represents an arterial compartment. It is a lumped compartment consis
     end
     pₜₘ ~ C.pₜₘ
     Δp_R ~ R.Δp
+    R.V ~ C.V
+    R.V₀ ~ C.V₀eff
   end
 end
 
@@ -750,9 +812,9 @@ This model represents a venous compartment. It is a lumped compartment consistin
     end
 
     if has_valve
-      R = ResistorDiode(R=R)
+      R = VesselCollapseDiode(R₀=R)
     else
-      R = Resistor(R=R)
+      R = VesselCollapseVein(R₀=R)
     end
     if has_tissue
       Pt = TissuePressure(ρ=ρt, rad=rad)
@@ -798,6 +860,8 @@ This model represents a venous compartment. It is a lumped compartment consistin
     connect(R.out, out)
     Δp_R ~ R.Δp
     pₜₘ ~ C.pₜₘ
+    R.V ~ C.V
+    R.V₀ ~ C.V₀eff
   end
 end
 
