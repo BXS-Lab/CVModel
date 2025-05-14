@@ -686,8 +686,6 @@ display(plot(Sol, idxs=[Vtotal],
         ylabel = "Volume (ml)",
         title = "Total Blood Volume")) # Debugging plot to quickly check volume conservation
 
-Sol[Vtotal][1]
-
 display(plot(Sol, idxs=[Head_cap.R]))
 
 display(plot(Sol, idxs=[Pulm_cap.out.cO₂, Cor_art.cO₂, Cor_vein.cO₂],
