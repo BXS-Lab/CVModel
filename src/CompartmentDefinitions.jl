@@ -268,6 +268,7 @@ Note: due to complexity this is composed as a @component and not a @mtkmodel. It
     V(t) # Time-varying volume (ml)
     p(t) # Time-varying pressure (mmHg)
     V₀eff(t) # Time-varying Effective zero-pressure volume (ml)
+    Cvar(t)
     cO₂(t) # Time-varying oxygen concentration (ml/ml)
     cCO₂(t) # Time-varying carbon dioxide concentration (ml/ml)
   end
@@ -322,29 +323,30 @@ append!(eqs, [Cneg ~ V₀eff / pcol])
 
   if is_nonlinear # Here are the nonlinear versions of the equations (including Qint)
     push!(sts, (@variables qint(t))[1])
-    push!(sts, (@variables Cvar(t))[1])
     if inP
       append!(eqs, [ # Nonlinear in pressure
-        Cvar ~ C / (1 + ((π * C) / (2 * V_max))^2 * (p - p_rel)^2), # Effective instantaneous compliance (ml/mmHg)
-        V ~ V₀eff + (2 * V_max / π) * atan((π * C / (2 * V_max)) * (p - p_rel)),
+        Cvar ~ ifelse((p-p_rel) > 0, C / (1 + ((π * C) / (2 * V_max))^2 * (p - p_rel)^2), Cneg), # Effective instantaneous compliance (ml/mmHg)
+        V ~ ifelse((p-p_rel)>0,V₀eff + (2 * V_max / π) * atan((π * C / (2 * V_max)) * (p - p_rel)), (p - p_rel) * Cvar + V₀eff),
         D(p) ~ (in.q + out.q - qint * Flow_div - D(V₀eff)) * 1 / Cvar + D(p_rel)
       ])
     else
       append!(eqs, [ # Nonlinear in volume
-        Cvar ~ C / (1 + ((π * C) / (2 * V_max))^2 * ((2 * V_max / (π * C)) * tan((π * (V - V₀eff)) / (2 * V_max)))^2), # Effective instantaneous compliance (ml/mmHg)
-        p ~ (2 * V_max / (π * C)) * tan((π * (V - V₀eff)) / (2 * V_max)) + p_rel,
+        Cvar ~ ifelse((V - V₀eff) > 0, C / (1 + ((π * C) / (2 * V_max))^2 * ((2 * V_max / (π * C)) * tan((π * (V - V₀eff)) / (2 * V_max)))^2), Cneg),# Effective instantaneous compliance (ml/mmHg)
+        p ~ ifelse((V - V₀eff) > 0, (2 * V_max / (π * C)) * tan((π * (V - V₀eff)) / (2 * V_max)) + p_rel, (V - V₀eff) / Cvar + p_rel),
         D(V) ~ in.q + out.q - qint * Flow_div
       ])
     end
   else # Here are the linear versions of the equations
     if inP # Linear in pressure
       append!(eqs, [
-        V ~ (p - p_rel) * C + V₀eff,
-        D(p) ~ (in.q + out.q - D(V₀eff)) * 1 / C + D(p_rel)
+        Cvar ~ ifelse((p - p_rel) > 0, C, Cneg),
+        V ~ (p - p_rel) * Cvar + V₀eff,
+        D(p) ~ (in.q + out.q - D(V₀eff)) * 1 / Cvar + D(p_rel)
       ])
     else # Linear in volume
       append!(eqs, [
-        p ~ (V - V₀eff) / C + p_rel,
+        Cvar ~ ifelse((V - V₀eff) > 0, C, Cneg),
+        p ~ (V - V₀eff) / Cvar + p_rel,
         D(V) ~ in.q + out.q
       ])
     end
