@@ -155,6 +155,45 @@ The Variable Resistor model extends the One Port model and represents a resistiv
   end
 end
 
+@mtkmodel VesselCollapseVein begin
+  @extend OnePort()
+  @parameters begin
+    R₀ = 1e-6
+    ε = 1e-5
+    Rₕᵢ = 1000
+  end
+  @variables begin
+    R(t) # Time-varying resistance
+    V(t) # Time-varying volume
+    V₀(t)
+  end
+
+  @equations begin
+    R ~ R₀ + Rₕᵢ * exp(log(ε/Rₕᵢ)*(V/V₀))
+    q ~ -Δp / R
+  end
+end
+
+@mtkmodel VesselCollapseArtery begin
+  @extend OnePort()
+  @parameters begin
+    R₀ = 1e-6
+    ε = 1e-5
+    Rₕᵢ = 1000
+  end
+  @variables begin
+    R(t) # Time-varying resistance
+    V(t) # Time-varying volume
+    V₀(t)
+  end
+
+  @equations begin
+    R ~ R₀ + Rₕᵢ * exp(log(ε/Rₕᵢ)*(V/V₀))
+    Δp ~ -q * R
+  end
+end
+
+
 """
 Resistor Diode
 The Resistor Diode model extends the One Port model and represents a resistive element with a diode-like behavior (e.g., a valve). The resistance (mmHg*s/ml = PRU) is defined as a static parameter R, and the flow set to zero when the pressure difference is negative.
@@ -166,6 +205,25 @@ The Resistor Diode model extends the One Port model and represents a resistive e
     R = 1e-3
   end
   @equations begin
+    q ~ -Δp / R * (Δp < 0)
+  end
+end
+
+@mtkmodel VesselCollapseDiode begin
+  @extend OnePort()
+  @parameters begin
+    R₀ = 1e-6
+    ε = 1e-5
+    Rₕᵢ = 1000
+  end
+  @variables begin
+    R(t) # Time-varying resistance
+    V(t) # Time-varying volume
+    V₀(t)
+  end
+
+  @equations begin
+    R ~ R₀ + Rₕᵢ * exp(log(ε/Rₕᵢ)*(V/V₀))
     q ~ -Δp / R * (Δp < 0)
   end
 end
@@ -256,7 +314,7 @@ The has_abr and has_cpr flags introduce extra variables Vabr and Vcpr, which rep
 Note: due to complexity this is composed as a @component and not a @mtkmodel. It makes no difference to the user.
 """
 
-@component function Compliance(; name, V₀=0.0, C=1.0, inP=false, has_ep=false, has_variable_ep=false, p₀=0.0, is_nonlinear=false, Flow_div = 1/3, V_max=1.0, V_min=0.0, has_abr=false, has_cpr=false, has_gasexchange=false, Vₜ=0.0, MO₂=0.0, RQ=0.84, is_pulmonary=false, pcol=p_col)
+@component function Compliance(; name, V₀=0.0, C=1.0, inP=false, has_ep=false, has_variable_ep=false, p₀=0.0, is_nonlinear=false, Flow_div = 1/3, V_max=1.0, V_min=1e-8, has_abr=false, has_cpr=false, has_gasexchange=false, Vₜ=0.0, MO₂=0.0, RQ=0.84, is_pulmonary=false, pcol=p_col)
   @named in = Pin() # Input pin
   @named out = Pin() # Output pin
 
@@ -278,7 +336,7 @@ Note: due to complexity this is composed as a @component and not a @mtkmodel. It
     C = C # Compliance (ml/mmHg)
     V_max = V_max # Maximum distending volume for nonlinear compartments (ml)
     Flow_div = Flow_div # Flow division to interstitial compartment (nonlinear only)
-    V_min = V_min # Minimum zero-pressure volume (ml)
+    V_min = V_min # Minimum volume (ml)
   end
 
   D = Differential(t)
@@ -639,14 +697,16 @@ This model represents an arterial compartment. It is a lumped compartment consis
     out = Pin()
     ep = PresPin()
 
+    # Rc1 = VesselCollapse()
+
     if has_valve
-      R = ResistorDiode(R=R)
+      R = VesselCollapseDiode(R₀=R)
     else
-      R = Resistor(R=R)
+      R = VesselCollapseArtery(R₀=R)
     end
     C = Compliance(V₀=V₀, C=C, inP=true, has_ep=true, has_variable_ep=true, p₀=p₀, is_nonlinear=false, has_gasexchange=has_gasexchange, Vₜ=Vₜ, MO₂=MO₂, RQ=RQ, is_pulmonary=is_pulmonary)
     if has_hydrostatic
-      Ph = HydrostaticPressure(ρ=ρ, g=g, h=h, con=con)
+      Ph = HydrostaticPressure(ρ=ρ, h=h, con=con)
     end
     if has_tissue
       Pt = TissuePressure(ρ=ρt, rad=rad)
@@ -678,6 +738,12 @@ This model represents an arterial compartment. It is a lumped compartment consis
       Δp_Ph ~ 0  # no pressure drop if Ph is disabled
     end
     connect(C.out, out)
+    # connect(C.out, Rc1.in)
+    # connect(Rc1.out, out)
+    # Rc1.V ~ C.V
+    R.V ~ C.V
+    # Rc1.V₀ ~ C.V₀eff
+    R.V₀ ~ C.V₀eff
     if has_tissue
       connect(C.ep, Pt.out)
       connect(Pt.in, ep)
@@ -744,17 +810,18 @@ This model represents a venous compartment. It is a lumped compartment consistin
     in = Pin()
     out = Pin()
     ep = PresPin()
+    # Rc1 = VesselCollapse()
 
     C = Compliance(V₀=V₀, C=C, inP=true, has_ep=true, has_variable_ep=true, p₀=p₀, is_nonlinear=is_nonlinear, V_max=V_max, V_min=V_min, Flow_div=Flow_div, has_cpr=has_cpr, has_abr=has_abr)
 
     if has_hydrostatic
-      Ph = HydrostaticPressure(ρ=ρ, g=g, h=h, con=con)
+      Ph = HydrostaticPressure(ρ=ρ, h=h, con=con)
     end
 
     if has_valve
-      R = ResistorDiode(R=R)
+      R = VesselCollapseDiode(R₀=R)
     else
-      R = Resistor(R=R)
+      R = VesselCollapseVein(R₀=R)
     end
     if has_tissue
       Pt = TissuePressure(ρ=ρt, rad=rad)
@@ -768,6 +835,8 @@ This model represents a venous compartment. It is a lumped compartment consistin
     cO₂ ~ in.cO₂
     cCO₂ ~ in.cCO₂
     connect(in, C.in)
+    # connect(in, Rc1.in)
+    # connect(Rc1.out, C.in)
     connect(C.out, has_hydrostatic ? Ph.in : R.in)
 
     if has_tissue
@@ -798,8 +867,59 @@ This model represents a venous compartment. It is a lumped compartment consistin
     end
 
     connect(R.out, out)
+    # Rc1.V ~ C.V
+    R.V ~ C.V
+    # Rc1.V₀ ~ C.V₀eff
+    R.V₀ ~ C.V₀eff
     Δp_R ~ R.Δp
     pₜₘ ~ C.pₜₘ
+  end
+end
+
+"""
+Vertebral Plexus
+"""
+
+@mtkmodel VertebralPlexus begin
+  @structural_parameters begin
+    R = 1.0        # Zero pressure volume (ml)
+    ρ = ρ_b
+    h = 10.0
+    con = 2.0
+  end
+
+  @variables begin
+    α(t)            # time-varying angle input (radians, to be connected externally)
+    g(t)            # time-varying gravity input (m/s^2, to be connected externally)
+    Δp(t)           # pressure drop across the compartment
+    Δp_Ph(t)     # pressure drop across hydrostatic pressure (set to 0 if not used)
+    q(t)            # flow rate into the compartment
+    cO₂(t)
+    cCO₂(t)
+  end
+
+  @components begin
+    in = Pin()
+    out = Pin()
+    R = Resistor(R=R)
+    Ph = HydrostaticPressure(ρ=ρ, h=h, con=con)
+  end
+
+  @equations begin
+    Δp ~ out.p - in.p
+    q ~ in.q
+    connect(in, R.in)
+    connect(R.out, Ph.in)
+    connect(Ph.out, out)
+    Ph.α ~ α
+    Ph.g ~ g
+    Δp_Ph ~ Ph.Δp
+    cO₂ ~ in.cO₂
+    in.cO₂ ~ instream(in.cO₂)
+    0 ~ cO₂ - out.cO₂
+    cCO₂ ~ in.cCO₂
+    in.cCO₂ ~ instream(in.cCO₂)
+    0 ~ cCO₂ - out.cCO₂
   end
 end
 

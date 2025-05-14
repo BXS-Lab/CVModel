@@ -114,6 +114,8 @@ This section of code instances the compartments used in the model, based on the 
 @named Head_veins = Vein(C=C_Head_veins, R=R_Head_veins, V₀=v0_Head_veins, h=h_Head_veins, rad=rad_Head)
 @named Jugular_vein = Vein(C=C_Jugular_vein, R=R_Jugular_vein, V₀=v0_Jugular_vein, h=h_Jugular_vein, has_tissue=false)
 
+@named VP = VertebralPlexus(R=Rᵥₚ, h=h_Jugular_vein)
+
 #### Microcirculation
 @named UpBd_cap = VarResistor()
 @named Renal_cap = VarResistor()
@@ -157,6 +159,7 @@ This section of code instances the compartments used in the model, based on the 
 @named Asc_A_Junc = Junction3()
 @named BC_A_Junc = Junction2()
 @named Abd_A_Junc = Junction3()
+@named Head_veins_Junc = Junction2()
 
 @named CentralResp = Chemoreceptors(Delay=Dc, Gain_A=G_cA, Gain_f=G_cf, set_point=paCO₂_set, time_A=τ_cA, time_f=τ_cf, delay_order=reflex_delay_order)
 @named PeripheralResp = PeripheralChemoreceptors(Delay=Dp, Gain_A=G_pA, Gain_f=G_pf, set_point=fapc_set, time_A=τ_pA, time_f=τ_pf, delay_order=reflex_delay_order)
@@ -203,6 +206,9 @@ circ_eqs = [
   connect(CommonCarotid.out, Head_art.in),
   connect(Head_art.out, Head_cap.in),
   connect(Head_cap.out, Head_veins.in),
+#   connect(Head_veins.out, Head_veins_Junc.in),
+#   connect(Head_veins_Junc.out1, Jugular_vein.in),
+#   connect(Head_veins_Junc.out2, VP.in),
   connect(Head_veins.out, Jugular_vein.in),
 
   #### Coronary Circulation
@@ -226,6 +232,7 @@ circ_eqs = [
   connect(Leg_cap.out, Leg_vein.in),
 
   #### Venous Tree
+#   connect(Jugular_vein.out, VP.out, UpBd_vein.out, SVC.in),
   connect(Jugular_vein.out, UpBd_vein.out, SVC.in),
   connect(Abd_veins.in, Renal_vein.out, Splanchnic_vein.out, Leg_vein.out),
   connect(Abd_veins.out, Thor_IVC.in),
@@ -283,6 +290,7 @@ circ_eqs = [
   Head_art.α ~ alpha_driver.α,
   Head_veins.α ~ alpha_driver.α,
   Jugular_vein.α ~ alpha_driver.α,
+#   VP.α ~ alpha_driver.α,
   Interstitial.α ~ alpha_driver.α,
   Intrathoracic.α ~ alpha_driver.α,
   Pulm_art.α ~ alpha_driver.α,
@@ -310,6 +318,7 @@ circ_eqs = [
   Head_art.g ~ gravity_driver.g,
   Head_veins.g ~ gravity_driver.g,
   Jugular_vein.g ~ gravity_driver.g,
+#   VP.g ~ gravity_driver.g,
   Interstitial.g ~ gravity_driver.g,
   Intrathoracic.g ~ gravity_driver.g,
   Pulm_art.g ~ gravity_driver.g,
@@ -401,7 +410,9 @@ This section of the code composes the system of ordinary differential equations 
   Asc_A, BC_A, UpBd_art, Thor_A, Abd_A, Renal_art, Splanchnic_art, Leg_art, # Arterial Tree
   UpBd_vein, SVC, Renal_vein, Splanchnic_vein, Leg_vein, Abd_veins, Thor_IVC, # Venous Tree
   CommonCarotid, Head_art, Head_veins, Jugular_vein, # Head and Neck Circulation
-  Asc_A_Junc, BC_A_Junc, Abd_A_Junc, # Junctions
+#   VP, # Vertebral Plexus
+  Asc_A_Junc, BC_A_Junc, Abd_A_Junc, # Arterial Junctions
+#   Head_veins_Junc, # Venous Junctions
   UpBd_cap, Renal_cap, Splanchnic_cap, Leg_cap, Head_cap, # Microcirculation
   Interstitial, # Interstitial Compartment
   Intrathoracic, Abdominal, External, ExternalLBNP, Intracranial, # External Pressures
@@ -692,18 +703,19 @@ display(plot(Sol, idxs=[Splanchnic_vein.cO₂, Splanchnic_art.cO₂],
         label = ["Peripheral" "Central"],
         xlabel = "Time (s)"))
 
-display(plot(Sol, idxs=[Head_cap.R],
+display(plot(Sol, idxs=[Head_cap.out.cO₂, Head_art.cO₂, Head_veins.cO₂],
         label = ["Head_art" "Head_vein"],
         xlabel = "Time (s)",
         ylabel = "Fractional Concentration",
         title = "Lung Gas Exchange"))
 
-display(plot(Sol, idxs=[Jugular_vein.pₜₘ, Jugular_vein.C.V],
-        xlims = (110, 130),
-        label = ["JV Transmural Pressure" "JV Volume"],
-        xlabel = "Time (s)",
-        ylabel = "Pressure (mmHg), Volume (ml)",
-        title = "Jugular Vein Hemodynamics"))
+display(plot(Sol, idxs=[Head_veins.C.pₜₘ, Head_veins.C.V],
+        xlims = (0, 10)))
+
+display(plot(Sol, idxs=[Head_veins.C.in.q, Head_veins.C.out.q],
+        xlims = (0, 10)))
+
+display(plot(Sol, idxs=[Head_veins.C.Cvar], xlims = (0,10)))
 
 display(plot(Sol, idxs=[(60/RespMuscles.BreathInt_held)]))
 
