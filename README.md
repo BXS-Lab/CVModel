@@ -1,7 +1,7 @@
 # Cardiovascular Model
 
-**Version:** 3.1.2<br>
-**Release Date:** May 11th, 2025<br>
+**Version:** 3.2.0<br>
+**Release Date:** May 13th, 2025<br>
 **Lab:** BXS Lab, UC Davis<br>
 **Authors:** R.S. Whittle, A.J. Kondoor, H.S. Vellore<br>
 **Contact:**<br>
