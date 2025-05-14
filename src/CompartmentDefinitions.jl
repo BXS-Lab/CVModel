@@ -1115,6 +1115,9 @@ This model represents the action of the respiratory muscles during breathing.
     TE(t) # Expiration time (s)
     TI(t) # Inspiration time (s)
     τ(t) # Muscle time constant (s)
+    p_new(t)
+    p_chemo(t)
+    p_held(t)
   end
   @equations begin
     RespRate_new ~ RespRate₀ + RespRate_chemo
@@ -1129,9 +1132,13 @@ This model represents the action of the respiratory muscles during breathing.
     TE ~ BreathInt_held/(1 + IEratio)
     TI ~ TE * IEratio
     τ ~ TE/5
+
+    p_new ~ p + p_chemo
+    D(p_held) ~ breath_trigger * (p_new - p_held) / τ_reset
+
     # Time within the breathing cycle
-    Δp ~ ifelse(t0 <= TI, (-p/(TI*TE)*t0^2 + p*BreathInt_held/(TI*TE)*t0),
-          (p/(1-exp(-TE/τ))*(exp(-(t0-TI)/τ)-exp(-TE/τ))))
+    Δp ~ ifelse(t0 <= TI, (-p_held/(TI*TE)*t0^2 + p_held*BreathInt_held/(TI*TE)*t0),
+          (p_held/(1-exp(-TE/τ))*(exp(-(t0-TI)/τ)-exp(-TE/τ))))
   end
 end
 

@@ -1,21 +1,20 @@
 """
 Cardiovascular Model
-Version 3.1.2 (May 11th, 2025)
+Version 3.2.0 (May 13th, 2025)
 BXS Lab, UC Davis; Authors: RS Whittle, AJ Kondoor, HS Vellore
 Contact info: Dr. Rich Whittle – Department of Mechanical and Aerospace Engineering, UC Davis, One Shields Ave, Davis CA 95616 (rswhittle@ucdavis.edu)
 This model is a simulation of the human cardiovascular system, including a four chamber heart, arteries, veins, and microcirculation. It includes reflex control for the arterial baroreflex (ABR) and cardiopulmonary reflex (CPR), as well as hydrostatic effects, interstitial fluid flow, and external tissue pressures. The model is designed to simulate various physiological scenarios, including a tilt angle protocol, altered-gravity environment, and lower body negative pressure (LBNP) protocol. The underlying equations are based on the work of Heldt (2004), Zamanian (2007), Diaz Artiles (2015), and Whittle (2023). The model is implemented using the ModelingToolkit.jl package in Julia.
 """
-### TODO: CV Model:            (1) Collapse in vessels, (2) Vertebral Plexus
+### TODO: CV Model:            (1) Collapse in vessels, (2) Vertebral Plexus (3) Dynamic ICP
 ### TODO: Pulmonary Mechanics: (1) Bring Intrathoracic Pressure into Lung Model
 ### TODO: Lung Gas Exchange:   (1) Improve fidelity (https://github.com/baillielab/oxygen_delivery/blob/master/oxygen_delivery.py)
 ### TODO: Tissue Gas Exchange: (1) Check values
-### TODO: Respiratory Control: (1) Central Chemoreceptors, (2) Peripheral Chemoreceptors
 ### TODO: CV Control:          (1) Autoregulation, (2) CNS Ischemic Response, (3) Peripheral Chemoreceptors, (4) Lung Stretch Receptors
 ### TODO: Simulation:          (1) Exercise Model, (2) Other blood parameters (e.g., pH etc.), (3) Altitude, pressure, temperature driver; water vapor etc.
 ### TODO: Code:                (1) Fix the whole model params thing
 
 module CVModel
-display("Cardiovascular Model v3.1.2 (May 11th, 2025) - BXS Lab, UC Davis")
+display("Cardiovascular Model v3.2.0 (May 13th, 2025) - BXS Lab, UC Davis")
 
 """
 Preamble
@@ -376,7 +375,8 @@ circ_eqs = [
   CentralResp.u ~ LungGE.paCO₂,
   PeripheralResp.uSaO₂ ~ LungGE.SaO₂,
   PeripheralResp.ucaCO₂ ~ LungGE.caCO₂,
-  RespMuscles.RespRate_chemo ~ (CentralResp.y_f + PeripheralResp.y_f)
+  RespMuscles.RespRate_chemo ~ (CentralResp.y_f + PeripheralResp.y_f),
+  RespMuscles.p_chemo ~ (CentralResp.y_A + PeripheralResp.y_A),
 ]
 
 """
@@ -622,6 +622,7 @@ u0 = [
   PeripheralResp.s2.delay.x => reflex_delay_init,
 
   RespMuscles.BreathInt_held => 60 / RespRateₙₒₘ,
+  RespMuscles.p_held => p_musmin,
 ]
 
 """
@@ -665,11 +666,17 @@ display(plot(Sol, idxs=[LungGE.p_ACO₂, LungGE.paCO₂, LungGE.cvCO₂],
         ylabel = "Fractional Concentration",
         title = "Lung Gas Exchange"))
 
-display(plot(Sol, idxs=[(PeripheralResp.y_f + CentralResp.y_f)],
+display(plot(Sol, idxs=[Splanchnic_vein.cO₂, Splanchnic_art.cO₂],
         label = ["Peripheral" "Central"],
         xlabel = "Time (s)"))
 
-display(plot(Sol, idxs=[RespMuscles.BreathInt_new, RespMuscles.BreathInt_held]))
+display(plot(Sol, idxs=[LungGE.paO₂, LungGE.paCO₂],
+        label = ["paO₂" "paCO₂" "caCO₂"],
+        xlabel = "Time (s)",
+        ylabel = "Fractional Concentration",
+        title = "Lung Gas Exchange"))
+
+display(plot(Sol, idxs=[(60/RespMuscles.BreathInt_held)]))
 
 #### Direct from Solution Plots
 

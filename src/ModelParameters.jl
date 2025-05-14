@@ -513,7 +513,7 @@ Central Chemoreceptors
 """
 
 Dc = 8.0 # Central chemoreceptor delay (s)
-G_cA = 850 * cmH2O2mmHg # Central chemoreceptor amplitude gain (mmHg/mmHg)
+G_cA = 0.850 * cmH2O2mmHg # Central chemoreceptor amplitude gain (mmHg/mmHg)
 G_cf = 0.9 # Central chemoreceptor frequency gain (breaths/min/mmHg)
 paCO₂_set = 40.0 # Set point for paCO₂ (mmHg)
 τ_cA = 105 # Amplitude time constant for central chemoreceptors (s)
@@ -537,7 +537,7 @@ Kdyn = 45 # (/s)
 
 #### Stage 2
 Dp = 7.0 # Peripheral chemoreceptor delay (s)
-G_pA = 1310 * cmH2O2mmHg # Peripheral chemoreceptor amplitude gain (mmHg/ν)
+G_pA = 1.310 * cmH2O2mmHg # Peripheral chemoreceptor amplitude gain (mmHg/ν)
 G_pf = 0.8735 # Peripheral chemoreceptor frequency gain (breaths/min/ν)
 fapc_set = 3.7 # Set point for fapc (spikes/s)
 τ_pA = 83 # Amplitude time constant for peripheral chemoreceptors (s)
