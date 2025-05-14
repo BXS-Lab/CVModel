@@ -365,13 +365,13 @@ Note: due to complexity this is composed as a @component and not a @mtkmodel. It
   if has_cpr && has_abr # This statement defines the effective zero-pressure volume based on the flags
     push!(sts, (@variables Vcpr(t))[1])
     push!(sts, (@variables Vabr(t))[1])
-    append!(eqs, [V₀eff ~ max(V₀ + Vcpr + Vabr,V_min)])
+    append!(eqs, [V₀eff ~ V₀ + Vcpr + Vabr])
   elseif has_cpr
     push!(sts, (@variables Vcpr(t))[1])
-    append!(eqs, [V₀eff ~ max(V₀ + Vcpr,V_min)])
+    append!(eqs, [V₀eff ~ V₀ + Vcpr])
   elseif has_abr
     push!(sts, (@variables Vabr(t))[1])
-    append!(eqs, [V₀eff ~ max(V₀ + Vabr,V_min)])
+    append!(eqs, [V₀eff ~ V₀ + Vabr])
   else
     append!(eqs, [V₀eff ~ V₀])
   end
@@ -383,7 +383,8 @@ append!(eqs, [Cneg ~ V₀eff / pcol])
     push!(sts, (@variables qint(t))[1])
     if inP
       append!(eqs, [ # Nonlinear in pressure
-        Cvar ~ ifelse((p-p_rel) > 0, C / (1 + ((π * C) / (2 * V_max))^2 * (p - p_rel)^2), Cneg), # Effective instantaneous compliance (ml/mmHg)
+        Cvar ~ C / (1 + ((π * C) / (2 * V_max))^2 * (p - p_rel)^2),
+        # Cvar ~ ifelse((p-p_rel) > 0, C / (1 + ((π * C) / (2 * V_max))^2 * (p - p_rel)^2), Cneg), # Effective instantaneous compliance (ml/mmHg)
         V ~ ifelse((p-p_rel)>0,V₀eff + (2 * V_max / π) * atan((π * C / (2 * V_max)) * (p - p_rel)), (p - p_rel) * Cvar + V₀eff),
         D(p) ~ (in.q + out.q - qint * Flow_div - D(V₀eff)) * 1 / Cvar + D(p_rel)
       ])
@@ -397,7 +398,8 @@ append!(eqs, [Cneg ~ V₀eff / pcol])
   else # Here are the linear versions of the equations
     if inP # Linear in pressure
       append!(eqs, [
-        Cvar ~ ifelse((p - p_rel) > 0, C, Cneg),
+        Cvar ~ C,
+        # Cvar ~ ifelse((p - p_rel) > 0, C, Cneg),
         V ~ (p - p_rel) * Cvar + V₀eff,
         D(p) ~ (in.q + out.q - D(V₀eff)) * 1 / Cvar + D(p_rel)
       ])
