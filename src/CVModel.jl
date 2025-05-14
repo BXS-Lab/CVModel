@@ -8,7 +8,7 @@ This model is a simulation of the human cardiovascular system, including a four 
 ### TODO: CV Model:            (1) Collapse in vessels, (2) Vertebral Plexus (3) Dynamic ICP
 ### TODO: Pulmonary Mechanics: (1) Bring Intrathoracic Pressure into Lung Model
 ### TODO: Lung Gas Exchange:   (1) Improve fidelity (https://github.com/baillielab/oxygen_delivery/blob/master/oxygen_delivery.py)
-### TODO: Tissue Gas Exchange: (1) Check values
+### TODO: Tissue Gas Exchange: (1) Check values (2) Consumption in Heart depends upon power (Ursino 2000)
 ### TODO: CV Control:          (1) Autoregulation, (2) CNS Ischemic Response, (3) Peripheral Chemoreceptors, (4) Lung Stretch Receptors
 ### TODO: Simulation:          (1) Exercise Model, (2) Other blood parameters (e.g., pH etc.), (3) Altitude, pressure, temperature driver; water vapor etc.
 ### TODO: Code:                (1) Fix the whole model params thing
