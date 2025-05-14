@@ -8,7 +8,6 @@ This model is a simulation of the human cardiovascular system, including a four 
 ### TODO: CV Model:            (1) Vertebral Plexus (2) Dynamic ICP
 ### TODO: Pulmonary Mechanics: (1) Bring Intrathoracic Pressure into Lung Model
 ### TODO: Lung Gas Exchange:   (1) Improve fidelity (https://github.com/baillielab/oxygen_delivery/blob/master/oxygen_delivery.py)
-### TODO: Tissue Gas Exchange: (1) Check values (2) Consumption in Heart depends upon power (Ursino 2000)
 ### TODO: CV Control:          (1) CNS Ischemic Response, (2) Peripheral Chemoreceptors, (3) Lung Stretch Receptors
 ### TODO: Simulation:          (1) Exercise Model, (2) Other blood parameters (e.g., pH etc.), (3) Altitude, pressure, temperature driver; water vapor etc.
 ### TODO: Code:                (1) Fix the whole model params thing
@@ -84,7 +83,7 @@ This section of code instances the compartments used in the model, based on the 
 @named R_aortic = MynardValve_SemiLunar(Leff=Leff_av, Ann=Ann_av, Kvc=Kvc_av, Kvo=Kvo_av)
 
 #### Coronary Circulation
-@named Cor_art = Artery(C=Cca, R=Rca, V₀=v0ca, has_hydrostatic=false, has_tissue=false, has_gasexchange=true, Vₜ=Vₜ_heart, MO₂=MO₂_heart, RQ=RQ₀)
+@named Cor_art = Artery(C=Cca, R=Rca, V₀=v0ca, has_hydrostatic=false, has_tissue=false, is_heart=true, Vₜ=Vₜ_heart, RQ=RQ₀)
 @named Cor_cap = VarResistor()
 @named Cor_vein = Vein(C=Ccv, R=Rcv, V₀=v0cv, has_hydrostatic=false, has_tissue=false)
 
@@ -166,6 +165,7 @@ This section of code instances the compartments used in the model, based on the 
 @named UBMuscleAutoreg = Autoregulation(Gain=G_muscle_O₂, set_point=cvO₂_muscle_setpoint, time=τ_muscle_O₂)
 @named LBMuscleAutoreg = Autoregulation(Gain=G_muscle_O₂, set_point=cvO₂_muscle_setpoint, time=τ_muscle_O₂)
 
+@named HeartP = HeartPower()
 """
 Structural Connections
 This section of code connects the instanced compartments together to form the cardiovascular system. The hemodynamic connections are made using the "connect" function, which connects pins linked in pressure and flow via Kirchhoff's laws. The DOE integrations and reflex connections are just included as direct signal connections to the respective compartments.
@@ -390,6 +390,12 @@ circ_eqs = [
   HeartAutoreg.ucvO₂ ~ Cor_vein.cO₂,
   UBMuscleAutoreg.ucvO₂ ~ UpBd_vein.cO₂,
   LBMuscleAutoreg.ucvO₂ ~ Leg_vein.cO₂,
+
+  HeartP.Plv ~ LV.pₜₘ,
+  HeartP.Prv ~ RV.pₜₘ,
+  HeartP.DVlv ~ (LV.in.q + LV.out.q),
+  HeartP.DVrv ~ (RV.in.q + RV.out.q),
+  HeartP.MO₂dyn ~ Cor_art.C.MO₂dyn,
 ]
 
 """
@@ -415,6 +421,7 @@ This section of the code composes the system of ordinary differential equations 
   Lungs, RespMuscles, LungGE, # Lung Model Breathing ChestWall
   CentralResp, PeripheralResp,
   BrainAutoreg, HeartAutoreg, UBMuscleAutoreg, LBMuscleAutoreg,# Autoregulation
+  HeartP, # Heart Power
   ])
 
 circ_sys = structural_simplify(circ_model)
@@ -424,11 +431,11 @@ circ_sys = structural_simplify(circ_model)
 equations(expand(circ_sys))
 unknowns(circ_sys)
 equations(expand(circ_model))
-unknown_list = collect(unknowns(circ_sys))
-println("Number of unknowns: ", length(unknown_list))
-for (i, u) in enumerate(unknown_list)
-    println("unknown $(i): ", u)
-end
+# unknown_list = collect(unknowns(circ_sys))
+# println("Number of unknowns: ", length(unknown_list))
+# for (i, u) in enumerate(unknown_list)
+#     println("unknown $(i): ", u)
+# end
 
 """
 Initial Conditions
@@ -647,6 +654,9 @@ u0 = [
   HeartAutoreg.x => 0.0,
   UBMuscleAutoreg.x => 0.0,
   LBMuscleAutoreg.x => 0.0,
+
+  #### Heart Dynamic Consumption
+  HeartP.Wh => Whₙₒₘ,
 ]
 
 """
@@ -686,8 +696,8 @@ display(plot(Sol, idxs=[Head_veins.C.in.q, Head_veins.C.out.q],
         xlims = (90, 105)))
 
 display(plot(Sol, idxs=[Jugular_vein.out.q, VP.out.q], xlims = (90, 105)))
-display(plot(Sol, idxs=[Jugular_vein.C.V], xlims = (90,105)))
-
+display(plot(Sol, idxs=[Cor_art.cO₂, Cor_vein.cO₂]))
+MO₂_heart
 
 
 #### Direct from Solution Plots

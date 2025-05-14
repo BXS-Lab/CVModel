@@ -314,7 +314,7 @@ The has_abr and has_cpr flags introduce extra variables Vabr and Vcpr, which rep
 Note: due to complexity this is composed as a @component and not a @mtkmodel. It makes no difference to the user.
 """
 
-@component function Compliance(; name, V₀=0.0, C=1.0, inP=false, has_ep=false, has_variable_ep=false, p₀=0.0, is_nonlinear=false, Flow_div = 1/3, V_max=1.0, V_min=1e-8, has_abr=false, has_cpr=false, has_gasexchange=false, Vₜ=0.0, MO₂=0.0, RQ=0.84, is_pulmonary=false, pcol=p_col)
+@component function Compliance(; name, V₀=0.0, C=1.0, inP=false, has_ep=false, has_variable_ep=false, p₀=0.0, is_nonlinear=false, Flow_div = 1/3, V_max=1.0, V_min=1e-8, has_abr=false, has_cpr=false, has_gasexchange=false, Vₜ=0.0, MO₂=0.0, RQ=0.84, is_pulmonary=false, pcol=p_col, is_heart=false)
   @named in = Pin() # Input pin
   @named out = Pin() # Output pin
 
@@ -425,6 +425,18 @@ append!(eqs, [Cneg ~ V₀eff / pcol])
       cCO₂ ~ in.cCO₂,
       in.cCO₂ ~ instream(in.cCO₂),
       D(out.cCO₂) ~ (in.q * (cCO₂ - out.cCO₂) + MO₂ * RQ) / (V + Vₜ),
+    ])
+  elseif is_heart
+    push!(ps, (@parameters Vₜ = Vₜ)[1])
+    push!(sts, (@variables MO₂dyn(t))[1])
+    push!(ps, (@parameters RQ = RQ)[1])
+    append!(eqs, [
+      cO₂ ~ in.cO₂,
+      in.cO₂ ~ instream(in.cO₂),
+      D(out.cO₂) ~ (in.q * (cO₂ - out.cO₂) - MO₂dyn) / (V + Vₜ),
+      cCO₂ ~ in.cCO₂,
+      in.cCO₂ ~ instream(in.cCO₂),
+      D(out.cCO₂) ~ (in.q * (cCO₂ - out.cCO₂) + MO₂dyn * RQ) / (V + Vₜ),
     ])
   elseif is_pulmonary
     push!(sts, (@variables caO₂(t))[1])
@@ -678,6 +690,7 @@ This model represents an arterial compartment. It is a lumped compartment consis
     MO₂=0.0
     RQ=RQ₀
     is_pulmonary=false
+    is_heart=false
   end
 
   @variables begin
@@ -703,7 +716,7 @@ This model represents an arterial compartment. It is a lumped compartment consis
     else
       R = VesselCollapseArtery(R₀=R)
     end
-    C = Compliance(V₀=V₀, C=C, inP=true, has_ep=true, has_variable_ep=true, p₀=p₀, is_nonlinear=false, has_gasexchange=has_gasexchange, Vₜ=Vₜ, MO₂=MO₂, RQ=RQ, is_pulmonary=is_pulmonary)
+    C = Compliance(V₀=V₀, C=C, inP=true, has_ep=true, has_variable_ep=true, p₀=p₀, is_nonlinear=false, has_gasexchange=has_gasexchange, Vₜ=Vₜ, MO₂=MO₂, RQ=RQ, is_pulmonary=is_pulmonary, is_heart=is_heart)
     if has_hydrostatic
       Ph = HydrostaticPressure(ρ=ρ, h=h, con=con)
     end
@@ -1453,4 +1466,27 @@ end
 
     SaO₂ ~ (caO₂ - paO₂ * sol_O₂) / (Hgb * Hgb_O₂_binding) * 100 # O₂ saturation in arterial blood (%)
   end
+end
+
+@mtkmodel HeartPower begin
+  @parameters begin
+    Wh₀ = Whₙₒₘ       # Zero pressure volume (ml)
+    MO₂ₙ = MO₂_heart
+    τw = τ_heart_w       # Time constant (s)
+  end
+  @variables begin
+    MO₂dyn(t)
+    Wh(t)
+    wh(t) # Instantaneous power
+    Plv(t) # Left ventricle pressure (mmHg)
+    Prv(t) # Right ventricle pressure (mmHg)
+    DVlv(t) # Left ventricle volume (ml)
+    DVrv(t) # Right ventricle volume (ml)
+  end
+  @equations begin
+    MO₂dyn ~ (Wh / Wh₀) * MO₂ₙ
+    wh ~ - Plv * DVlv - Prv * DVrv
+    D(Wh) ~ (wh - Wh) / τw
+  end
+
 end

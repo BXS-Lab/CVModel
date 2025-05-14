@@ -459,7 +459,7 @@ MO₂_total = 250 # Total O₂ consumption rate (ml/min)
 MO₂_spes_rat = 7.384 # Splanchnic to extrasplanchnic O₂ consumption rate ratio (Albanese, 2016)
 
 MO₂_brain = 47.502/60 # Brain O₂ consumption rate (ml/s)
-MO₂_heart = 24/60 # Heart O₂ consumption rate (ml/s)
+MO₂_heart = 24/60 # Heart O₂ consumption rate (ml/s) (Dynamic)
 MO₂_sm = 51.6/60 # Skeletal muscle O₂ consumption rate (ml/s)
 MO₂_ub = MO₂_sm * ub_mass_frac # Upper body (skeletal muscle) O₂ consumption rate (ml/s)
 MO₂_legs = MO₂_sm * (1-ub_mass_frac) # Leg (skeletal muscle) O₂ consumption rate (ml/s)
@@ -470,6 +470,10 @@ MO₂_splanchnic = MO₂_renal * MO₂_spes_rat # Splanchnic O₂ consumption ra
 #### Tissue CO₂ Production Rate
 RQ₀ = 0.84 # Respiratory Quotient (CO₂ produced / O₂ consumed)
 MCO₂_total = MO₂_total * RQ₀ # Total CO₂ production rate (ml/min)
+
+#### Heart Workload
+Whₙₒₘ = 12660 # Nominal heart workload (mmHg.ml/s)
+τ_heart_w = 5 # Time constant for heart workload (s)
 
 """
 Lung Gas Exchange Model
