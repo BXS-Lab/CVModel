@@ -316,7 +316,7 @@ The carotid sinus offset above the brachiocephalic arteries is defined here. Thi
 h_cs = -14.0 # Carotid Sinus Offset (cm)
 
 """
-Reflex System Parameters
+Heldt Reflex System Parameters
 These parameters define the properties of the arterial baroreflex (ABR) and cardiopulmonary reflex (CPR). The afferent arms include a state space filter with  matrices A, B, and C, as well as the set points and afferent gains. The transfer functions are defined by a delay, a peak, and an end timing and are dynamically set to have unit area impulse response. The delay is defined by a Pade approximation, the order of the approximation can be set here to give a sharper response (more computationally intensive). Finally, the static gains for the ABR and CPR are also defined here.
 """
 
@@ -564,6 +564,118 @@ G_brain_O₂ = 10
 cvO₂_heart_setpoint = 0.11
 G_heart_O₂ = 35
 τ_heart_O₂ = 10
+
+"""
+Albanese Reflex Parameters
+"""
+#### Afferent Baroreflex
+τ_zb = 6.37 # (s)
+τ_pb = 2.076 # (s)
+fabₘᵢₙ = 2.52 # (spikes/s)
+fabₘₐₓ = 47.78 # (spikes/s)
+Pn = 92 # (mmHg)
+kab = 11.76 # (mmHg)
+
+#### Afferent Chemoreflex
+τ_c = 2.0 # (s)
+facₘᵢₙ = 1.16 # (spikes/s)
+facₘₐₓ = 17.07 # (spikes/s)
+PO₂n = 45 # (mmHg)
+kac = 29.27 # (mmHg)
+
+#### Afferent Pulmonary Stretch Receptors pathway
+τ_p = 2 # (s)
+G_ap = 23.29 # (spikes/l/s)
+
+#### Efferent sympathetic pathway
+fes∞ =2.1 # (spikes/s)
+fes₀ = 16.11 # (spikes/s)
+fesₘᵢₙ = 2.66 # (spikes/s)
+fesₘₐₓ = 60
+kes = 0.0675 # (s)
+
+Wbₛₚ = 1
+Wcₛₚ = 5
+Wpₛₚ = 0.34
+
+Wbₛₕ = 1
+Wcₛₕ = 5
+
+#### Efferent vagal pathway
+fev∞ = 6.3 # (spikes/s)
+fev₀ = 3.2 # (spikes/s)
+fab₀ = 25 # (spikes/s)
+kev = 7.06 # (s)
+
+Wcᵥ = 0.2
+Wpᵥ = 0.103
+θᵥ = -0.68 # (spikes/s)
+
+#### CNS Hypoxic Response
+χₘₐₓₛₚ = 13.32 # (spikes/s)
+χₘₐₓₛₕ = 3.59 # (spikes/s)
+τisc = 30 # (s)
+χₘᵢₙₛₚ = 7.33 # (spikes/s)
+χₘᵢₙₛₕ = -49.38 # (spikes/s)
+PO₂nₛₚ = 30 # (mmHg)
+PO₂nₛₕ = 45 # (mmHg)
+kiscₛₚ = 2 # (mmHg)
+kiscₛₕ = 6 # (mmHg)
+
+#### Ventilatory Response
+Gv = 0.125 # (l/ν)
+τv = 3 # (s)
+Dv = 6 # (s)
+VTₙ = 0.583 # (l)
+facₙ = 3.6 # (spikes/s)
+
+#### Reflex Effectors
+GEmaxlv = 0.475 # (mmHg/ml/ν)
+GEmaxrv = 0.282 # (mmHg/ml/ν)
+GRsp = 0.695 # (mmHg.s/ml/ν)
+GRep = 0.695 # (mmHg.s/ml/ν)
+GRmp = 0.695 # (mmHg.s/ml/ν)
+Gvusv = -265.4 # (ml/ν)
+Gvuev = -74.21 # (ml/ν)
+Gvumv = -58.29 # (ml/ν)
+GTs = -0.13 # (s/ν)
+GTv = 0.09 # (s/ν)
+
+τEmaxlv = 8 # (s)
+τEmaxrv = 8 # (s)
+τRsp = 6 # (s)
+τRep = 6 # (s)
+τRmp = 6 # (s)
+τVusv = 20 # (s)
+τVuev = 20 # (s)
+τVumv = 20 # (s)
+τTs = 2 # (s)
+τTv = 1.5 # (s)
+
+DEmaxlv = 2 # (s)
+DEmaxrv = 2 # (s)
+DRsp = 2 # (s)
+DRep = 2 # (s)
+DRmp = 2 # (s)
+DVusv = 5 # (s)
+DVuev = 5 # (s)
+DVumv = 5 # (s)
+DTs = 2 # (s)
+DTv = 0.2 # (s)
+
+Emaxlv₀ = 2.392 # (mmHg/ml)
+Emaxrv₀ = 1.412 # (mmHg/ml)
+Rsp₀ = 2.49 # (mmHg.s/ml)
+Rep₀ = 1.655 # (mmHg.s/ml)
+Rmp₀ = 2.106 # (mmHg.s/ml)
+Vusv₀ = 1435.4 # (ml)
+Vuev₀ = 640.73 # (ml)
+Vumv₀ = 503.26 # (ml)
+T₀ = 0.58 # (s)
+
+
+
+
 
 
 for name in names(@__MODULE__; all=true, imported=false)
