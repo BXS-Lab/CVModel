@@ -12,6 +12,7 @@ This model is a simulation of the human cardiovascular system, including a four 
 ### TODO: Respiratory Control: (1) Central Chemoreceptors, (2) Peripheral Chemoreceptors
 ### TODO: CV Control:          (1) Autoregulation, (2) CNS Ischemic Response, (3) Peripheral Chemoreceptors, (4) Lung Stretch Receptors
 ### TODO: Simulation:          (1) Exercise Model, (2) Other blood parameters (e.g., pH etc.), (3) Altitude, pressure, temperature driver; water vapor etc.
+### TODO: Code:                (1) Fix the whole model params thing
 
 module CVModel
 display("Cardiovascular Model v3.1.2 (May 11th, 2025) - BXS Lab, UC Davis")
@@ -374,7 +375,8 @@ circ_eqs = [
   #### Respiratory Reflex Afferents (Sensed Pressures)
   CentralResp.u ~ LungGE.paCO₂,
   PeripheralResp.uSaO₂ ~ LungGE.SaO₂,
-  PeripheralResp.ucaCO₂ ~ LungGE.caCO₂
+  PeripheralResp.ucaCO₂ ~ LungGE.caCO₂,
+  RespMuscles.RespRate_chemo ~ (CentralResp.y_f + PeripheralResp.y_f)
 ]
 
 """
@@ -406,6 +408,9 @@ circ_sys = structural_simplify(circ_model)
 equations(expand(circ_sys))
 unknowns(circ_sys)
 equations(expand(circ_model))
+# for u in unknowns(circ_sys)
+#     println("Unknown: ", u)
+# end
 
 """
 Initial Conditions
@@ -614,7 +619,9 @@ u0 = [
   PeripheralResp.s1.ϕc => 0.0,
   PeripheralResp.s2.y_A => 0.0,
   PeripheralResp.s2.y_f => 0.0,
-  PeripheralResp.s2.delay.x => reflex_delay_init
+  PeripheralResp.s2.delay.x => reflex_delay_init,
+
+  RespMuscles.BreathInt_held => 60 / RespRateₙₒₘ,
 ]
 
 """
@@ -661,6 +668,8 @@ display(plot(Sol, idxs=[LungGE.p_ACO₂, LungGE.paCO₂, LungGE.cvCO₂],
 display(plot(Sol, idxs=[(PeripheralResp.y_f + CentralResp.y_f)],
         label = ["Peripheral" "Central"],
         xlabel = "Time (s)"))
+
+display(plot(Sol, idxs=[RespMuscles.BreathInt_new, RespMuscles.BreathInt_held]))
 
 #### Direct from Solution Plots
 

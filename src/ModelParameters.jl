@@ -418,11 +418,7 @@ Lung Model
 
 p_musmin = -5.0 * cmH2O2mmHg # Minimum respiratory muscle pressure (mmHg)
 RespRateₙₒₘ = 12.0 # Breathing Rate (breaths/min)
-IEratio = 0.6 # Inspiratory to Expiratory Ratio
-Tbreath = 60.0 / RespRateₙₒₘ # Total Breathing Cycle Time (s)
-T_E = Tbreath/(1 + IEratio) # Expiratory Time (s)
-T_I = T_E * IEratio # Inspiratory Time (s)
-τ_mus = T_E/5 # Respiratory muscle time constant (s)
+IE_ratio = 0.6 # Inspiratory to Expiratory Ratio
 
 #### Lung Parameters
 

@@ -1098,21 +1098,39 @@ This model represents the action of the respiratory muscles during breathing.
   @extend OnePortPres()
   @parameters begin
     p = p_musmin
-    TI = T_I
-    TE = T_E
-    T0 = Tbreath
-    τ = τ_mus
+    RespRate₀ = RespRateₙₒₘ
+    IEratio = IE_ratio
+    ε = 0.002         # width of the update pulse
+    τ_reset = 0.01    # smoothing timescale
   end
   @variables begin
+    RespRate_new(t) # breaths/min
+    RespRate_chemo(t) # Chemoreceptor contributions (breaths/min)
+    BreathInt_new(t) # Breath interval (s)
+    ϕ(t) # Continuous slope
+    BreathInt_held(t) # Breath interval held to a new breath (s)
+    ϕ_wrapped(t) # Wrapped phase of the breathing cycle
+    breath_trigger(t) # Trigger for the breath
     t0(t) # Time withing the breathing cycle
-    ϕ(t) # Phase of the breathing cycle
+    TE(t) # Expiration time (s)
+    TI(t) # Inspiration time (s)
+    τ(t) # Muscle time constant (s)
   end
   @equations begin
-    D(ϕ) ~ 1 / T0
-    t0 ~ (ϕ - floor(ϕ)) * T0
-    # Δp ~ ifelse(t0 <= TI, 0.01 * t0, 0.1 * t0)
+    RespRate_new ~ RespRate₀ + RespRate_chemo
+    BreathInt_new ~ 60 / RespRate_new
+    D(ϕ) ~ 1 / BreathInt_held
+    ϕ_wrapped ~ ϕ - floor(ϕ)
+
+    breath_trigger ~ exp(-((ϕ_wrapped - 1)^2) / ε)
+    D(BreathInt_held) ~ breath_trigger * (BreathInt_new - BreathInt_held) / τ_reset
+
+    t0 ~ ϕ_wrapped * BreathInt_held
+    TE ~ BreathInt_held/(1 + IEratio)
+    TI ~ TE * IEratio
+    τ ~ TE/5
     # Time within the breathing cycle
-    Δp ~ ifelse(t0 <= TI, (-p/(TI*TE)*t0^2 + p*T0/(TI*TE)*t0),
+    Δp ~ ifelse(t0 <= TI, (-p/(TI*TE)*t0^2 + p*BreathInt_held/(TI*TE)*t0),
           (p/(1-exp(-TE/τ))*(exp(-(t0-TI)/τ)-exp(-TE/τ))))
   end
 end
