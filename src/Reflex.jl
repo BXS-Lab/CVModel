@@ -145,17 +145,17 @@ The TransferFunction component implements a transfer function that models the re
   end
 end
 
-@mtkmodel CentralChemoreceptors begin
+@mtkmodel Chemoreceptors begin
   @parameters begin
-    Delay = Dc
-    Gain_cA = G_cA
-    Gain_cf = G_cf
-    set_point = paCO₂_set
-    time_cA = τ_cA
-    time_cf = τ_cf
+    Delay = 1.0
+    Gain_A = 1.0
+    Gain_f = 1.0
+    set_point = 1.0
+    time_A = 1.0
+    time_f = 1.0
   end
   @structural_parameters begin
-    delay_order = reflex_delay_order
+    delay_order = 5
   end
   @variables begin
     u(t)
@@ -167,8 +167,8 @@ end
   end
   @equations begin
     u ~ delay.u
-    D(y_A) ~ (-y_A + Gain_cA * (delay.y - set_point)) / time_cA
-    D(y_f) ~ (-y_f + Gain_cf * (delay.y - set_point)) / time_cf
+    D(y_A) ~ (-y_A + Gain_A * (delay.y - set_point)) / time_A
+    D(y_f) ~ (-y_f + Gain_f * (delay.y - set_point)) / time_f
   end
 end
 
@@ -206,5 +206,36 @@ end
     ϕbarc ~ _Kstat * (1 - exp(-Phi / _Kstat)) + _Kdyn * (1 - exp(-ϕCO₂dyn / _Kdyn))
     D(ϕc) ~ (ϕbarc - ϕc) / _τ_pl
     fc ~ ifelse(ϕc > 0, ϕc, 0.0)
+  end
+end
+
+@mtkmodel PeripheralChemoreceptors begin
+  @parameters begin
+    Delay = 1.0
+    Gain_A = 1.0
+    Gain_f = 1.0
+    set_point = 1.0
+    time_A = 1.0
+    time_f = 1.0
+  end
+  @structural_parameters begin
+    delay_order = 5
+  end
+  @components begin
+    s1 = PeripheralChemoreceptors1stStage()
+    s2 = Chemoreceptors(Delay=Delay, Gain_A=Gain_A, Gain_f=Gain_f, set_point=set_point, time_A=time_A, time_f=time_f, delay_order=delay_order)
+  end
+  @variables begin
+    uSaO₂(t)
+    ucaCO₂(t)
+    y_A(t)
+    y_f(t)
+  end
+  @equations begin
+    uSaO₂ ~ s1.uSaO₂
+    ucaCO₂ ~ s1.ucaCO₂
+    s2.u ~ s1.fc
+    y_A ~ s2.y_A
+    y_f ~ s2.y_f
   end
 end

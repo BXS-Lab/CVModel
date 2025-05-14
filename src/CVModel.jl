@@ -156,8 +156,8 @@ This section of code instances the compartments used in the model, based on the 
 @named BC_A_Junc = Junction2()
 @named Abd_A_Junc = Junction3()
 
-@named CentralResp = CentralChemoreceptors()
-@named PeripheralResp = PeripheralChemoreceptors1stStage()
+@named CentralResp = Chemoreceptors(Delay=Dc, Gain_A=G_cA, Gain_f=G_cf, set_point=paCO₂_set, time_A=τ_cA, time_f=τ_cf, delay_order=reflex_delay_order)
+@named PeripheralResp = PeripheralChemoreceptors(Delay=Dp, Gain_A=G_pA, Gain_f=G_pf, set_point=fapc_set, time_A=τ_pA, time_f=τ_pf, delay_order=reflex_delay_order)
 
 """
 Structural Connections
@@ -610,8 +610,11 @@ u0 = [
   CentralResp.delay.x => reflex_delay_init,
   CentralResp.y_A => 0.0,
   CentralResp.y_f => 0.0,
-  PeripheralResp.ϕCO₂dyn => 0.0,
-  PeripheralResp.ϕc => 0.0,
+  PeripheralResp.s1.ϕCO₂dyn => 0.0,
+  PeripheralResp.s1.ϕc => 0.0,
+  PeripheralResp.s2.y_A => 0.0,
+  PeripheralResp.s2.y_f => 0.0,
+  PeripheralResp.s2.delay.x => reflex_delay_init
 ]
 
 """
@@ -655,7 +658,9 @@ display(plot(Sol, idxs=[LungGE.p_ACO₂, LungGE.paCO₂, LungGE.cvCO₂],
         ylabel = "Fractional Concentration",
         title = "Lung Gas Exchange"))
 
-display(plot(Sol, idxs=[PeripheralResp.fc]))
+display(plot(Sol, idxs=[(PeripheralResp.y_f + CentralResp.y_f)],
+        label = ["Peripheral" "Central"],
+        xlabel = "Time (s)"))
 
 #### Direct from Solution Plots
 
