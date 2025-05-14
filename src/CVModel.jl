@@ -12,9 +12,6 @@ This model is a simulation of the human cardiovascular system, including a four 
 ### TODO: CV Control:          (1) CNS Ischemic Response, (2) Peripheral Chemoreceptors, (3) Lung Stretch Receptors
 ### TODO: Simulation:          (1) Exercise Model, (2) Other blood parameters (e.g., pH etc.), (3) Altitude, pressure, temperature driver; water vapor etc.
 ### TODO: Code:                (1) Fix the whole model params thing
-
-########### TODO: Instability at tilt is due to Jugular Vein negative volume.
-
 module CVModel
 display("Cardiovascular Model v3.2.0 (May 13th, 2025) - BXS Lab, UC Davis")
 
@@ -112,9 +109,9 @@ This section of code instances the compartments used in the model, based on the 
 @named Abd_veins = Vein(C=C_Abd_veins, R=R_Abd_veins, V₀=v0_Abd_veins, h=h_Abd_veins, is_nonlinear=true, Flow_div = Flow_Abd_veins, V_max=vM_Abd_vein, rad=rad_Abd)
 @named Thor_IVC = Vein(C=C_Thor_IVC, R=R_Thor_IVC, V₀=v0_Thor_IVC, h=h_Thor_IVC, has_tissue=false)
 @named Head_veins = Vein(C=C_Head_veins, R=R_Head_veins, V₀=v0_Head_veins, h=h_Head_veins, rad=rad_Head)
-@named Jugular_vein = Vein(C=C_Jugular_vein, R=R_Jugular_vein, V₀=v0_Jugular_vein, h=h_Jugular_vein, rad=rad_Neck)
+@named Jugular_vein = Vein(C=C_Jugular_vein, R=R_Jugular_vein, V₀=v0_Jugular_vein, h=h_Jugular_vein, rad=rad_Neck, has_valve=true)
 
-@named VP = VertebralPlexus(R=Rᵥₚ, h=h_Jugular_vein)
+# @named VP = VertebralPlexus(R=Rᵥₚ, h=h_Jugular_vein)
 
 #### Microcirculation
 @named UpBd_cap = VarResistor()
@@ -260,10 +257,6 @@ circ_eqs = [
   LungGE.cvCO₂ ~ Pulm_art.C.cCO₂,
   LungGE.caO₂ ~ Pulm_art.C.caO₂,
   LungGE.caCO₂ ~ Pulm_art.C.caCO₂,
-#   0.204 ~ Pulm_art.C.caO₂,
-#   0.042 ~ Pulm_art.C.caCO₂,
-#   Pulm_art.C.cO₂ ~ Pulm_art.C.caO₂,
-#   Pulm_art.C.cCO₂ ~ Pulm_art.C.caCO₂,
 
   #### Interstitial Connections (Direct Connections)
   Splanchnic_vein.C.qint ~ Interstitial.Qint,
@@ -686,38 +679,16 @@ display(plot(Sol, idxs=[Vtotal],
         ylabel = "Volume (ml)",
         title = "Total Blood Volume")) # Debugging plot to quickly check volume conservation
 
-display(plot(Sol, idxs=[Head_cap.R]))
-
-display(plot(Sol, idxs=[Pulm_cap.out.cO₂, Cor_art.cO₂, Cor_vein.cO₂],
-        label = ["Driver" "art" "vein" "Leg" "Abdomen"],
-        xlabel = "Time (s)",
-        ylabel = "cO₂ (ml/ml)",
-        title = "Oxygen Extraction"))
-
-display(plot(Sol, idxs=[LungGE.p_ACO₂, LungGE.paCO₂, LungGE.cvCO₂],
-        xlabel = "Time (s)",
-        ylabel = "Fractional Concentration",
-        title = "Lung Gas Exchange"))
-
-display(plot(Sol, idxs=[Splanchnic_vein.cO₂, Splanchnic_art.cO₂],
-        label = ["Peripheral" "Central"],
-        xlabel = "Time (s)"))
-
-display(plot(Sol, idxs=[Head_cap.out.cO₂, Head_art.cO₂, Head_veins.cO₂],
-        label = ["Head_art" "Head_vein"],
-        xlabel = "Time (s)",
-        ylabel = "Fractional Concentration",
-        title = "Lung Gas Exchange"))
-
 display(plot(Sol, idxs=[Head_veins.C.pₜₘ, Head_veins.C.V],
-        xlims = (0, 10)))
+        xlims = (90, 105)))
 
 display(plot(Sol, idxs=[Head_veins.C.in.q, Head_veins.C.out.q],
-        xlims = (0, 10)))
+        xlims = (90, 105)))
 
-display(plot(Sol, idxs=[Head_veins.C.Cvar], xlims = (0,10)))
+display(plot(Sol, idxs=[Jugular_vein.out.q, VP.out.q], xlims = (90, 105)))
+display(plot(Sol, idxs=[Jugular_vein.C.V], xlims = (90,105)))
 
-display(plot(Sol, idxs=[(60/RespMuscles.BreathInt_held)]))
+
 
 #### Direct from Solution Plots
 

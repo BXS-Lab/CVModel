@@ -891,7 +891,7 @@ Vertebral Plexus
   @components begin
     in = Pin()
     out = Pin()
-    R = Resistor(R=R)
+    R = ResistorDiode(R=R)
     Ph = HydrostaticPressure(ρ=ρ, h=h, con=con)
   end
 
