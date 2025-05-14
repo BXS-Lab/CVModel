@@ -1300,9 +1300,9 @@ end
 
 
     # #### Dissociation equations
-    cppO₂ ~ _CₛₐₜO₂ * (XppO₂)^(1/_h₁)/(1 + (XppO₂)^(1/_h₁))
+    cppO₂ ~ _CₛₐₜO₂ * (max(XppO₂,1e-8))^(1/_h₁)/(1 + (max(XppO₂,1e-8))^(1/_h₁))
     XppO₂ ~ pppO₂ * (1 + _β₁ * pppCO₂) / (_K₁ * (1 + _α₁ * pppCO₂))
-    cppCO₂ ~ _CₛₐₜCO₂ * (XppCO₂)^(1/_h₂)/(1 + (XppCO₂)^(1/_h₂))
+    cppCO₂ ~ _CₛₐₜCO₂ * (max(XppCO₂,1e-8))^(1/_h₂)/(1 + (max(XppCO₂,1e-8))^(1/_h₂))
     XppCO₂ ~ pppCO₂ * (1 + _β₂ * pppO₂) / (_K₂ * (1 + _α₂ * pppO₂))
 
     # #### Instantaneous equilibrium equations
@@ -1329,8 +1329,8 @@ end
     qps ~ qpa * _sh
 
     #### O₂ saturation in arterial blood
-    XaO₂ ~ ((caO₂ / _CₛₐₜO₂) / (1 - (caO₂ / _CₛₐₜO₂)))^_h₁
-    XaCO₂ ~ ((caCO₂ / _CₛₐₜCO₂) / (1 - (caCO₂ / _CₛₐₜCO₂)))^_h₂
+    XaO₂ ~ max(((caO₂ / _CₛₐₜO₂) / (1 - (caO₂ / _CₛₐₜO₂))),1e-8)^_h₁
+    XaCO₂ ~ max(((caCO₂ / _CₛₐₜCO₂) / (1 - (caCO₂ / _CₛₐₜCO₂))),1e-8)^_h₂
 
     paO₂ ~ (-1 + √(1 + 2*_K₁*XaO₂*_β₂ + 2*_K₂*XaCO₂*_β₁ + (_K₁^2)*(XaO₂^2)*(_β₂^2) - 2*_K₁*_K₂*XaCO₂*XaO₂*_α₁*_α₂ + 4*_K₁*_K₂*XaCO₂*XaO₂*_α₁*_β₂ + 4*_K₁*_K₂*XaCO₂*XaO₂*_α₂*_β₁ - 2*_K₁*_K₂*XaCO₂*XaO₂*_β₁*_β₂ + (_K₂^2)*(XaCO₂^2)*(_β₁^2) + 2(_K₁^2)*_K₂*XaCO₂*(XaO₂^2)*_α₁*_α₂*_β₂ + 2*_K₁*(_K₂^2)*(XaCO₂^2)*XaO₂*_α₁*_α₂*_β₁ + (_K₁^2)*(_K₂^2)*(XaCO₂^2)*(XaO₂^2)*(_α₁^2)*(_α₂^2)) + _K₁*XaO₂*_β₂ - _K₂*XaCO₂*_β₁ + _K₁*_K₂*XaCO₂*XaO₂*_α₁*_α₂) / (2*_β₂ + 2*_K₂*XaCO₂*_α₂*_β₁)
 

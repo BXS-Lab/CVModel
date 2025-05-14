@@ -13,6 +13,8 @@ This model is a simulation of the human cardiovascular system, including a four 
 ### TODO: Simulation:          (1) Exercise Model, (2) Other blood parameters (e.g., pH etc.), (3) Altitude, pressure, temperature driver; water vapor etc.
 ### TODO: Code:                (1) Fix the whole model params thing
 
+########### TODO: Instability at tilt is due to Jugular Vein negative volume.
+
 module CVModel
 display("Cardiovascular Model v3.2.0 (May 13th, 2025) - BXS Lab, UC Davis")
 
@@ -418,9 +420,11 @@ circ_sys = structural_simplify(circ_model)
 equations(expand(circ_sys))
 unknowns(circ_sys)
 equations(expand(circ_model))
-# for u in unknowns(circ_sys)
-#     println("Unknown: ", u)
-# end
+unknown_list = collect(unknowns(circ_sys))
+println("Number of unknowns: ", length(unknown_list))
+for (i, u) in enumerate(unknown_list)
+    println("unknown $(i): ", u)
+end
 
 """
 Initial Conditions
@@ -648,7 +652,13 @@ This section of the code solves the ODE system. The time span and save interval 
 
 prob = ODEProblem(circ_sys, u0, tspan)
 
-@time Sol = solve(prob, Tsit5(), reltol=1e-10, abstol=1e-12, maxiters=1e8, saveat=Start_time:Time_step:Stop_time)
+function terminate_on_nan(u, t, integrator)
+    any(x -> !isfinite(x), u)
+end
+
+cb = DiscreteCallback(terminate_on_nan, terminate!)
+
+@time Sol = solve(prob, Tsit5(), callback=cb, reltol=1e-10, abstol=1e-12, maxiters=1e8)#, saveat=Start_time:Time_step:Stop_time)
 # For a discussion on the solver choice, see: https://docs.sciml.ai/DiffEqDocs/stable/solvers/ode_solve/
 # Previously used KenCarp4() which incorporates a stiffness detection and auto-switching algorithm. Tsit5() is the default choice and faster.
 
@@ -688,8 +698,15 @@ display(plot(Sol, idxs=[Splanchnic_vein.cO₂, Splanchnic_art.cO₂],
         label = ["Peripheral" "Central"],
         xlabel = "Time (s)"))
 
-display(plot(Sol, idxs=[LungGE.paO₂, LungGE.paCO₂],
-        label = ["paO₂" "paCO₂" "caCO₂"],
+display(plot(Sol, idxs=[Head_cap.R],
+        label = ["Head_art" "Head_vein"],
+        xlabel = "Time (s)",
+        ylabel = "Fractional Concentration",
+        title = "Lung Gas Exchange"))
+
+display(plot(Sol, idxs=[Jugular_vein.C.V],
+        xlims = (110, 130),
+        label = ["cO₂"],
         xlabel = "Time (s)",
         ylabel = "Fractional Concentration",
         title = "Lung Gas Exchange"))
@@ -810,6 +827,12 @@ plot(beat_times, [(Head_art_Vmean + Head_veins_Vmean + Jugular_vein_Vmean + Comm
 #### Pulmonary and Respiratory Plots
 
 p4a = plot(Sol, idxs=[RespMuscles.out.p], xlims = (0, 250),
+        label = "pₘᵤₛ",
+        xlabel = "Time (s)",
+        ylabel = "Pressure (mmHg)",
+        title = "Respiratory Muscle Pressure")
+
+p4a = plot(Sol, idxs=[Cor_cap.R], xlims = (110,130),
         label = "pₘᵤₛ",
         xlabel = "Time (s)",
         ylabel = "Pressure (mmHg)",
