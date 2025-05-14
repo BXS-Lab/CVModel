@@ -239,3 +239,18 @@ end
     y_f ~ s2.y_f
   end
 end
+
+@mtkmodel Autoregulation begin
+  @parameters begin
+    Gain = 1.0
+    set_point = 1.0
+    time = 1.0
+  end
+  @variables begin
+    ucvO₂(t)
+    x(t)
+  end
+  @equations begin
+    D(x) ~ (-x - Gain * (ucvO₂ - set_point)) / time
+  end
+end

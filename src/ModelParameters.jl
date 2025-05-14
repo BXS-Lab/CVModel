@@ -543,6 +543,23 @@ fapc_set = 3.7 # Set point for fapc (spikes/s)
 τ_pA = 83 # Amplitude time constant for peripheral chemoreceptors (s)
 τ_pf = 147.78 # Frequency time constant for peripheral chemoreceptors (s)
 
+"""
+Local Autoregulation
+"""
+
+cvO₂_muscle_setpoint = 0.155
+G_muscle_O₂ = 30
+τ_muscle_O₂ = 10
+
+cvO₂_brain_setpoint = 0.14
+G_brain_O₂ = 10
+τ_brain_O₂ = 10
+
+cvO₂_heart_setpoint = 0.11
+G_heart_O₂ = 35
+τ_heart_O₂ = 10
+
+
 for name in names(@__MODULE__; all=true, imported=false)
   # Only export if it's not a function or macro and is defined
   if isdefined(@__MODULE__, name) && !(name in (:eval, :include, :__doc__)) && !(name in names(Base))

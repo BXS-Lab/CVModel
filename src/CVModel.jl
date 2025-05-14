@@ -9,7 +9,7 @@ This model is a simulation of the human cardiovascular system, including a four 
 ### TODO: Pulmonary Mechanics: (1) Bring Intrathoracic Pressure into Lung Model
 ### TODO: Lung Gas Exchange:   (1) Improve fidelity (https://github.com/baillielab/oxygen_delivery/blob/master/oxygen_delivery.py)
 ### TODO: Tissue Gas Exchange: (1) Check values (2) Consumption in Heart depends upon power (Ursino 2000)
-### TODO: CV Control:          (1) Autoregulation, (2) CNS Ischemic Response, (3) Peripheral Chemoreceptors, (4) Lung Stretch Receptors
+### TODO: CV Control:          (1) CNS Ischemic Response, (2) Peripheral Chemoreceptors, (3) Lung Stretch Receptors
 ### TODO: Simulation:          (1) Exercise Model, (2) Other blood parameters (e.g., pH etc.), (3) Altitude, pressure, temperature driver; water vapor etc.
 ### TODO: Code:                (1) Fix the whole model params thing
 
@@ -158,6 +158,11 @@ This section of code instances the compartments used in the model, based on the 
 
 @named CentralResp = Chemoreceptors(Delay=Dc, Gain_A=G_cA, Gain_f=G_cf, set_point=paCO₂_set, time_A=τ_cA, time_f=τ_cf, delay_order=reflex_delay_order)
 @named PeripheralResp = PeripheralChemoreceptors(Delay=Dp, Gain_A=G_pA, Gain_f=G_pf, set_point=fapc_set, time_A=τ_pA, time_f=τ_pf, delay_order=reflex_delay_order)
+
+@named BrainAutoreg = Autoregulation(Gain=G_brain_O₂, set_point=cvO₂_brain_setpoint, time=τ_brain_O₂)
+@named HeartAutoreg = Autoregulation(Gain=G_heart_O₂, set_point=cvO₂_heart_setpoint, time=τ_heart_O₂)
+@named UBMuscleAutoreg = Autoregulation(Gain=G_muscle_O₂, set_point=cvO₂_muscle_setpoint, time=τ_muscle_O₂)
+@named LBMuscleAutoreg = Autoregulation(Gain=G_muscle_O₂, set_point=cvO₂_muscle_setpoint, time=τ_muscle_O₂)
 
 """
 Structural Connections
@@ -330,16 +335,16 @@ circ_eqs = [
   # The outputs of the transfer functions are connected directly to the relevant compartments via static gains defined in the parameters file.
 
   # Coronary Resistance
-  Cor_cap.R ~ Rcc,
+  Cor_cap.R ~ Rcc / max(1 + HeartAutoreg.x, 1e-6),
 
   # Head Resistance
-  Head_cap.R ~ R_Head_cap,
+  Head_cap.R ~ R_Head_cap / max(1 + BrainAutoreg.x, 1e-6),
 
   # Arterial Resistance (ABR and CPR)
-  UpBd_cap.R ~ R_UpBd_cap + (Gabr_r * abr_αr.y) + (Gcpr_r * cpr_αr.y),
+  UpBd_cap.R ~ (R_UpBd_cap + (Gabr_r * abr_αr.y) + (Gcpr_r * cpr_αr.y))/(1 + UBMuscleAutoreg.x),
   Renal_cap.R ~ R_Renal_cap + (Gabr_r * abr_αr.y) + (Gcpr_r * cpr_αr.y),
   Splanchnic_cap.R ~ R_Splanchnic_cap + (Gabr_r * abr_αr.y) + (Gcpr_r * cpr_αr.y),
-  Leg_cap.R ~ R_Leg_cap + (Gabr_r * abr_αr.y) + (Gcpr_r * cpr_αr.y),
+  Leg_cap.R ~ (R_Leg_cap + (Gabr_r * abr_αr.y) + (Gcpr_r * cpr_αr.y)) / (1 + LBMuscleAutoreg.x),
 
   # Venous Tone (ABR and CPR)
   UpBd_vein.C.Vabr ~ Gabr_vub * abr_αv.y,
@@ -377,6 +382,10 @@ circ_eqs = [
   PeripheralResp.ucaCO₂ ~ LungGE.caCO₂,
   RespMuscles.RespRate_chemo ~ (CentralResp.y_f + PeripheralResp.y_f),
   RespMuscles.p_chemo ~ (CentralResp.y_A + PeripheralResp.y_A),
+  BrainAutoreg.ucvO₂ ~ Head_veins.cO₂,
+  HeartAutoreg.ucvO₂ ~ Cor_vein.cO₂,
+  UBMuscleAutoreg.ucvO₂ ~ UpBd_vein.cO₂,
+  LBMuscleAutoreg.ucvO₂ ~ Leg_vein.cO₂,
 ]
 
 """
@@ -398,7 +407,8 @@ This section of the code composes the system of ordinary differential equations 
   CPRafferent, cpr_αr, cpr_αv, # Cardiopulmonary Reflex
   alpha_driver, gravity_driver, lbnp_driver, # Design of Experiments Drivers
   Lungs, RespMuscles, LungGE, # Lung Model Breathing ChestWall
-  CentralResp, PeripheralResp
+  CentralResp, PeripheralResp,
+  BrainAutoreg, HeartAutoreg, UBMuscleAutoreg, LBMuscleAutoreg,# Autoregulation
   ])
 
 circ_sys = structural_simplify(circ_model)
@@ -623,6 +633,12 @@ u0 = [
 
   RespMuscles.BreathInt_held => 60 / RespRateₙₒₘ,
   RespMuscles.p_held => p_musmin,
+
+  #### Autoregulation
+  BrainAutoreg.x => 0.0,
+  HeartAutoreg.x => 0.0,
+  UBMuscleAutoreg.x => 0.0,
+  LBMuscleAutoreg.x => 0.0,
 ]
 
 """
@@ -654,6 +670,8 @@ display(plot(Sol, idxs=[Vtotal],
         xlabel = "Time (s)",
         ylabel = "Volume (ml)",
         title = "Total Blood Volume")) # Debugging plot to quickly check volume conservation
+
+display(plot(Sol, idxs=[Head_cap.R]))
 
 display(plot(Sol, idxs=[Pulm_cap.out.cO₂, Cor_art.cO₂, Cor_vein.cO₂],
         label = ["Driver" "art" "vein" "Leg" "Abdomen"],
