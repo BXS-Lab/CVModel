@@ -155,6 +155,18 @@ The Variable Resistor model extends the One Port model and represents a resistiv
   end
 end
 
+@mtkmodel VarConductor begin
+  @extend OnePort()
+
+  @variables begin
+    G(t) # Time-varying resistance
+  end
+
+  @equations begin
+    q ~ -Δp * G
+  end
+end
+
 @mtkmodel VesselCollapseVein begin
   @extend OnePort()
   @parameters begin

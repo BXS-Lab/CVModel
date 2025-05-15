@@ -13,7 +13,7 @@ Vzpf = v0_Asc_A + v0_BC_A + v0_UpBd_art + UpBd_vein.C.V₀eff + v0_SVC + v0_Thor
 
 Vinterstitial = Interstitial.Vint
 Vtotal = Vvessel + Vinterstitial
-TPR = 1 / (1/UpBd_cap.R + 1/Renal_cap.R + 1/Splanchnic_cap.R + 1/Leg_cap.R + 1/Cor_cap.R + 1/Head_cap.R)
+TPR = 1 / (1/UpBd_cap.R + 1/Renal_cap.R + 1/Splanchnic_cap.R + 1/Leg_cap.R + 1/Cor_cap.R + Head_cap.G)
 HR = 60 / SA.RR_held
 RR = SA.RR_held * 1000 # Convert to ms
 

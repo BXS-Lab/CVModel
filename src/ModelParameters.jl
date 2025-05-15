@@ -130,7 +130,7 @@ v0ca = 24.0 # Coronary Artery zero pressure volume (ml)
 Lca = 0.047 # Coronary Artery inductance (mmHg.s^2/ml)
 
 #### Coronary Capillaries
-Rcc = 19.36 # Coronary Capillary microvascular resistance (PRU)
+Rcc = 19.71 # Coronary Capillary microvascular resistance (PRU)
 
 #### Coronary Vein parameters
 Rcv = 0.224 # Coronary Vein resistance (PRU)
@@ -515,21 +515,21 @@ DlCO₂ = DmCO₂
 DlO₂ = DmO₂
 
 """
-Central Chemoreceptors
+Central Chemoreceptors (Albanese 2016)
 """
+PaCO₂n = 40.0 # Set point for paCO₂ (mmHg)
 
 Dc = 8.0 # Central chemoreceptor delay (s)
 G_cA = 0.850 * cmH2O2mmHg # Central chemoreceptor amplitude gain (mmHg/mmHg)
 G_cf = 0.9 # Central chemoreceptor frequency gain (breaths/min/mmHg)
-paCO₂_set = 40.0 # Set point for paCO₂ (mmHg)
 τ_cA = 105 # Amplitude time constant for central chemoreceptors (s)
 τ_cf = 400 # Frequency time constant for central chemoreceptors (s)
 
 """
-Peripheral Chemoreceptors
+Peripheral Chemoreceptors (Albanese 2016)
 """
 
-#### Stage 1
+#### Stage 1 (Ursino 2002)
 Ap = 600
 Bp = 10.18
 KO₂ = 200
@@ -550,20 +550,42 @@ fapc_set = 3.7 # Set point for fapc (spikes/s)
 τ_pf = 147.78 # Frequency time constant for peripheral chemoreceptors (s)
 
 """
-Local Autoregulation
+Local Autoregulation (Magosso 2001)
 """
 
-cvO₂_muscle_setpoint = 0.155
-G_muscle_O₂ = 30
-τ_muscle_O₂ = 10
+# cvO₂_muscle_setpoint = 0.155
+# G_muscle_O₂ = 30
+# τ_muscle_O₂ = 10
 
-cvO₂_brain_setpoint = 0.14
-G_brain_O₂ = 10
-τ_brain_O₂ = 10
+# cvO₂_brain_setpoint = 0.14
+# G_brain_O₂ = 10
+# τ_brain_O₂ = 10
 
-cvO₂_heart_setpoint = 0.11
-G_heart_O₂ = 35
-τ_heart_O₂ = 10
+# cvO₂_heart_setpoint = 0.11
+# G_heart_O₂ = 35
+# τ_heart_O₂ = 10
+
+Gbpn = 0.15 # ml/(mmHg.s)
+
+CvbO₂n = 0.14
+gbO₂ = 140 # Raised from 10 by Albanese, ml blood/mlO₂
+A_auto = 20.9
+B_auto = 92.8
+C_auto = 10570
+D_auto = -5.251
+
+#Rhpn = 19.71 # mmHg.s/ml, same as Rcc
+CvhO₂n = 0.11
+ghO₂ = 490 # Raised from 35 by Albanese, ml blood/mlO₂
+khCO₂ = 11.11 # mmHg
+
+Rmpn = 4.48 # mmHg.s/ml
+CvmO₂n = 0.155
+gmO₂ = 420 # Raised from 30 by Albanese, ml blood/mlO₂
+kmCO₂ = 142.86 # mmHg
+
+τO₂ = 10 # s
+τCO₂ = 20 # s
 
 """
 Albanese Reflex Parameters
@@ -590,13 +612,13 @@ G_ap = 23.29 # (spikes/l/s)
 #### Efferent sympathetic pathway
 fes∞ =2.1 # (spikes/s)
 fes₀ = 16.11 # (spikes/s)
-fesₘᵢₙ = 2.66 # (spikes/s)
+# fesₘᵢₙ = 2.66 # (spikes/s)
 fesₘₐₓ = 60
 kes = 0.0675 # (s)
 
-Wbₛₚ = 1
+Wbₛₚ = -1
 Wcₛₚ = 5
-Wpₛₚ = 0.34
+Wpₛₚ = -0.34
 
 Wbₛₕ = 1
 Wcₛₕ = 5

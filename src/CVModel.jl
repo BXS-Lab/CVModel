@@ -8,8 +8,8 @@ This model is a simulation of the human cardiovascular system, including a four 
 ### TODO: CV Model:            (1) Vertebral Plexus (2) Dynamic ICP
 ### TODO: Pulmonary Mechanics: (1) Bring Intrathoracic Pressure into Lung Model
 ### TODO: Lung Gas Exchange:   (1) Improve fidelity (https://github.com/baillielab/oxygen_delivery/blob/master/oxygen_delivery.py)
-### TODO: CV Control:          (1) CNS Ischemic Response, (2) Peripheral Chemoreceptors, (3) Lung Stretch Receptors
-### TODO: Simulation:          (1) Exercise Model, (2) Other blood parameters (e.g., pH etc.), (3) Altitude, pressure, temperature driver; water vapor etc.
+### TODO: CV Control:          (1) CNS Ischemic Response, (2) Peripheral Chemoreceptors, (3) Lung Stretch Receptors (4) Braroreflex (update) (5) CPR (update)
+### TODO: Simulation:          (1) Exercise Model, (2) Other blood parameters (e.g., pH etc.), (3) Altitude, pressure, temperature driver; water vapor etc. (4) Update ICs (negative compliance alters volume)
 ### TODO: Code:                (1) Fix the whole model params thing
 module CVModel
 display("Cardiovascular Model v3.3.0 (May 14th, 2025) - BXS Lab, UC Davis")
@@ -117,7 +117,7 @@ This section of code instances the compartments used in the model, based on the 
 @named Renal_cap = VarResistor()
 @named Splanchnic_cap = VarResistor()
 @named Leg_cap = VarResistor()
-@named Head_cap = VarResistor()
+@named Head_cap = VarConductor()
 
 #### Interstitial Compartment
 @named Interstitial = InterstitialCompartment(Vmtilt=Vmax_tilt, Vmlbnp=Vmax_lbnp, τ=τint)
@@ -157,13 +157,15 @@ This section of code instances the compartments used in the model, based on the 
 @named Abd_A_Junc = Junction3()
 @named Head_veins_Junc = Junction2()
 
-@named CentralResp = Chemoreceptors(Delay=Dc, Gain_A=G_cA, Gain_f=G_cf, set_point=paCO₂_set, time_A=τ_cA, time_f=τ_cf, delay_order=reflex_delay_order)
-@named PeripheralResp = PeripheralChemoreceptors(Delay=Dp, Gain_A=G_pA, Gain_f=G_pf, set_point=fapc_set, time_A=τ_pA, time_f=τ_pf, delay_order=reflex_delay_order)
+@named PeripheralChemo = PeripheralChemoreceptors()
 
-@named BrainAutoreg = Autoregulation(Gain=G_brain_O₂, set_point=cvO₂_brain_setpoint, time=τ_brain_O₂)
-@named HeartAutoreg = Autoregulation(Gain=G_heart_O₂, set_point=cvO₂_heart_setpoint, time=τ_heart_O₂)
-@named UBMuscleAutoreg = Autoregulation(Gain=G_muscle_O₂, set_point=cvO₂_muscle_setpoint, time=τ_muscle_O₂)
-@named LBMuscleAutoreg = Autoregulation(Gain=G_muscle_O₂, set_point=cvO₂_muscle_setpoint, time=τ_muscle_O₂)
+@named CentralResp = Chemoreceptors(Delay=Dc, Gain_A=G_cA, Gain_f=G_cf, set_point=PaCO₂n, time_A=τ_cA, time_f=τ_cf, delay_order=reflex_delay_order)
+@named PeripheralResp = Chemoreceptors(Delay=Dp, Gain_A=G_pA, Gain_f=G_pf, set_point=fapc_set, time_A=τ_pA, time_f=τ_pf, delay_order=reflex_delay_order)
+
+@named BrainAutoreg = CerebralAutoregulation()
+@named HeartAutoreg = Autoregulation(_gjO₂=ghO₂, _CvjO₂n=CvhO₂n, _τO₂=τO₂, _PaCO₂n=PaCO₂n, _kjCO₂=khCO₂, _τCO₂=τCO₂)
+@named UBMuscleAutoreg = Autoregulation(_gjO₂=gmO₂, _CvjO₂n=CvmO₂n, _τO₂=τO₂, _PaCO₂n=PaCO₂n, _kjCO₂=kmCO₂, _τCO₂=τCO₂)
+@named LBMuscleAutoreg = Autoregulation(_gjO₂=gmO₂, _CvjO₂n=CvmO₂n, _τO₂=τO₂, _PaCO₂n=PaCO₂n, _kjCO₂=kmCO₂, _τCO₂=τCO₂)
 
 @named HeartP = HeartPower()
 """
@@ -338,17 +340,11 @@ circ_eqs = [
   #### Reflex Arc Efferents
   # The outputs of the transfer functions are connected directly to the relevant compartments via static gains defined in the parameters file.
 
-  # Coronary Resistance
-  Cor_cap.R ~ Rcc / max(1 + HeartAutoreg.x, 1e-6),
-
-  # Head Resistance
-  Head_cap.R ~ R_Head_cap / max(1 + BrainAutoreg.x, 1e-6),
-
   # Arterial Resistance (ABR and CPR)
-  UpBd_cap.R ~ (R_UpBd_cap + (Gabr_r * abr_αr.y) + (Gcpr_r * cpr_αr.y))/(1 + UBMuscleAutoreg.x),
+  UpBd_cap.R ~ (R_UpBd_cap + (Gabr_r * abr_αr.y) + (Gcpr_r * cpr_αr.y)) * (1 + UBMuscleAutoreg.xjCO₂) /(1 + UBMuscleAutoreg.xjO₂),
   Renal_cap.R ~ R_Renal_cap + (Gabr_r * abr_αr.y) + (Gcpr_r * cpr_αr.y),
   Splanchnic_cap.R ~ R_Splanchnic_cap + (Gabr_r * abr_αr.y) + (Gcpr_r * cpr_αr.y),
-  Leg_cap.R ~ (R_Leg_cap + (Gabr_r * abr_αr.y) + (Gcpr_r * cpr_αr.y)) / (1 + LBMuscleAutoreg.x),
+  Leg_cap.R ~ (R_Leg_cap + (Gabr_r * abr_αr.y) + (Gcpr_r * cpr_αr.y)) * (1 + LBMuscleAutoreg.xjCO₂) /(1 + LBMuscleAutoreg.xjO₂),
 
   # Venous Tone (ABR and CPR)
   UpBd_vein.C.Vabr ~ Gabr_vub * abr_αv.y,
@@ -380,17 +376,31 @@ circ_eqs = [
   LA.τ ~ SA.RR_held,
   LV.τ ~ SA.RR_held,
 
-  #### Respiratory Reflex Afferents (Sensed Pressures)
+  #### Peripheral Chemoreceptors
+  PeripheralChemo.uSaO₂ ~ LungGE.SaO₂,
+  PeripheralChemo.ucaCO₂ ~ LungGE.caCO₂,
+
+  #### Respiratory Control
   CentralResp.u ~ LungGE.paCO₂,
-  PeripheralResp.uSaO₂ ~ LungGE.SaO₂,
-  PeripheralResp.ucaCO₂ ~ LungGE.caCO₂,
+  PeripheralResp.u ~ PeripheralChemo.fapc,
+
   RespMuscles.RespRate_chemo ~ (CentralResp.y_f + PeripheralResp.y_f),
   RespMuscles.p_chemo ~ (CentralResp.y_A + PeripheralResp.y_A),
-  BrainAutoreg.ucvO₂ ~ Head_veins.cO₂,
-  HeartAutoreg.ucvO₂ ~ Cor_vein.cO₂,
-  UBMuscleAutoreg.ucvO₂ ~ UpBd_vein.cO₂,
-  LBMuscleAutoreg.ucvO₂ ~ Leg_vein.cO₂,
 
+  #### Autoregulation
+  BrainAutoreg.uCvbO₂ ~ Head_veins.cO₂,
+  HeartAutoreg.uCvjO₂ ~ Cor_vein.cO₂,
+  UBMuscleAutoreg.uCvjO₂ ~ UpBd_vein.cO₂,
+  LBMuscleAutoreg.uCvjO₂ ~ Leg_vein.cO₂,
+  BrainAutoreg.uPaCO₂ ~ LungGE.paCO₂,
+  HeartAutoreg.uPaCO₂ ~ LungGE.paCO₂,
+  UBMuscleAutoreg.uPaCO₂ ~ LungGE.paCO₂,
+  LBMuscleAutoreg.uPaCO₂ ~ LungGE.paCO₂,
+
+  Cor_cap.R ~ Rcc * (1 + HeartAutoreg.xjCO₂) /(1 + HeartAutoreg.xjO₂),
+  Head_cap.G ~ Gbpn * (1 + BrainAutoreg.xbO₂ + BrainAutoreg.xbCO₂),
+
+  #### Heart Power
   HeartP.Plv ~ LV.pₜₘ,
   HeartP.Prv ~ RV.pₜₘ,
   HeartP.DVlv ~ (LV.in.q + LV.out.q),
@@ -420,6 +430,7 @@ This section of the code composes the system of ordinary differential equations 
   alpha_driver, gravity_driver, lbnp_driver, # Design of Experiments Drivers
   Lungs, RespMuscles, LungGE, # Lung Model Breathing ChestWall
   CentralResp, PeripheralResp,
+  PeripheralChemo, # Respiratory Control
   BrainAutoreg, HeartAutoreg, UBMuscleAutoreg, LBMuscleAutoreg,# Autoregulation
   HeartP, # Heart Power
   ])
@@ -636,24 +647,31 @@ u0 = [
   LungGE.FAO₂ => FIO₂,
   LungGE.FACO₂ => FICO₂,
 
+  #### Peripheral Chemoreceptors
+  PeripheralChemo.ϕCO₂dyn => 0.0,
+  PeripheralChemo.ϕc => 0.0,
+
   #### Respiratory Control
   CentralResp.delay.x => reflex_delay_init,
   CentralResp.y_A => 0.0,
   CentralResp.y_f => 0.0,
-  PeripheralResp.s1.ϕCO₂dyn => 0.0,
-  PeripheralResp.s1.ϕc => 0.0,
-  PeripheralResp.s2.y_A => 0.0,
-  PeripheralResp.s2.y_f => 0.0,
-  PeripheralResp.s2.delay.x => reflex_delay_init,
+  PeripheralResp.delay.x => reflex_delay_init,
+  PeripheralResp.y_A => 0.0,
+  PeripheralResp.y_f => 0.0,
 
+  #### Central Pattern Generator
   RespMuscles.BreathInt_held => 60 / RespRateₙₒₘ,
   RespMuscles.p_held => p_musmin,
 
   #### Autoregulation
-  BrainAutoreg.x => 0.0,
-  HeartAutoreg.x => 0.0,
-  UBMuscleAutoreg.x => 0.0,
-  LBMuscleAutoreg.x => 0.0,
+  BrainAutoreg.xbO₂ => 0.0,
+  BrainAutoreg.xbCO₂ => 0.0,
+  HeartAutoreg.xjO₂ => 0.0,
+  HeartAutoreg.xjCO₂ => 0.0,
+  UBMuscleAutoreg.xjO₂ => 0.0,
+  UBMuscleAutoreg.xjCO₂ => 0.0,
+  LBMuscleAutoreg.xjO₂ => 0.0,
+  LBMuscleAutoreg.xjCO₂ => 0.0,
 
   #### Heart Dynamic Consumption
   HeartP.Wh => Whₙₒₘ,
@@ -689,8 +707,8 @@ display(plot(Sol, idxs=[Vtotal],
         ylabel = "Volume (ml)",
         title = "Total Blood Volume")) # Debugging plot to quickly check volume conservation
 
-display(plot(Sol, idxs=[Head_veins.C.pₜₘ, Head_veins.C.V],
-        xlims = (90, 105)))
+display(plot(Sol, idxs=[Head_cap.G],
+        xlims = (0, 250)))
 
 display(plot(Sol, idxs=[Head_veins.C.in.q, Head_veins.C.out.q],
         xlims = (90, 105)))

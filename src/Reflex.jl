@@ -145,6 +145,63 @@ The TransferFunction component implements a transfer function that models the re
   end
 end
 
+"""
+Ursino: Autoregulation
+"""
+
+@mtkmodel CerebralAutoregulation begin
+  @parameters begin
+    _τO₂ = τO₂
+    _gbO₂ = gbO₂
+    _CvbO₂n = CvbO₂n
+    _A_auto = A_auto
+    _B_auto = B_auto
+    _C_auto = C_auto
+    _D_auto = D_auto
+    _PaCO₂n = PaCO₂n
+    _τCO₂ = τCO₂
+  end
+  @variables begin
+    uCvbO₂(t)
+    xbO₂(t)
+    Phib(t)
+    uPaCO₂(t)
+    xbCO₂(t)
+  end
+  @equations begin
+    D(xbO₂) ~ (-xbO₂ - _gbO₂ * (uCvbO₂ - _CvbO₂n)) / _τO₂
+    Phib ~ ((_A_auto + (_B_auto) / (1 + _C_auto * exp(_D_auto * log(uPaCO₂)))) / (_A_auto + (_B_auto) / (1 + _C_auto * exp(_D_auto * log(_PaCO₂n))))) - 1
+    D(xbCO₂) ~ (-xbCO₂ + Phib) / _τCO₂
+  end
+end
+
+@mtkmodel Autoregulation begin
+  @parameters begin
+    _gjO₂ = 1.0
+    _CvjO₂n = 1.0
+    _τO₂ = 1.0
+    _PaCO₂n = 1.0
+    _kjCO₂ = 1.0
+    _τCO₂ = 1.0
+  end
+  @variables begin
+    uCvjO₂(t)
+    xjO₂(t)
+    uPaCO₂(t)
+    Phij(t)
+    xjCO₂(t)
+  end
+  @equations begin
+    D(xjO₂) ~ (-xjO₂ - _gjO₂ * (uCvjO₂ - _CvjO₂n)) / _τO₂
+    Phij ~ (1 - exp((uPaCO₂ - _PaCO₂n)/(_kjCO₂))) / (1 + exp((uPaCO₂ - _PaCO₂n)/(_kjCO₂)))
+    D(xjCO₂) ~ (-xjCO₂ + Phij) / _τCO₂
+  end
+end
+
+"""
+Ursino: Chemoreceptors
+"""
+
 @mtkmodel Chemoreceptors begin
   @parameters begin
     Delay = 1.0
@@ -172,7 +229,11 @@ end
   end
 end
 
-@mtkmodel PeripheralChemoreceptors1stStage begin
+"""
+Ursino: Peripheral Chemoreceptors
+"""
+
+@mtkmodel PeripheralChemoreceptors begin
   @parameters begin
     _Ap = Ap
     _Bp = Bp
@@ -195,7 +256,7 @@ end
     ϕCO₂dyn(t)
     ϕbarc(t)
     ϕc(t)
-    fc(t)
+    fapc(t)
   end
   @equations begin
     xO₂ ~ _Ap * (1 - uSaO₂) + _Bp
@@ -205,52 +266,26 @@ end
     D(ϕCO₂dyn) ~ (_τ_zh * D(ucaCO₂) - ϕCO₂dyn) / _τ_ph
     ϕbarc ~ _Kstat * (1 - exp(-Phi / _Kstat)) + _Kdyn * (1 - exp(-ϕCO₂dyn / _Kdyn))
     D(ϕc) ~ (ϕbarc - ϕc) / _τ_pl
-    fc ~ ifelse(ϕc > 0, ϕc, 0.0)
+    fapc ~ ifelse(ϕc > 0, ϕc, 0.0)
   end
 end
 
-@mtkmodel PeripheralChemoreceptors begin
-  @parameters begin
-    Delay = 1.0
-    Gain_A = 1.0
-    Gain_f = 1.0
-    set_point = 1.0
-    time_A = 1.0
-    time_f = 1.0
-  end
-  @structural_parameters begin
-    delay_order = 5
-  end
-  @components begin
-    s1 = PeripheralChemoreceptors1stStage()
-    s2 = Chemoreceptors(Delay=Delay, Gain_A=Gain_A, Gain_f=Gain_f, set_point=set_point, time_A=time_A, time_f=time_f, delay_order=delay_order)
-  end
-  @variables begin
-    uSaO₂(t)
-    ucaCO₂(t)
-    y_A(t)
-    y_f(t)
-  end
-  @equations begin
-    uSaO₂ ~ s1.uSaO₂
-    ucaCO₂ ~ s1.ucaCO₂
-    s2.u ~ s1.fc
-    y_A ~ s2.y_A
-    y_f ~ s2.y_f
-  end
-end
+"""
+Ursino: Afferent Baroreflex
+"""
 
-@mtkmodel Autoregulation begin
-  @parameters begin
-    Gain = 1.0
-    set_point = 1.0
-    time = 1.0
-  end
-  @variables begin
-    ucvO₂(t)
-    x(t)
-  end
-  @equations begin
-    D(x) ~ (-x - Gain * (ucvO₂ - set_point)) / time
-  end
-end
+# @mtkmodel AfferentBaroreflex begin
+#   @parameters begin
+#     Gain = 1.0
+#     set_point = 1.0
+#     time = 1.0
+#   end
+#   @variables begin
+#     ucvO₂(t)
+#     x(t)
+#   end
+#   @equations begin
+#     D(x) ~ (-x - Gain * (ucvO₂ - set_point)) / time
+#   end
+# end
+
