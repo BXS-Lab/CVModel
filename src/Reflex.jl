@@ -271,6 +271,26 @@ Ursino: Peripheral Chemoreceptors
 end
 
 """
+Lung Stretch Receptors
+"""
+
+@mtkmodel LungStretch begin
+  @parameters begin
+    _Gasr = Gasr
+    _τasr = τasr
+  end
+  @variables begin
+    ϕasr(t)
+    VT(t)
+    fasr(t)
+  end
+  @equations begin
+    ϕasr ~ _Gasr * VT
+    D(fasr) ~ (-fasr + ϕasr) / _τasr
+  end
+end
+
+"""
 Ursino: Afferent Baroreflex
 """
 

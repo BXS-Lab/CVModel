@@ -553,18 +553,6 @@ fapc_set = 3.7 # Set point for fapc (spikes/s)
 Local Autoregulation (Magosso 2001)
 """
 
-# cvO₂_muscle_setpoint = 0.155
-# G_muscle_O₂ = 30
-# τ_muscle_O₂ = 10
-
-# cvO₂_brain_setpoint = 0.14
-# G_brain_O₂ = 10
-# τ_brain_O₂ = 10
-
-# cvO₂_heart_setpoint = 0.11
-# G_heart_O₂ = 35
-# τ_heart_O₂ = 10
-
 Gbpn = 0.15 # ml/(mmHg.s)
 
 CvbO₂n = 0.14
@@ -606,8 +594,8 @@ PO₂n = 45 # (mmHg)
 kac = 29.27 # (mmHg)
 
 #### Afferent Pulmonary Stretch Receptors pathway
-τ_p = 2 # (s)
-G_ap = 23.29 # (spikes/l/s)
+τasr = 2 # (s)
+Gasr = 23.29 # (spikes/l/s)
 
 #### Efferent sympathetic pathway
 fes∞ =2.1 # (spikes/s)

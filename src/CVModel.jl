@@ -8,7 +8,7 @@ This model is a simulation of the human cardiovascular system, including a four 
 ### TODO: CV Model:            (1) Vertebral Plexus (2) Dynamic ICP
 ### TODO: Pulmonary Mechanics: (1) Bring Intrathoracic Pressure into Lung Model
 ### TODO: Lung Gas Exchange:   (1) Improve fidelity (https://github.com/baillielab/oxygen_delivery/blob/master/oxygen_delivery.py)
-### TODO: CV Control:          (1) CNS Ischemic Response, (2) Peripheral Chemoreceptors, (3) Lung Stretch Receptors (4) Braroreflex (update) (5) CPR (update)
+### TODO: CV Control:          (1) CNS Ischemic Response, (2) Lung Stretch Receptors (3) Baroreflex (update) (4) CPR (update)
 ### TODO: Simulation:          (1) Exercise Model, (2) Other blood parameters (e.g., pH etc.), (3) Altitude, pressure, temperature driver; water vapor etc. (4) Update ICs (negative compliance alters volume)
 ### TODO: Code:                (1) Fix the whole model params thing
 module CVModel
@@ -158,6 +158,7 @@ This section of code instances the compartments used in the model, based on the 
 @named Head_veins_Junc = Junction2()
 
 @named PeripheralChemo = PeripheralChemoreceptors()
+@named LungStretchReceptors = LungStretch()
 
 @named CentralResp = Chemoreceptors(Delay=Dc, Gain_A=G_cA, Gain_f=G_cf, set_point=PaCO₂n, time_A=τ_cA, time_f=τ_cf, delay_order=reflex_delay_order)
 @named PeripheralResp = Chemoreceptors(Delay=Dp, Gain_A=G_pA, Gain_f=G_pf, set_point=fapc_set, time_A=τ_pA, time_f=τ_pf, delay_order=reflex_delay_order)
@@ -386,6 +387,8 @@ circ_eqs = [
 
   RespMuscles.RespRate_chemo ~ (CentralResp.y_f + PeripheralResp.y_f),
   RespMuscles.p_chemo ~ (CentralResp.y_A + PeripheralResp.y_A),
+
+#   Lungs.VT ~ LungStretch.VT, # TODO: Work out tidal volume
 
   #### Autoregulation
   BrainAutoreg.uCvbO₂ ~ Head_veins.cO₂,
