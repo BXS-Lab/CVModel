@@ -791,6 +791,12 @@ display(plot(Sol, idxs=[IschVeins.ΔΘO₂ₛⱼ, IschArterioles.ΔΘO₂ₛⱼ]
         ylabel = "Ischemic Response",
         title = "CNS Ischemic Response"))
 
+display(plot(Sol, idxs=[LungGE.cppO₂],
+        label = ["O₂"],
+        xlabel = "Time (s)",
+        ylabel = "Gas Exchange",
+        title = "Pulmonary Gas Exchange"))
+
 #### Direct from Solution Plots
 
 p0a = plot(Sol, idxs=[alpha_driver.α * 180 / π],
@@ -955,6 +961,7 @@ p4h = plot(Sol, idxs=[Intrathoracic.pth.p], xlims = (0, 250),
       # plot(Sol , idxs=[Lungs.VT])
 
 display(plot(p4a,p4b,p4c,p4d,p4e,p4f,p4g,p4h, layout=(4,2), size=(900,600), suptitle="Lungs"))
+
 
 
 
