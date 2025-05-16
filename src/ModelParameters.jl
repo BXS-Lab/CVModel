@@ -8,7 +8,7 @@ module ModelParams
 Global System Parameters
 These parameters define global anthropometric and physiological constants for the model.
 """
-HRₙₒₘ = 67.0  # Nominal Heart Rate (bpm)
+HRₙₒₘ = 103  # Nominal Heart Rate (bpm)
 TBV = 5300.0 # Total Blood Volume (ml)
 ρ_b = 1060.0 # Blood Density (kg/m^3)
 Pa2mmHg = 0.00750062 # Conversion factor from Pascal to mmHg
@@ -667,10 +667,27 @@ Wpᵥ = 0.103
 
 
 """
-Unsorted Parameters
+Effectors
 """
 
+fesₘᵢₙ = 2.66 # (spikes/s)
 
+#### Cardiac Elastances
+GEmaxlv = 0.475 # (mmHg/ml/ν)
+τEmaxlv = 8 # (s)
+DEmaxlv = 2 # (s)
+
+GEmaxrv = 0.282 # (mmHg/ml/ν)
+τEmaxrv = 8 # (s)
+DEmaxrv = 2 # (s)
+
+#### Heart Rate
+GTs = -0.13 # (s/ν)
+GTv = 0.09 # (s/ν)
+τTs = 2 # (s)
+τTv = 1.5 # (s)
+DTs = 2 # (s)
+DTv = 0.2 # (s)
 
 
 
@@ -693,38 +710,26 @@ Unsorted Parameters
 
 
 #### Reflex Effectors
-GEmaxlv = 0.475 # (mmHg/ml/ν)
-GEmaxrv = 0.282 # (mmHg/ml/ν)
 GRsp = 0.695 # (mmHg.s/ml/ν)
 GRep = 0.695 # (mmHg.s/ml/ν)
 GRmp = 0.695 # (mmHg.s/ml/ν)
 Gvusv = -265.4 # (ml/ν)
 Gvuev = -74.21 # (ml/ν)
 Gvumv = -58.29 # (ml/ν)
-GTs = -0.13 # (s/ν)
-GTv = 0.09 # (s/ν)
 
-τEmaxlv = 8 # (s)
-τEmaxrv = 8 # (s)
 τRsp = 6 # (s)
 τRep = 6 # (s)
 τRmp = 6 # (s)
 τVusv = 20 # (s)
 τVuev = 20 # (s)
 τVumv = 20 # (s)
-τTs = 2 # (s)
-τTv = 1.5 # (s)
 
-DEmaxlv = 2 # (s)
-DEmaxrv = 2 # (s)
 DRsp = 2 # (s)
 DRep = 2 # (s)
 DRmp = 2 # (s)
 DVusv = 5 # (s)
 DVuev = 5 # (s)
 DVumv = 5 # (s)
-DTs = 2 # (s)
-DTv = 0.2 # (s)
 
 Emaxlv₀ = 2.392 # (mmHg/ml)
 Emaxrv₀ = 1.412 # (mmHg/ml)

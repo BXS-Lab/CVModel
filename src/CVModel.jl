@@ -173,6 +173,12 @@ This section of code instances the compartments used in the model, based on the 
 #### Efferent Pathways
 @named Efferent = EfferentPathways()
 
+#### Effectors
+@named ERH = Effectors(Gain=GEmaxrv, delay=DEmaxrv, time=τEmaxrv, min=fesₘᵢₙ, delay_order=reflex_delay_order)
+@named ELH = Effectors(Gain=GEmaxlv, delay=DEmaxlv, time=τEmaxlv, min=fesₘᵢₙ, delay_order=reflex_delay_order)
+@named ERR = EffectorsRR(Gainₛ=GTs, Gainᵥ=GTv, delayₛ=DTs, delayᵥ=DTv, timeₛ=τTs, timeᵥ=τTv, min=fesₘᵢₙ, delay_order=reflex_delay_order)
+
+
 #### Pulmonary Reflexes
 @named CentralResp = Chemoreceptors(Delay=Dc, Gain_A=G_cA, Gain_f=G_cf, set_point=PaCO₂n, time_A=τ_cA, time_f=τ_cf, delay_order=reflex_delay_order)
 @named PeripheralResp = Chemoreceptors(Delay=Dp, Gain_A=G_pA, Gain_f=G_pf, set_point=fapc_set, time_A=τ_pA, time_f=τ_pf, delay_order=reflex_delay_order)
@@ -425,6 +431,12 @@ circ_eqs = [
   Efferent.θₛₚ ~ IschArterioles.θₛⱼ,
   Efferent.θₛᵥ ~ IschVeins.θₛⱼ,
 
+  #### Effectors
+  ERH.u ~ Efferent.fₛₕ,
+  ELH.u ~ Efferent.fₛₕ,
+  ERR.uₛ ~ Efferent.fₛₕ,
+  ERR.uᵥ ~ Efferent.fᵥ,
+
   #### Effectors: Arteriole Resistance
   Cor_cap.R ~ Rcc * (1 + HeartAutoreg.xjCO₂) /(1 + HeartAutoreg.xjO₂),
   Head_cap.G ~ Gbpn * (1 + BrainAutoreg.xbO₂ + BrainAutoreg.xbCO₂),
@@ -445,11 +457,11 @@ circ_eqs = [
   Leg_vein.C.Vcpr ~ Gcpr_vlb * cpr_αv.y,
 
   #### Effectors: Ventricular Contractility
-  SA.Eabr_rv ~ Gabr_erv * abr_β.y,
-  SA.Eabr_lv ~ Gabr_elv * abr_β.y,
+  SA.Eabr_rv ~ ERH.Δσ,
+  SA.Eabr_lv ~ ELH.Δσ,
 
   #### Effectors: Heart Rate
-  SA.RRabr ~ (Gabr_rrsymp * abr_β.y) + (Gabr_rrpara * abr_para.y),
+  SA.RRabr ~ ERR.ΔT,
 
   #### Pulmonary Reflexes
   CentralResp.u ~ LungGE.paCO₂,
@@ -504,6 +516,7 @@ This section of the code composes the system of ordinary differential equations 
   ABR, CPR, # Afferent Baroreflex
   IschArterioles, IschVeins, IschHeart, # CNS Ischemic Response
   Efferent, # Efferent Pathways
+  ERH, ELH, ERR, # Effectors
   ])
 
 circ_sys = structural_simplify(circ_model)
@@ -763,6 +776,15 @@ u0 = [
   IschVeins.ΔΘCO₂ₛⱼ => 0.0,
   IschHeart.ΔΘO₂ₛⱼ => 0.0,
   IschHeart.ΔΘCO₂ₛⱼ => 0.0,
+
+  #### Effectors
+  ERH.Δσ => 0.0,
+  ERH.d.x => reflex_delay_init,
+  ELH.Δσ => 0.0,
+  ELH.d.x => reflex_delay_init,
+  ERR.ΔT => 0.0,
+  ERR.dₛ.x => reflex_delay_init,
+  ERR.dᵥ.x => reflex_delay_init,
 
 ]
 
