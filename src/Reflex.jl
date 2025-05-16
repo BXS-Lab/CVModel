@@ -403,7 +403,7 @@ Ursino: Efferent Pathways
     fᵥ(t)
   end
   @equations begin
-    fₛₕ ~ min(_fes∞ + (_fes₀ - _fes∞) * exp(_kes * ((_Wbh * fab) + (_Wch * fapc) + (_Wph * fasr) - θₛₕ)), _fesₘₐₓ)
+    fₛₕ ~ min(_fes∞ + (_fes₀ - _fes∞) * exp(_kes * ((_Wbh * fab) + (_Wch * fapc) + (_Wph * fasr) + (_Wrp * fcpr) - θₛₕ)), _fesₘₐₓ)
     fₛₚ ~ min(_fes∞ + (_fes₀ - _fes∞) * exp(_kes * ((_Wbp * fab) + (_Wcp * fapc) + (_Wpp * fasr) + (_Wrp * fcpr) - θₛₚ)), _fesₘₐₓ)
     fₛᵥ ~ min(_fes∞ + (_fes₀ - _fes∞) * exp(_kes * ((_Wbv * fab) + (_Wcv * fapc) + (_Wpv * fasr) + (_Wrv * fcpr) - θₛᵥ)), _fesₘₐₓ)
 
