@@ -320,97 +320,10 @@ Heldt Reflex System Parameters
 These parameters define the properties of the arterial baroreflex (ABR) and cardiopulmonary reflex (CPR). The afferent arms include a state space filter with  matrices A, B, and C, as well as the set points and afferent gains. The transfer functions are defined by a delay, a peak, and an end timing and are dynamically set to have unit area impulse response. The delay is defined by a Pade approximation, the order of the approximation can be set here to give a sharper response (more computationally intensive). Finally, the static gains for the ABR and CPR are also defined here.
 """
 
-######################
-# Afferent Arms
-######################
-
-#### State Space Filter
-
-A_9x9 = [
-  -9.45889157397485 -116.684730988048 -716.776540007884 -4286.18041417701 -16964.9739125645 -56703.9505500527 -128365.488100833 -200510.747016871 -151338.279894609
-  1.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0
-  0.0 1.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0
-  0.0 0.0 1.0 0.0 0.0 0.0 0.0 0.0 0.0
-  0.0 0.0 0.0 1.0 0.0 0.0 0.0 0.0 0.0
-  0.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 0.0
-  0.0 0.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0
-  0.0 0.0 0.0 0.0 0.0 0.0 1.0 0.0 0.0
-  0.0 0.0 0.0 0.0 0.0 0.0 0.0 1.0 0.0
-] # A matrix for the state space filter
-B_9x1 = [1.0; 0.0; 0.0; 0.0; 0.0; 0.0; 0.0; 0.0; 0.0][:, :] # B matrix for the state space filter
-C_1x9 = [0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 151338.279894609] # C matrix for the state space filter
-x0 = ones(9) # Initial condition for the state space filter
-
-#### Afferent Set Points and Gains
-
-p_cpr = 6.0 # CPR Set Point (mmHg)
-gain_cpr = 5.0 # CPR Afferent Gain
-
-p_abr = 91.0 # ABR Set Point (mmHg)
-gain_abr = 18.0 # ABR Afferent Gain
-
-######################
-# Transfer Functions
-######################
-
 #### Pade Approximation
 
 reflex_delay_order = 2 # Order of the Pade delay
 reflex_delay_init = zeros(reflex_delay_order) # Initial condition for the delay
-
-#### Transfer Function Timings
-
-abr_αr_delay = 2.5 # Arterial Baroreflex α-sympathetic resistance delay (s)
-abr_αr_peak = 3.5 # Arterial Baroreflex α-sympathetic resistance peak (s)
-abr_αr_end = 30.0 # Arterial Baroreflex α-sympathetic resistance end (s)
-
-abr_αv_delay = 5.0 # Arterial Baroreflex α-sympathetic volume delay (s)
-abr_αv_peak = 10.0 # Arterial Baroreflex α-sympathetic volume peak (s)
-abr_αv_end = 42.0 # Arterial Baroreflex α-sympathetic volume end (s)
-
-abr_β_delay = 2.5 # Arterial Baroreflex β-sympathetic delay (s)
-abr_β_peak = 3.5 # Arterial Baroreflex β-sympathetic peak (s)
-abr_β_end = 15.0 # Arterial Baroreflex β-sympathetic end (s)
-
-abr_para_delay = 0.59 # Arterial Baroreflex parasympathetic delay (s)
-abr_para_peak = 0.70 # Arterial Baroreflex parasympathetic peak (s)
-abr_para_end = 1.0 # Arterial Baroreflex parasympathetic end (s)
-
-cpr_αr_delay = 2.5 # Cardiopulmonary Reflex α-sympathetic resistance delay (s)
-cpr_αr_peak = 5.5 # Cardiopulmonary Reflex α-sympathetic resistance peak (s)
-cpr_αr_end = 35.0 # Cardiopulmonary Reflex α-sympathetic resistance end (s)
-
-cpr_αv_delay = 5.0 # Cardiopulmonary Reflex α-sympathetic volume delay (s)
-cpr_αv_peak = 9.0 # Cardiopulmonary Reflex α-sympathetic volume peak (s)
-cpr_αv_end = 40.0 # Cardiopulmonary Reflex α-sympathetic volume end (s)
-
-######################
-# Efferent Static Gains
-######################
-
-#### Arterial Baroreflex
-
-Gabr_r = -0.05 # ABR Resistance Gain (PRU/mmHg) (Previous -0.13)
-
-Gabr_vub = 5.0 # ABR Upper Body Volume Gain (ml/mmHg) (Previous 5.3)
-Gabr_vre = 2.0 # ABR Renal Volume Gain (ml/mmHg) (Previous 1.3)
-Gabr_vsp = 13.0 # ABR Splanchnic Volume Gain (ml/mmHg) (Previous 13.3)
-Gabr_vlb = 7.0 # ABR Lower Body Volume Gain (ml/mmHg) (Previous 6.7)
-
-Gabr_erv = -0.037 # ABR RV Elastance Gain (1/ml) (Equivalent to contractility gain of 0.022 ml/mmHg^2) (Previous Contractility Gain 0.021)
-Gabr_elv = -0.044 # ABR LV Elastance Gain (1/ml) (Equivalent to contractility gain of 0.007 ml/mmHg^2) (Previous Contractility Gain 0.014)
-
-Gabr_rrsymp = 0.009 # ABR RR Interval Sympathetic Gain (s/mmHg) (Previous 0.012)
-Gabr_rrpara = 0.009 # ABR RR Interval Parasympathetic Gain (s/mmHg)
-
-#### Cardiopulmonary Reflex
-
-Gcpr_r = -0.05 # CPR Resistance Gain (PRU/mmHg) (Previous -0.3)
-
-Gcpr_vub = 13.0 # CPR Upper Body Volume Gain (ml/mmHg) (Previous 13.5)
-Gcpr_vre = 3.0 # CPR Renal Volume Gain (ml/mmHg) (Previous 2.7)
-Gcpr_vsp = 64.0 # CPR Splanchnic Volume Gain (ml/mmHg)
-Gcpr_vlb = 30.0 # CPR Lower Body Volume Gain (ml/mmHg)
 
 """
 Lung Model

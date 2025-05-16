@@ -194,21 +194,6 @@ This section of code instances the compartments used in the model, based on the 
 @named gravity_driver = Gravity()
 @named lbnp_driver = LBNP()
 
-################
-# Heldt Reflexes
-################
-
-# There are two afferents, one for each arc (ABR and CPR). The separate effects (e.g., α-Sympathetic, β-Sympathetic, Parasympathetic) are modeled as separate transfer functions.
-@named CPRafferent = Afferent(p_set=p_cpr, gain=gain_cpr)
-@named ABRafferent = Afferent(p_set=p_abr, gain=gain_abr)
-
-@named abr_αr = TransferFunction(delay_order = reflex_delay_order, reflex_delay = abr_αr_delay, reflex_peak = abr_αr_peak, reflex_end = abr_αr_end)
-@named abr_αv = TransferFunction(delay_order = reflex_delay_order, reflex_delay = abr_αv_delay, reflex_peak = abr_αv_peak, reflex_end = abr_αv_end)
-@named abr_β = TransferFunction(delay_order = reflex_delay_order, reflex_delay = abr_β_delay, reflex_peak = abr_β_peak, reflex_end = abr_β_end)
-@named abr_para = TransferFunction(delay_order = reflex_delay_order, reflex_delay = abr_para_delay, reflex_peak = abr_para_peak, reflex_end = abr_para_end)
-@named cpr_αr = TransferFunction(delay_order = reflex_delay_order, reflex_delay = cpr_αr_delay, reflex_peak = cpr_αr_peak, reflex_end = cpr_αr_end)
-@named cpr_αv = TransferFunction(delay_order = reflex_delay_order, reflex_delay = cpr_αv_delay, reflex_peak = cpr_αv_peak, reflex_end = cpr_αv_end)
-
 """
 Structural Connections
 This section of code connects the instanced compartments together to form the cardiovascular system. The hemodynamic connections are made using the "connect" function, which connects pins linked in pressure and flow via Kirchhoff's laws. The DOE integrations and reflex connections are just included as direct signal connections to the respective compartments.
@@ -477,23 +462,6 @@ circ_eqs = [
 
   RespMuscles.RespRate_chemo ~ (CentralResp.y_f + PeripheralResp.y_f),
   RespMuscles.p_chemo ~ (CentralResp.y_A + PeripheralResp.y_A),
-
-  ################
-  # Heldt Reflexes
-  ################
-
-  #### Reflex Arc Afferent Inputs (Sensed Pressures)
-  CPRafferent.e ~ (RA.pₜₘ),
-  ABRafferent.e ~ (Asc_A.C.pₜₘ+(BC_A.C.pₜₘ + (ρ_b*gravity_driver.g*(h_cs/100)*sin(alpha_driver.α)*Pa2mmHg)))/2.0,
-
-  #### Reflex Arc Afferent Outputs Connected to Transfer Function Inputs
-  ABRafferent.δ ~ abr_αr.u,
-  ABRafferent.δ ~ abr_αv.u,
-  ABRafferent.δ ~ abr_β.u,
-  ABRafferent.δ ~ abr_para.u,
-  CPRafferent.δ ~ cpr_αr.u,
-  CPRafferent.δ ~ cpr_αv.u,
-
 ]
 
 """
@@ -513,8 +481,6 @@ This section of the code composes the system of ordinary differential equations 
   UpBd_cap, Renal_cap, Splanchnic_cap, Leg_cap, Head_cap, # Microcirculation
   Interstitial, # Interstitial Compartment
   Intrathoracic, Abdominal, External, ExternalLBNP, Intracranial, # External Pressures
-  ABRafferent, abr_αr, abr_αv, abr_β, abr_para, # Arterial Baroreflex
-  CPRafferent, cpr_αr, cpr_αv, # Cardiopulmonary Reflex
   alpha_driver, gravity_driver, lbnp_driver, # Design of Experiments Drivers
   Lungs, RespMuscles, LungGE, TV, # Lung Model Breathing ChestWall
   CentralResp, PeripheralResp,
@@ -592,66 +558,6 @@ u0 = [
   #### Interstitial Compartment
   Interstitial.Qint => 0.0,
   Interstitial.Vint => VintIC,
-
-  #### Reflex Afferents
-  CPRafferent.x => x0,
-  ABRafferent.x => x0,
-
-  #### Reflex Transfer Functions
-  abr_αr.tfdelay.tftime.x => reflex_delay_init,
-  abr_αr.tfdelay.double_integrator.v => 0.0,
-  abr_αr.tfdelay.double_integrator.y => 0.0,
-  abr_αr.tfpeak.tftime.x => reflex_delay_init,
-  abr_αr.tfpeak.double_integrator.v => 0.0,
-  abr_αr.tfpeak.double_integrator.y => 0.0,
-  abr_αr.tfend.tftime.x => reflex_delay_init,
-  abr_αr.tfend.double_integrator.v => 0.0,
-  abr_αr.tfend.double_integrator.y => 0.0,
-  abr_αv.tfdelay.tftime.x => reflex_delay_init,
-  abr_αv.tfdelay.double_integrator.v => 0.0,
-  abr_αv.tfdelay.double_integrator.y => 0.0,
-  abr_αv.tfpeak.tftime.x => reflex_delay_init,
-  abr_αv.tfpeak.double_integrator.v => 0.0,
-  abr_αv.tfpeak.double_integrator.y => 0.0,
-  abr_αv.tfend.tftime.x => reflex_delay_init,
-  abr_αv.tfend.double_integrator.v => 0.0,
-  abr_αv.tfend.double_integrator.y => 0.0,
-  abr_β.tfdelay.tftime.x => reflex_delay_init,
-  abr_β.tfdelay.double_integrator.v => 0.0,
-  abr_β.tfdelay.double_integrator.y => 0.0,
-  abr_β.tfpeak.tftime.x => reflex_delay_init,
-  abr_β.tfpeak.double_integrator.v => 0.0,
-  abr_β.tfpeak.double_integrator.y => 0.0,
-  abr_β.tfend.tftime.x => reflex_delay_init,
-  abr_β.tfend.double_integrator.v => 0.0,
-  abr_β.tfend.double_integrator.y => 0.0,
-  abr_para.tfdelay.tftime.x => reflex_delay_init,
-  abr_para.tfdelay.double_integrator.v => 0.0,
-  abr_para.tfdelay.double_integrator.y => 0.0,
-  abr_para.tfpeak.tftime.x => reflex_delay_init,
-  abr_para.tfpeak.double_integrator.v => 0.0,
-  abr_para.tfpeak.double_integrator.y => 0.0,
-  abr_para.tfend.tftime.x => reflex_delay_init,
-  abr_para.tfend.double_integrator.v => 0.0,
-  abr_para.tfend.double_integrator.y => 0.0,
-  cpr_αr.tfdelay.tftime.x => reflex_delay_init,
-  cpr_αr.tfdelay.double_integrator.v => 0.0,
-  cpr_αr.tfdelay.double_integrator.y => 0.0,
-  cpr_αr.tfpeak.tftime.x => reflex_delay_init,
-  cpr_αr.tfpeak.double_integrator.v => 0.0,
-  cpr_αr.tfpeak.double_integrator.y => 0.0,
-  cpr_αr.tfend.tftime.x => reflex_delay_init,
-  cpr_αr.tfend.double_integrator.v => 0.0,
-  cpr_αr.tfend.double_integrator.y => 0.0,
-  cpr_αv.tfdelay.tftime.x => reflex_delay_init,
-  cpr_αv.tfdelay.double_integrator.v => 0.0,
-  cpr_αv.tfdelay.double_integrator.y => 0.0,
-  cpr_αv.tfpeak.tftime.x => reflex_delay_init,
-  cpr_αv.tfpeak.double_integrator.v => 0.0,
-  cpr_αv.tfpeak.double_integrator.y => 0.0,
-  cpr_αv.tfend.tftime.x => reflex_delay_init,
-  cpr_αv.tfend.double_integrator.v => 0.0,
-  cpr_αv.tfend.double_integrator.y => 0.0,
 
   #### Sino-Atrial Node
   SA.RR_held => RRₙₒₘ,
