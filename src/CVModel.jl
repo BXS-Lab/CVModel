@@ -7,9 +7,8 @@ This model is a simulation of the human cardiovascular system, including a four 
 """
 ### TODO: CV Model:            (1) Vertebral Plexus (2) Dynamic ICP
 ### TODO: Pulmonary Mechanics: (1) Bring Intrathoracic Pressure into Lung Model
-### TODO: Lung Gas Exchange:   (1) Improve fidelity (https://github.com/baillielab/oxygen_delivery/blob/master/oxygen_delivery.py)
-### TODO: CV Control:          (1) Efferent Pathways, (2) Effectors
-### TODO: Simulation:          (1) Exercise Model, (2) Other blood parameters (e.g., pH etc.), (3) Altitude, pressure, temperature driver; water vapor etc. (4) Update ICs (negative compliance alters volume)
+### TODO: CV Control:          (1) Effectors
+### TODO: Simulation:          (1) Exercise Model, (2) Other blood parameters (e.g., pH etc.), (https://github.com/baillielab/oxygen_delivery/blob/master/oxygen_delivery.py) (3) Altitude, pressure, temperature driver; water vapor etc. (4) Update ICs (negative compliance alters volume)
 ### TODO: Code:                (1) Fix the whole model params thing
 module CVModel
 display("Cardiovascular Model v3.3.0 (May 14th, 2025) - BXS Lab, UC Davis")
@@ -170,6 +169,9 @@ This section of code instances the compartments used in the model, based on the 
 @named IschArterioles = IschemicResponse(_χₛⱼ=χₛₚ, _PaO₂ₛⱼn=PO₂nₛₚ, _kiscₛⱼ=kiscₛₚ, _τisc=τisc, _PaCO₂n=PaCO₂n, _gccₛⱼ=gccₛₚ, _τcc=τcc, _θₛⱼn=θₛₚₙ)
 @named IschVeins = IschemicResponse(_χₛⱼ=χₛᵥ, _PaO₂ₛⱼn=PO₂nₛᵥ, _kiscₛⱼ=kiscₛᵥ, _τisc=τisc, _PaCO₂n=PaCO₂n, _gccₛⱼ=gccₛᵥ, _τcc=τcc, _θₛⱼn=θₛᵥₙ)
 @named IschHeart = IschemicResponse(_χₛⱼ=χₛₕ, _PaO₂ₛⱼn=PO₂nₛₕ, _kiscₛⱼ=kiscₛₕ, _τisc=τisc, _PaCO₂n=PaCO₂n, _gccₛⱼ=gccₛₕ, _τcc=τcc, _θₛⱼn=θₛₕₙ)
+
+#### Efferent Pathways
+@named Efferent = EfferentPathways()
 
 #### Pulmonary Reflexes
 @named CentralResp = Chemoreceptors(Delay=Dc, Gain_A=G_cA, Gain_f=G_cf, set_point=PaCO₂n, time_A=τ_cA, time_f=τ_cf, delay_order=reflex_delay_order)
@@ -414,6 +416,15 @@ circ_eqs = [
   IschHeart.uPaO₂ ~ LungGE.paO₂,
   IschHeart.uPaCO₂ ~ LungGE.paCO₂,
 
+  #### Efferent Pathways
+  Efferent.fab ~ ABR.fab,
+  Efferent.fcpr ~ CPR.fcpr,
+  Efferent.fapc ~ PeripheralChemo.fapc,
+  Efferent.fasr ~ LungStretchReceptors.fasr,
+  Efferent.θₛₕ ~ IschHeart.θₛⱼ,
+  Efferent.θₛₚ ~ IschArterioles.θₛⱼ,
+  Efferent.θₛᵥ ~ IschVeins.θₛⱼ,
+
   #### Effectors: Arteriole Resistance
   Cor_cap.R ~ Rcc * (1 + HeartAutoreg.xjCO₂) /(1 + HeartAutoreg.xjO₂),
   Head_cap.G ~ Gbpn * (1 + BrainAutoreg.xbO₂ + BrainAutoreg.xbCO₂),
@@ -492,6 +503,7 @@ This section of the code composes the system of ordinary differential equations 
   HeartP, # Heart Power
   ABR, CPR, # Afferent Baroreflex
   IschArterioles, IschVeins, IschHeart, # CNS Ischemic Response
+  Efferent, # Efferent Pathways
   ])
 
 circ_sys = structural_simplify(circ_model)
@@ -791,11 +803,11 @@ display(plot(Sol, idxs=[IschVeins.ΔΘO₂ₛⱼ, IschArterioles.ΔΘO₂ₛⱼ]
         ylabel = "Ischemic Response",
         title = "CNS Ischemic Response"))
 
-display(plot(Sol, idxs=[LungGE.cppO₂],
-        label = ["O₂"],
+display(plot(Sol, idxs=[Efferent.fₛₕ, Efferent.fₛₚ, Efferent.fₛᵥ, Efferent.fᵥ],
+        label = ["Heart" "Arterioles" "Veins" "Vagal"],
         xlabel = "Time (s)",
-        ylabel = "Gas Exchange",
-        title = "Pulmonary Gas Exchange"))
+        ylabel = "Efferent",
+        title = "Efferent Pathways"))
 
 #### Direct from Solution Plots
 

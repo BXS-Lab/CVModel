@@ -381,12 +381,34 @@ Ursino: Efferent Pathways
 @mtkmodel EfferentPathways begin
   @parameters begin
     # TODO
-    _fes∞ = τ
-    _fes₀ = gain
-    _kes
-    _Wb
-    _Wc
-    _Wp
+    _fes₀ = fes₀
+    _fesₘₐₓ = fesₘₐₓ
+    _fes∞ = fes∞
+    _kes = kes
+
+    _Wbh = Wbₛₕ
+    _Wch = Wcₛₕ
+    _Wph = Wpₛₕ
+    _Wrh = Wrₛₕ
+
+    _Wbp = Wbₛₚ
+    _Wcp = Wcₛₚ
+    _Wpp = Wpₛₚ
+    _Wrp = Wrₛₚ
+
+    _Wbv = Wbₛᵥ
+    _Wcv = Wcₛᵥ
+    _Wpv = Wpₛᵥ
+    _Wrv = Wrₛᵥ
+
+    _fev₀ = fev₀
+    _fev∞ = fev∞
+    _kev = kev
+
+    _fab₀ = fab₀
+    _Wc_vagal = Wcᵥ
+    _Wp_vagal = Wpᵥ
+    _θᵥ = θᵥ
   end
   @variables begin
     fab(t)
@@ -396,18 +418,17 @@ Ursino: Efferent Pathways
     θₛₕ(t)
     θₛₚ(t)
     θₛᵥ(t)
-    θᵥ(t)
     fₛₕ(t)
     fₛₚ(t)
     fₛᵥ(t)
     fᵥ(t)
   end
   @equations begin
-    fₛₕ ~ min(_fes∞ + (_fes₀ - _fes∞) * exp(_kes * ((_Wbh * fab) + (_Wch * fapc) + (_Wph * fasr) + (_Wrp * fcpr) - θₛₕ)), _fesₘₐₓ)
+    fₛₕ ~ min(_fes∞ + (_fes₀ - _fes∞) * exp(_kes * ((_Wbh * fab) + (_Wch * fapc) + (_Wph * fasr) + (_Wrh * fcpr) - θₛₕ)), _fesₘₐₓ)
     fₛₚ ~ min(_fes∞ + (_fes₀ - _fes∞) * exp(_kes * ((_Wbp * fab) + (_Wcp * fapc) + (_Wpp * fasr) + (_Wrp * fcpr) - θₛₚ)), _fesₘₐₓ)
     fₛᵥ ~ min(_fes∞ + (_fes₀ - _fes∞) * exp(_kes * ((_Wbv * fab) + (_Wcv * fapc) + (_Wpv * fasr) + (_Wrv * fcpr) - θₛᵥ)), _fesₘₐₓ)
 
-    fᵥ ~ (_fev₀ + _fev∞ * exp((fab - _fab₀) / _kev)) / (1 + exp((fab - _fab₀) / _kev)) + (_Wc_vagal * fapc) + (_Wp_vagal * fasr) - θᵥ
+    fᵥ ~ (_fev₀ + _fev∞ * exp((fab - _fab₀) / _kev)) / (1 + exp((fab - _fab₀) / _kev)) + (_Wc_vagal * fapc) + (_Wp_vagal * fasr) - _θᵥ
   end
 end
 

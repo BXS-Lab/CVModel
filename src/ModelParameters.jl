@@ -632,37 +632,46 @@ fapc_set = 3.7 # Set point for fapc (spikes/s)
 τ_pf = 147.78 # Frequency time constant for peripheral chemoreceptors (s)
 
 """
-Unsorted Parameters
+Efferent Pathways
 """
 
-
-# #### Afferent Chemoreflex
-# τ_c = 2.0 # (s)
-# facₘᵢₙ = 1.16 # (spikes/s)
-# facₘₐₓ = 17.07 # (spikes/s)
-# PO₂n = 45 # (mmHg)
-# kac = 29.27 # (mmHg)
-
-
-#### Efferent sympathetic pathway
-fes∞ =2.1 # (spikes/s)
 fes₀ = 16.11 # (spikes/s)
-# fesₘᵢₙ = 2.66 # (spikes/s)
 fesₘₐₓ = 60
+fes∞ =2.1 # (spikes/s)
 kes = 0.0675 # (s)
-
-Wbₛₚ = -1.1375 # Baroreflex to arterioles
-Wcₛₚ = 1.716 # Chemoreceptors to arterioles
-Wpₛₚ = -0.3997 # Pulmonary stretch receptors to arterioles
-
-Wbₛᵥ = -1.0806 # Baroreflex to venous tone
-Wcₛᵥ = 1.716 # Chemoreceptors to venous tone
-Wpₛᵥ = -0.2907 # Pulmonary stretch receptors to venous tone
-
 
 Wbₛₕ = -1.75 # Baroreflex to heart
 Wcₛₕ = 1 # Modified from 5, Chemoreceptors to heart
 Wpₛₕ = 0 # Pulmonary stretch receptors to heart
+Wrₛₕ = 0 # Cardiopulmonary reflex to heart
+
+Wbₛₚ = -1.1375 # Baroreflex to arterioles
+Wcₛₚ = 1.716 # Chemoreceptors to arterioles
+Wpₛₚ = -0.3997 # Pulmonary stretch receptors to arterioles
+Wrₛₚ = -0.1375 # Cardiopulmonary reflex to arterioles
+
+Wbₛᵥ = -1.0806 # Baroreflex to venous tone
+Wcₛᵥ = 1.716 # Chemoreceptors to venous tone
+Wpₛᵥ = -0.2907 # Pulmonary stretch receptors to venous tone
+Wrₛᵥ = -0.1375 # Cardiopulmonary reflex to venous tone # TODO
+
+fev₀ = 3.2 # (spikes/s)
+fev∞ = 6.3 # (spikes/s)
+kev = 7.06 # (s)
+
+fab₀ = 25 # (spikes/s)
+Wcᵥ = 0.2
+Wpᵥ = 0.103
+
+θᵥ = -0.68 # (spikes/s)
+
+
+"""
+Unsorted Parameters
+"""
+
+
+
 
 
 
@@ -672,23 +681,16 @@ Wpₛₕ = 0 # Pulmonary stretch receptors to heart
 
 
 #### Efferent vagal pathway
-fev∞ = 6.3 # (spikes/s)
-fev₀ = 3.2 # (spikes/s)
-fab₀ = 25 # (spikes/s)
-kev = 7.06 # (s)
-
-Wcᵥ = 0.2
-Wpᵥ = 0.103
-θᵥ = -0.68 # (spikes/s)
 
 
 
-#### Ventilatory Response
-Gv = 0.125 # (l/ν)
-τv = 3 # (s)
-Dv = 6 # (s)
-VTₙ = 0.583 # (l)
-facₙ = 3.6 # (spikes/s)
+
+
+
+
+
+
+
 
 #### Reflex Effectors
 GEmaxlv = 0.475 # (mmHg/ml/ν)

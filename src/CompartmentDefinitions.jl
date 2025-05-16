@@ -1442,13 +1442,6 @@ Lung Gas Exchange
     caO₂(t) # O₂ concentration in the arterial blood (ml/ml) (output)
     caCO₂(t) # CO₂ concentration in the arterial blood (ml/ml) (output)
 
-    VrO₂p(t) # O₂ uptake (ml/s)
-    VrCO₂p(t) # CO₂ uptake (ml/s)
-    VrO₂d(t) # O₂ diffusion (ml/s)
-    VrCO₂d(t) # CO₂ diffusion (ml/s)
-    VrO₂(t) # O₂ uptake (ml/s)
-    VrCO₂(t) # CO₂ uptake (ml/s)
-
     XaO₂(t) # O₂ saturation in the arterial blood (ml/ml)
     XaCO₂(t) # CO₂ saturation in the arterial blood (ml/ml)
     paO₂(t) # O₂ partial pressure in the arterial blood (mmHg)
