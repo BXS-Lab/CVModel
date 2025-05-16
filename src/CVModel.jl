@@ -155,10 +155,10 @@ This section of code instances the compartments used in the model, based on the 
 @named LBMuscleAutoreg = Autoregulation(_gjO₂=gmO₂, _CvjO₂n=CvmO₂n, _τO₂=τO₂, _PaCO₂n=PaCO₂n, _kjCO₂=kmCO₂, _τCO₂=τCO₂)
 
 #### Arterial Baroreflex
-
+@named ABR = AfferentBaroreflex()
 
 #### Cardiopulmonary Reflex
-
+@named CPR = AfferentCPR()
 
 #### Peripheral Chemoreceptors
 @named PeripheralChemo = PeripheralChemoreceptors()
@@ -389,10 +389,10 @@ circ_eqs = [
   LBMuscleAutoreg.uPaCO₂ ~ LungGE.paCO₂,
 
   #### Arterial Baroreflex
-
+  ABR.pb ~ (Asc_A.C.pₜₘ+(BC_A.C.pₜₘ + (ρ_b*gravity_driver.g*(h_cs/100)*sin(alpha_driver.α)*Pa2mmHg)))/2.0,
 
   #### Cardiopulmonary Reflex
-  
+  CPR.pr ~ RA.pₜₘ,
 
   #### Afferent: Peripheral Chemoreceptors
   PeripheralChemo.uSaO₂ ~ LungGE.SaO₂,
@@ -477,6 +477,7 @@ This section of the code composes the system of ordinary differential equations 
   PeripheralChemo, LungStretchReceptors, # Respiratory Control
   BrainAutoreg, HeartAutoreg, UBMuscleAutoreg, LBMuscleAutoreg,# Autoregulation
   HeartP, # Heart Power
+  ABR, CPR, # Afferent Baroreflex
   ])
 
 circ_sys = structural_simplify(circ_model)
@@ -724,6 +725,10 @@ u0 = [
 
   #### Heart Dynamic Consumption
   HeartP.Wh => Whₙₒₘ,
+
+  #### Afferent Baroreflex
+  ABR.P => Pn,
+  CPR.P => Prn,
 ]
 
 """
@@ -755,6 +760,8 @@ display(plot(Sol, idxs=[Vtotal],
         xlabel = "Time (s)",
         ylabel = "Volume (ml)",
         title = "Total Blood Volume")) # Debugging plot to quickly check volume conservation
+
+display(plot(Sol, idxs=[ABR.fab, LungStretchReceptors.fasr, PeripheralChemo.fapc, CPR.fcpr]))
 
 #### Direct from Solution Plots
 

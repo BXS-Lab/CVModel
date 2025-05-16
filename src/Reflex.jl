@@ -323,7 +323,7 @@ end
 Whittle: Afferent Cardiopulmonary Reflex
 """
 
-@mtkmodel AfferentBaroreflex begin
+@mtkmodel AfferentCPR begin
   @parameters begin
     _τzr = τzr
     _τpr = τpr

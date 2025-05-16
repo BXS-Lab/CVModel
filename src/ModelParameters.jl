@@ -514,44 +514,13 @@ DmCO₂ =  20 * DmO₂# CO₂ diffusion coefficient ml/s/mmHg
 DlCO₂ = DmCO₂
 DlO₂ = DmO₂
 
-"""
-Central Chemoreceptors (Albanese 2016)
-"""
-PaCO₂n = 40.0 # Set point for paCO₂ (mmHg)
 
-Dc = 8.0 # Central chemoreceptor delay (s)
-G_cA = 0.850 * cmH2O2mmHg # Central chemoreceptor amplitude gain (mmHg/mmHg)
-G_cf = 0.9 # Central chemoreceptor frequency gain (breaths/min/mmHg)
-τ_cA = 105 # Amplitude time constant for central chemoreceptors (s)
-τ_cf = 400 # Frequency time constant for central chemoreceptors (s)
-
-"""
-Peripheral Chemoreceptors (Albanese 2016)
-"""
-
-#### Stage 1 (Ursino 2002)
-Ap = 600
-Bp = 10.18
-KO₂ = 200
-KCO₂ = 1 # (/s)
-Cₜ = 0.36 # (ml/ml)
-Kstat = 20 # (/s)
-τ_ph = 3.5 # (s)
-τ_zh = 600 # (s)
-τ_pl = 3.5 # (s)
-Kdyn = 45 # (/s)
-
-#### Stage 2
-Dp = 7.0 # Peripheral chemoreceptor delay (s)
-G_pA = 1.310 * cmH2O2mmHg # Peripheral chemoreceptor amplitude gain (mmHg/ν)
-G_pf = 0.8735 # Peripheral chemoreceptor frequency gain (breaths/min/ν)
-fapc_set = 3.7 # Set point for fapc (spikes/s)
-τ_pA = 83 # Amplitude time constant for peripheral chemoreceptors (s)
-τ_pf = 147.78 # Frequency time constant for peripheral chemoreceptors (s)
 
 """
 Local Autoregulation (Magosso 2001)
 """
+
+PaCO₂n = 40.0 # Set point for paCO₂ (mmHg)
 
 Gbpn = 0.15 # ml/(mmHg.s)
 
@@ -567,7 +536,7 @@ CvhO₂n = 0.11
 ghO₂ = 490 # Raised from 35 by Albanese, ml blood/mlO₂
 khCO₂ = 11.11 # mmHg
 
-Rmpn = 4.48 # mmHg.s/ml
+# Rmpn = 4.48 # mmHg.s/ml, replaced by leg and arm microvascular resistances
 CvmO₂n = 0.155
 gmO₂ = 420 # Raised from 30 by Albanese, ml blood/mlO₂
 kmCO₂ = 142.86 # mmHg
@@ -576,26 +545,82 @@ kmCO₂ = 142.86 # mmHg
 τCO₂ = 20 # s
 
 """
-Albanese Reflex Parameters
+BaroReflex Parameters
 """
-#### Afferent Baroreflex
-τ_zb = 6.37 # (s)
-τ_pb = 2.076 # (s)
+
+τzb = 6.37 # (s)
+τpb = 2.076 # (s)
 fabₘᵢₙ = 2.52 # (spikes/s)
 fabₘₐₓ = 47.78 # (spikes/s)
 Pn = 92 # (mmHg)
 kab = 11.76 # (mmHg)
 
-#### Afferent Chemoreflex
-τ_c = 2.0 # (s)
-facₘᵢₙ = 1.16 # (spikes/s)
-facₘₐₓ = 17.07 # (spikes/s)
-PO₂n = 45 # (mmHg)
-kac = 29.27 # (mmHg)
+"""
+Cardiopulmonary Reflex Parameters
+"""
 
-#### Afferent Pulmonary Stretch Receptors pathway
+τzr = 6.37
+τpr = 2.076
+Prn = 6
+kcpr = 11.76/18*5
+fcprₘₐₓ = (47.78 - 2.52) * 5 / 18
+fcprₘᵢₙ = 2.52
+
+"""
+Peripheral Chemoreceptors (Ursino 2002)
+"""
+
+Ap = 600
+Bp = 10.18
+KO₂ = 200
+KCO₂ = 1 # (/s)
+Cₜ = 0.36 # (ml/ml)
+Kstat = 20 # (/s)
+τ_ph = 3.5 # (s)
+τ_zh = 600 # (s)
+τ_pl = 3.5 # (s)
+Kdyn = 45 # (/s)
+
+"""
+Lung Stretch Receptors (Albanese 2016)
+"""
+
 τasr = 2 # (s)
-Gasr = 0.01176 # (spikes/l/s), modified from 23.29
+Gasr = 0.01176 # (spikes/ml/s), modified from 23.29
+
+"""
+Pulmonary: Central Chemoreceptors (Albanese 2016)
+"""
+
+Dc = 8.0 # Central chemoreceptor delay (s)
+G_cA = 0.850 * cmH2O2mmHg # Central chemoreceptor amplitude gain (mmHg/mmHg)
+G_cf = 0.9 # Central chemoreceptor frequency gain (breaths/min/mmHg)
+τ_cA = 105 # Amplitude time constant for central chemoreceptors (s)
+τ_cf = 400 # Frequency time constant for central chemoreceptors (s)
+
+"""
+Pulmonary: Peripheral Chemoreceptors (Albanese 2016)
+"""
+
+Dp = 7.0 # Peripheral chemoreceptor delay (s)
+G_pA = 1.310 * cmH2O2mmHg # Peripheral chemoreceptor amplitude gain (mmHg/ν)
+G_pf = 0.8735 # Peripheral chemoreceptor frequency gain (breaths/min/ν)
+fapc_set = 3.7 # Set point for fapc (spikes/s)
+τ_pA = 83 # Amplitude time constant for peripheral chemoreceptors (s)
+τ_pf = 147.78 # Frequency time constant for peripheral chemoreceptors (s)
+
+"""
+Unsorted Parameters
+"""
+
+
+# #### Afferent Chemoreflex
+# τ_c = 2.0 # (s)
+# facₘᵢₙ = 1.16 # (spikes/s)
+# facₘₐₓ = 17.07 # (spikes/s)
+# PO₂n = 45 # (mmHg)
+# kac = 29.27 # (mmHg)
+
 
 #### Efferent sympathetic pathway
 fes∞ =2.1 # (spikes/s)
@@ -604,16 +629,19 @@ fes₀ = 16.11 # (spikes/s)
 fesₘₐₓ = 60
 kes = 0.0675 # (s)
 
-Wbₛₚ = -1.1375 # modified from -1
-Wbₛᵥ = -1.0806 # New
-Wbₛₕ = -1.75 # modified from 1
+Wbₛₚ = -1.1375 # Baroreflex to arterioles
+Wcₛₚ = 1.716 # Chemoreceptors to arterioles
+Wpₛₚ = -0.3997 # Pulmonary stretch receptors to arterioles
 
-Wcₛₚ = 5
-Wcₛₕ = 5
+Wbₛᵥ = -1.0806 # Baroreflex to venous tone
+Wcₛᵥ = 1.716 # Chemoreceptors to venous tone
+Wpₛᵥ = -0.2907 # Pulmonary stretch receptors to venous tone
 
-Wpₛₚ = -0.34
-Wpcsp = 1.716
-Wpcsv = 1.716
+
+Wbₛₕ = -1.75 # Baroreflex to heart
+Wcₛₕ = 1 # Modified from 5, Chemoreceptors to heart
+Wpₛₕ = 0 # Pulmonary stretch receptors to heart
+
 
 
 
@@ -692,6 +720,7 @@ Vusv₀ = 1435.4 # (ml)
 Vuev₀ = 640.73 # (ml)
 Vumv₀ = 503.26 # (ml)
 T₀ = 0.58 # (s)
+
 
 
 
