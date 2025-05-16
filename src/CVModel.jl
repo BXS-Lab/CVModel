@@ -178,6 +178,7 @@ This section of code instances the compartments used in the model, based on the 
 @named ELH = Effectors(Gain=GEmaxlv, delay=DEmaxlv, time=τEmaxlv, min=fesₘᵢₙ, delay_order=reflex_delay_order)
 @named ERR = EffectorsRR(Gainₛ=GTs, Gainᵥ=GTv, delayₛ=DTs, delayᵥ=DTv, timeₛ=τTs, timeᵥ=τTv, min=fesₘᵢₙ, delay_order=reflex_delay_order)
 
+@named EResistance = Effectors(Gain=GResistance, delay=DResistance, time=τResistance, min=fesₘᵢₙ, delay_order=reflex_delay_order)
 
 #### Pulmonary Reflexes
 @named CentralResp = Chemoreceptors(Delay=Dc, Gain_A=G_cA, Gain_f=G_cf, set_point=PaCO₂n, time_A=τ_cA, time_f=τ_cf, delay_order=reflex_delay_order)
@@ -437,14 +438,16 @@ circ_eqs = [
   ERR.uₛ ~ Efferent.fₛₕ,
   ERR.uᵥ ~ Efferent.fᵥ,
 
+  EResistance.u ~ Efferent.fₛₚ,
+
   #### Effectors: Arteriole Resistance
   Cor_cap.R ~ Rcc * (1 + HeartAutoreg.xjCO₂) /(1 + HeartAutoreg.xjO₂),
   Head_cap.G ~ Gbpn * (1 + BrainAutoreg.xbO₂ + BrainAutoreg.xbCO₂),
 
-  UpBd_cap.R ~ (R_UpBd_cap + (Gabr_r * abr_αr.y) + (Gcpr_r * cpr_αr.y)) * (1 + UBMuscleAutoreg.xjCO₂) /(1 + UBMuscleAutoreg.xjO₂),
-  Renal_cap.R ~ R_Renal_cap + (Gabr_r * abr_αr.y) + (Gcpr_r * cpr_αr.y),
-  Splanchnic_cap.R ~ R_Splanchnic_cap + (Gabr_r * abr_αr.y) + (Gcpr_r * cpr_αr.y),
-  Leg_cap.R ~ (R_Leg_cap + (Gabr_r * abr_αr.y) + (Gcpr_r * cpr_αr.y)) * (1 + LBMuscleAutoreg.xjCO₂) /(1 + LBMuscleAutoreg.xjO₂),
+  UpBd_cap.R ~ (R_UpBd_cap + EResistance.Δσ) * (1 + UBMuscleAutoreg.xjCO₂) /(1 + UBMuscleAutoreg.xjO₂),
+  Renal_cap.R ~ R_Renal_cap + EResistance.Δσ,
+  Splanchnic_cap.R ~ R_Splanchnic_cap + EResistance.Δσ,
+  Leg_cap.R ~ (R_Leg_cap + EResistance.Δσ) * (1 + LBMuscleAutoreg.xjCO₂) /(1 + LBMuscleAutoreg.xjO₂),
 
   #### Effectors: Venous Tone
   UpBd_vein.C.Vabr ~ Gabr_vub * abr_αv.y,
@@ -517,6 +520,7 @@ This section of the code composes the system of ordinary differential equations 
   IschArterioles, IschVeins, IschHeart, # CNS Ischemic Response
   Efferent, # Efferent Pathways
   ERH, ELH, ERR, # Effectors
+  EResistance, # Effectors: Resistance
   ])
 
 circ_sys = structural_simplify(circ_model)
@@ -785,6 +789,8 @@ u0 = [
   ERR.ΔT => 0.0,
   ERR.dₛ.x => reflex_delay_init,
   ERR.dᵥ.x => reflex_delay_init,
+  EResistance.Δσ => 0.0,
+  EResistance.d.x => reflex_delay_init,
 
 ]
 

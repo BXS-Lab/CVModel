@@ -689,6 +689,11 @@ GTv = 0.09 # (s/ν)
 DTs = 2 # (s)
 DTv = 0.2 # (s)
 
+#### Arteriole Resistances
+GResistance = 0.695 # (mmHg.s/ml/ν)
+τResistance = 6 # (s)
+DResistance = 2 # (s)
+
 
 
 
@@ -710,42 +715,31 @@ DTv = 0.2 # (s)
 
 
 #### Reflex Effectors
-GRsp = 0.695 # (mmHg.s/ml/ν)
-GRep = 0.695 # (mmHg.s/ml/ν)
-GRmp = 0.695 # (mmHg.s/ml/ν)
+
 Gvusv = -265.4 # (ml/ν)
 Gvuev = -74.21 # (ml/ν)
 Gvumv = -58.29 # (ml/ν)
 
-τRsp = 6 # (s)
-τRep = 6 # (s)
-τRmp = 6 # (s)
+
 τVusv = 20 # (s)
 τVuev = 20 # (s)
 τVumv = 20 # (s)
 
-DRsp = 2 # (s)
-DRep = 2 # (s)
-DRmp = 2 # (s)
+
 DVusv = 5 # (s)
 DVuev = 5 # (s)
 DVumv = 5 # (s)
 
-Emaxlv₀ = 2.392 # (mmHg/ml)
-Emaxrv₀ = 1.412 # (mmHg/ml)
-Rsp₀ = 2.49 # (mmHg.s/ml)
-Rep₀ = 1.655 # (mmHg.s/ml)
-Rmp₀ = 2.106 # (mmHg.s/ml)
-Vusv₀ = 1435.4 # (ml)
-Vuev₀ = 640.73 # (ml)
-Vumv₀ = 503.26 # (ml)
-T₀ = 0.58 # (s)
-
-
-
-
-
-
+#### Original ICs from Ursino
+# Emaxlv₀ = 2.392 # (mmHg/ml)
+# Emaxrv₀ = 1.412 # (mmHg/ml)
+# Rsp₀ = 2.49 # (mmHg.s/ml)
+# Rep₀ = 1.655 # (mmHg.s/ml)
+# Rmp₀ = 2.106 # (mmHg.s/ml)
+# Vusv₀ = 1435.4 # (ml)
+# Vuev₀ = 640.73 # (ml)
+# Vumv₀ = 503.26 # (ml)
+# T₀ = 0.58 # (s)
 
 for name in names(@__MODULE__; all=true, imported=false)
   # Only export if it's not a function or macro and is defined
