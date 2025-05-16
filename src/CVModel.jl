@@ -7,7 +7,6 @@ This model is a simulation of the human cardiovascular system, including a four 
 """
 ### TODO: CV Model:            (1) Vertebral Plexus (2) Dynamic ICP
 ### TODO: Pulmonary Mechanics: (1) Bring Intrathoracic Pressure into Lung Model
-### TODO: CV Control:          (1) Effectors
 ### TODO: Simulation:          (1) Exercise Model, (2) Other blood parameters (e.g., pH etc.), (https://github.com/baillielab/oxygen_delivery/blob/master/oxygen_delivery.py) (3) Altitude, pressure, temperature driver; water vapor etc. (4) Update ICs (negative compliance alters volume)
 ### TODO: Code:                (1) Fix the whole model params thing
 module CVModel
@@ -102,11 +101,11 @@ This section of code instances the compartments used in the model, based on the 
 @named Head_art = Artery(C=C_Head_art, R=R_Head_art, V₀=v0_Head_art, h=h_Head_art, rad=rad_Head, L=L_Head_art, has_gasexchange=true, Vₜ=Vₜ_brain, MO₂=MO₂_brain, RQ=RQ₀)
 
 #### Venous Circulation
-@named UpBd_vein = Vein(C=C_UpBd_vein, R=R_UpBd_vein, V₀=v0_UpBd_vein, h=h_UpBd_vein, con=con_UpBd_vein, has_valve=true, has_abr=true, has_cpr=true, rad=rad_UB)
+@named UpBd_vein = Vein(C=C_UpBd_vein, R=R_UpBd_vein, V₀=v0_UpBd_vein, h=h_UpBd_vein, con=con_UpBd_vein, has_valve=true, has_reflex=true, rad=rad_UB)
 @named SVC = Vein(C=C_SVC, R=R_SVC, V₀=v0_SVC, h=h_SVC, has_tissue=false)
-@named Renal_vein = Vein(C=C_Renal_vein, R=R_Renal_vein, V₀=v0_Renal_vein, h=h_Renal_vein, has_abr=true, has_cpr=true, rad=rad_Abd, V_min=vₘᵢₙ_Renal_vein)
-@named Splanchnic_vein = Vein(C=C_Splanchnic_vein, R=R_Splanchnic_vein, V₀=v0_Splanchnic_vein, h=h_Splanchnic_vein, is_nonlinear=true, Flow_div = Flow_Splanchnic_vein, V_max=vM_Splanchnic_vein, has_abr=true, has_cpr=true, rad=rad_Abd)
-@named Leg_vein = Vein(C=C_Leg_vein, R=R_Leg_vein, V₀=v0_Leg_vein, h=h_Leg_vein, con=con_Leg_vein, has_valve=true, is_nonlinear=true, Flow_div = Flow_Leg_vein, V_max=vM_Leg_vein, has_abr=true, has_cpr=true, rad=rad_Leg)
+@named Renal_vein = Vein(C=C_Renal_vein, R=R_Renal_vein, V₀=v0_Renal_vein, h=h_Renal_vein, has_reflex=true, rad=rad_Abd, V_min=vₘᵢₙ_Renal_vein)
+@named Splanchnic_vein = Vein(C=C_Splanchnic_vein, R=R_Splanchnic_vein, V₀=v0_Splanchnic_vein, h=h_Splanchnic_vein, is_nonlinear=true, Flow_div = Flow_Splanchnic_vein, V_max=vM_Splanchnic_vein, has_reflex=true, rad=rad_Abd)
+@named Leg_vein = Vein(C=C_Leg_vein, R=R_Leg_vein, V₀=v0_Leg_vein, h=h_Leg_vein, con=con_Leg_vein, has_valve=true, is_nonlinear=true, Flow_div = Flow_Leg_vein, V_max=vM_Leg_vein, has_reflex=true, rad=rad_Leg)
 @named Abd_veins = Vein(C=C_Abd_veins, R=R_Abd_veins, V₀=v0_Abd_veins, h=h_Abd_veins, is_nonlinear=true, Flow_div = Flow_Abd_veins, V_max=vM_Abd_vein, rad=rad_Abd)
 @named Thor_IVC = Vein(C=C_Thor_IVC, R=R_Thor_IVC, V₀=v0_Thor_IVC, h=h_Thor_IVC, has_tissue=false)
 @named Head_veins = Vein(C=C_Head_veins, R=R_Head_veins, V₀=v0_Head_veins, h=h_Head_veins, rad=rad_Head)
@@ -179,6 +178,11 @@ This section of code instances the compartments used in the model, based on the 
 @named ERR = EffectorsRR(Gainₛ=GTs, Gainᵥ=GTv, delayₛ=DTs, delayᵥ=DTv, timeₛ=τTs, timeᵥ=τTv, min=fesₘᵢₙ, delay_order=reflex_delay_order)
 
 @named EResistance = Effectors(Gain=GResistance, delay=DResistance, time=τResistance, min=fesₘᵢₙ, delay_order=reflex_delay_order)
+
+@named EVtone_UpBd = Effectors(Gain=GVtone_UpBd, delay=DVtone, time=τVtone, min=fesₘᵢₙ, delay_order=reflex_delay_order)
+@named EVtone_Renal = Effectors(Gain=GVtone_Renal, delay=DVtone, time=τVtone, min=fesₘᵢₙ, delay_order=reflex_delay_order)
+@named EVtone_Splanchnic = Effectors(Gain=GVtone_Splanchnic, delay=DVtone, time=τVtone, min=fesₘᵢₙ, delay_order=reflex_delay_order)
+@named EVtone_Leg = Effectors(Gain=GVtone_Leg, delay=DVtone, time=τVtone, min=fesₘᵢₙ, delay_order=reflex_delay_order)
 
 #### Pulmonary Reflexes
 @named CentralResp = Chemoreceptors(Delay=Dc, Gain_A=G_cA, Gain_f=G_cf, set_point=PaCO₂n, time_A=τ_cA, time_f=τ_cf, delay_order=reflex_delay_order)
@@ -440,6 +444,11 @@ circ_eqs = [
 
   EResistance.u ~ Efferent.fₛₚ,
 
+  EVtone_UpBd.u ~ Efferent.fₛᵥ,
+  EVtone_Renal.u ~ Efferent.fₛᵥ,
+  EVtone_Splanchnic.u ~ Efferent.fₛᵥ,
+  EVtone_Leg.u ~ Efferent.fₛᵥ,
+
   #### Effectors: Arteriole Resistance
   Cor_cap.R ~ Rcc * (1 + HeartAutoreg.xjCO₂) /(1 + HeartAutoreg.xjO₂),
   Head_cap.G ~ Gbpn * (1 + BrainAutoreg.xbO₂ + BrainAutoreg.xbCO₂),
@@ -450,14 +459,10 @@ circ_eqs = [
   Leg_cap.R ~ (R_Leg_cap + EResistance.Δσ) * (1 + LBMuscleAutoreg.xjCO₂) /(1 + LBMuscleAutoreg.xjO₂),
 
   #### Effectors: Venous Tone
-  UpBd_vein.C.Vabr ~ Gabr_vub * abr_αv.y,
-  Renal_vein.C.Vabr ~ Gabr_vre * abr_αv.y,
-  Splanchnic_vein.C.Vabr ~ Gabr_vsp * abr_αv.y,
-  Leg_vein.C.Vabr~ Gabr_vlb * abr_αv.y,
-  UpBd_vein.C.Vcpr ~ Gcpr_vub * cpr_αv.y,
-  Renal_vein.C.Vcpr ~ Gcpr_vre * cpr_αv.y,
-  Splanchnic_vein.C.Vcpr ~ Gcpr_vsp * cpr_αv.y,
-  Leg_vein.C.Vcpr ~ Gcpr_vlb * cpr_αv.y,
+  UpBd_vein.ΔV ~ EVtone_UpBd.Δσ,
+  Renal_vein.ΔV ~ EVtone_Renal.Δσ,
+  Splanchnic_vein.ΔV ~ EVtone_Splanchnic.Δσ,
+  Leg_vein.ΔV ~ EVtone_Leg.Δσ,
 
   #### Effectors: Ventricular Contractility
   SA.Eabr_rv ~ ERH.Δσ,
@@ -521,6 +526,7 @@ This section of the code composes the system of ordinary differential equations 
   Efferent, # Efferent Pathways
   ERH, ELH, ERR, # Effectors
   EResistance, # Effectors: Resistance
+  EVtone_UpBd, EVtone_Renal, EVtone_Splanchnic, EVtone_Leg, # Effectors: Venous Tone
   ])
 
 circ_sys = structural_simplify(circ_model)
@@ -791,6 +797,15 @@ u0 = [
   ERR.dᵥ.x => reflex_delay_init,
   EResistance.Δσ => 0.0,
   EResistance.d.x => reflex_delay_init,
+
+  EVtone_UpBd.Δσ => 0.0,
+  EVtone_UpBd.d.x => reflex_delay_init,
+  EVtone_Renal.Δσ => 0.0,
+  EVtone_Renal.d.x => reflex_delay_init,
+  EVtone_Splanchnic.Δσ => 0.0,
+  EVtone_Splanchnic.d.x => reflex_delay_init,
+  EVtone_Leg.Δσ => 0.0,
+  EVtone_Leg.d.x => reflex_delay_init,
 
 ]
 

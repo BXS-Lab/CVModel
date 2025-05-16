@@ -326,7 +326,7 @@ The has_abr and has_cpr flags introduce extra variables Vabr and Vcpr, which rep
 Note: due to complexity this is composed as a @component and not a @mtkmodel. It makes no difference to the user.
 """
 
-@component function Compliance(; name, V₀=0.0, C=1.0, inP=false, has_ep=false, has_variable_ep=false, p₀=0.0, is_nonlinear=false, Flow_div = 1/3, V_max=1.0, V_min=1e-8, has_abr=false, has_cpr=false, has_gasexchange=false, Vₜ=0.0, MO₂=0.0, RQ=0.84, is_pulmonary=false, pcol=p_col, is_heart=false)
+@component function Compliance(; name, V₀=0.0, C=1.0, inP=false, has_ep=false, has_variable_ep=false, p₀=0.0, is_nonlinear=false, Flow_div = 1/3, V_max=1.0, V_min=1e-8, has_reflex=false, has_gasexchange=false, Vₜ=0.0, MO₂=0.0, RQ=0.84, is_pulmonary=false, pcol=p_col, is_heart=false)
   @named in = Pin() # Input pin
   @named out = Pin() # Output pin
 
@@ -374,16 +374,9 @@ Note: due to complexity this is composed as a @component and not a @mtkmodel. It
     p_rel = p₀
   end
 
-  if has_cpr && has_abr # This statement defines the effective zero-pressure volume based on the flags
-    push!(sts, (@variables Vcpr(t))[1])
-    push!(sts, (@variables Vabr(t))[1])
-    append!(eqs, [V₀eff ~ V₀ + Vcpr + Vabr])
-  elseif has_cpr
-    push!(sts, (@variables Vcpr(t))[1])
-    append!(eqs, [V₀eff ~ V₀ + Vcpr])
-  elseif has_abr
-    push!(sts, (@variables Vabr(t))[1])
-    append!(eqs, [V₀eff ~ V₀ + Vabr])
+  if has_reflex # This statement defines the effective zero-pressure volume based on the flags
+    push!(sts, (@variables ΔV(t))[1])
+    append!(eqs, [V₀eff ~ V₀ + ΔV])
   else
     append!(eqs, [V₀eff ~ V₀])
   end
@@ -800,8 +793,7 @@ This model represents a venous compartment. It is a lumped compartment consistin
     is_nonlinear = false
     V_max = 1.0
     Flow_div = 1/3
-    has_abr = false
-    has_cpr = false
+    has_reflex = false
     has_tissue = true
     ρt = ρ_fft
     rad = 10.0
@@ -818,11 +810,8 @@ This model represents a venous compartment. It is a lumped compartment consistin
     pₜₘ(t)
     cO₂(t)
     cCO₂(t)
-    if has_cpr
-      Vcpr(t)
-    end
-    if has_abr
-      Vabr(t)
+    if has_reflex
+      ΔV(t)
     end
   end
 
@@ -831,7 +820,7 @@ This model represents a venous compartment. It is a lumped compartment consistin
     out = Pin()
     ep = PresPin()
 
-    C = Compliance(V₀=V₀, C=C, inP=true, has_ep=true, has_variable_ep=true, p₀=p₀, is_nonlinear=is_nonlinear, V_max=V_max, V_min=V_min, Flow_div=Flow_div, has_cpr=has_cpr, has_abr=has_abr)
+    C = Compliance(V₀=V₀, C=C, inP=true, has_ep=true, has_variable_ep=true, p₀=p₀, is_nonlinear=is_nonlinear, V_max=V_max, V_min=V_min, Flow_div=Flow_div, has_reflex=has_reflex)
 
     if has_hydrostatic
       Ph = HydrostaticPressure(ρ=ρ, h=h, con=con)
@@ -867,11 +856,8 @@ This model represents a venous compartment. It is a lumped compartment consistin
       Δp_Pt ~ 0  # no pressure drop if tissue is disabled
     end
 
-    if has_cpr
-      C.Vcpr ~ Vcpr
-    end
-    if has_abr
-      C.Vabr ~ Vabr
+    if has_reflex
+      C.ΔV ~ ΔV
     end
 
     if has_hydrostatic

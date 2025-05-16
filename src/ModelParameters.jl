@@ -694,41 +694,14 @@ GResistance = 0.695 # (mmHg.s/ml/ν)
 τResistance = 6 # (s)
 DResistance = 2 # (s)
 
+#### Venous Tone
+GVtone_UpBd = -58.29 * 18/55
+GVtone_Renal = -74.21 # (ml/ν)
+GVtone_Splanchnic = -265.4 # (ml/ν)
+GVtone_Leg = -58.29 * 37/55 # (ml/ν)
 
-
-
-
-# New ???
-
-
-
-#### Efferent vagal pathway
-
-
-
-
-
-
-
-
-
-
-
-#### Reflex Effectors
-
-Gvusv = -265.4 # (ml/ν)
-Gvuev = -74.21 # (ml/ν)
-Gvumv = -58.29 # (ml/ν)
-
-
-τVusv = 20 # (s)
-τVuev = 20 # (s)
-τVumv = 20 # (s)
-
-
-DVusv = 5 # (s)
-DVuev = 5 # (s)
-DVumv = 5 # (s)
+τVtone = 20 # (s)
+DVtone = 5 # (s)
 
 #### Original ICs from Ursino
 # Emaxlv₀ = 2.392 # (mmHg/ml)
