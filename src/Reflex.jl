@@ -146,6 +146,11 @@ The TransferFunction component implements a transfer function that models the re
 end
 
 """
+NEW Reflexes
+Here are the reflexes that are not included in the original model. These are the ones that are not included in the original model, but are necessary for the simulation.
+"""
+
+"""
 Ursino: Autoregulation
 """
 
@@ -294,18 +299,116 @@ end
 Ursino: Afferent Baroreflex
 """
 
-# @mtkmodel AfferentBaroreflex begin
-#   @parameters begin
-#     Gain = 1.0
-#     set_point = 1.0
-#     time = 1.0
-#   end
-#   @variables begin
-#     ucvO₂(t)
-#     x(t)
-#   end
-#   @equations begin
-#     D(x) ~ (-x - Gain * (ucvO₂ - set_point)) / time
-#   end
-# end
+@mtkmodel AfferentBaroreflex begin
+  @parameters begin
+    _τzb = τzb
+    _τpb = τpb
+    _Pn = Pn
+    _kab = kab
+    _fabₘₐₓ = fabₘₐₓ
+    _fabₘᵢₙ = fabₘᵢₙ
+  end
+  @variables begin
+    P(t)
+    pb(t)
+    fab(t)
+  end
+  @equations begin
+    D(P) ~ (pb + (_τzb * D(pb)) - P) / _τpb
+    fab ~ (_fabₘᵢₙ + _fabₘₐₓ * exp((P - _Pn) / _kab)) / (1 + exp((P - _Pn) / _kab))
+  end
+end
+
+"""
+Whittle: Afferent Cardiopulmonary Reflex
+"""
+
+@mtkmodel AfferentBaroreflex begin
+  @parameters begin
+    _τzr = τzr
+    _τpr = τpr
+    _Prn = Prn
+    _kcpr = kcpr
+    _fcprₘₐₓ = fcprₘₐₓ
+    _fcprₘᵢₙ = fcprₘᵢₙ
+  end
+  @variables begin
+    P(t)
+    pr(t)
+    fcpr(t)
+  end
+  @equations begin
+    D(P) ~ (pr + (_τzr * D(pr)) - P) / _τpr
+    fcpr ~ (_fcprₘᵢₙ + _fcprₘₐₓ * exp((P - _Prn) / _kcpr)) / (1 + exp((P - _Prn) / _kcpr))
+  end
+end
+
+"""
+Ischemic Response
+"""
+
+@mtkmodel IschemicResponse begin
+  @parameters begin
+    _χₛⱼ = 1.0
+    _PaO₂ₛⱼn = 1.0
+    _kiscₛⱼ = 1.0
+    _τisc = 1.0
+    _PaCO₂n = 1.0
+    _gccₛⱼ = 1.0
+    _τcc = 1.0
+    _θₛⱼn = 1.0
+  end
+  @variables begin
+    uPaO₂(t)
+    uPaCO₂(t)
+    ωₛⱼ(t)
+    ΔΘO₂ₛⱼ(t)
+    ΔΘCO₂ₛⱼ(t)
+    θₛⱼ(t)
+  end
+  @equations begin
+    ωₛⱼ = _χₛⱼ / (1 + exp((uPaO₂ - _PaO₂ₛⱼn) / _kiscₛⱼ))
+    D(ΔΘO₂ₛⱼ) = (-ΔΘO₂ₛⱼ + ωₛⱼ) / _τisc
+    D(ΔΘCO₂ₛⱼ) = (-ΔΘCO₂ₛⱼ + _gccₛⱼ * (uPaCO₂ - _PaCO₂n)) / _τcc
+    θₛⱼ = _θₛⱼn - ΔΘO₂ₛⱼ - ΔΘCO₂ₛⱼ
+  end
+end
+
+"""
+Ursino: Efferent Pathways
+"""
+
+@mtkmodel EfferentPathways begin
+  @parameters begin
+    # TODO
+    _fes∞ = τ
+    _fes₀ = gain
+    _kes
+    _Wb
+    _Wc
+    _Wp
+  end
+  @variables begin
+    fab(t)
+    fapc(t)
+    fasr(t)
+    fcpr(t)
+    θₛₕ(t)
+    θₛₚ(t)
+    θₛᵥ(t)
+    θᵥ(t)
+    fₛₕ(t)
+    fₛₚ(t)
+    fₛᵥ(t)
+    fᵥ(t)
+  end
+  @equations begin
+    fₛₕ ~ min(_fes∞ + (_fes₀ - _fes∞) * exp(_kes * ((_Wbh * fab) + (_Wch * fapc) + (_Wph * fasr) - θₛₕ)), _fesₘₐₓ)
+    fₛₚ ~ min(_fes∞ + (_fes₀ - _fes∞) * exp(_kes * ((_Wbp * fab) + (_Wcp * fapc) + (_Wpp * fasr) + (_Wrp * fcpr) - θₛₚ)), _fesₘₐₓ)
+    fₛᵥ ~ min(_fes∞ + (_fes₀ - _fes∞) * exp(_kes * ((_Wbv * fab) + (_Wcv * fapc) + (_Wpv * fasr) + (_Wrv * fcpr) - θₛᵥ)), _fesₘₐₓ)
+
+    fᵥ ~ (_fev₀ + _fev∞ * exp((fab - _fab₀) / _kev)) / (1 + exp((fab - _fab₀) / _kev)) + (_Wc_vagal * fapc) + (_Wp_vagal * fasr) - θᵥ
+  end
+end
+
 

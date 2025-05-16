@@ -595,7 +595,7 @@ kac = 29.27 # (mmHg)
 
 #### Afferent Pulmonary Stretch Receptors pathway
 τasr = 2 # (s)
-Gasr = 23.29 # (spikes/l/s)
+Gasr = 0.01176 # (spikes/l/s), modified from 23.29
 
 #### Efferent sympathetic pathway
 fes∞ =2.1 # (spikes/s)
@@ -604,12 +604,22 @@ fes₀ = 16.11 # (spikes/s)
 fesₘₐₓ = 60
 kes = 0.0675 # (s)
 
-Wbₛₚ = -1
-Wcₛₚ = 5
-Wpₛₚ = -0.34
+Wbₛₚ = -1.1375 # modified from -1
+Wbₛᵥ = -1.0806 # New
+Wbₛₕ = -1.75 # modified from 1
 
-Wbₛₕ = 1
+Wcₛₚ = 5
 Wcₛₕ = 5
+
+Wpₛₚ = -0.34
+Wpcsp = 1.716
+Wpcsv = 1.716
+
+
+
+# New ???
+
+
 
 #### Efferent vagal pathway
 fev∞ = 6.3 # (spikes/s)

@@ -1240,7 +1240,7 @@ This model represents the action of the respiratory muscles during breathing.
     p = p_musmin
     RespRate₀ = RespRateₙₒₘ
     IEratio = IE_ratio
-    ε = 0.002         # width of the update pulse
+    ε = 0.00002         # width of the update pulse
     τ_reset = 0.01    # smoothing timescale
   end
   @variables begin
@@ -1251,6 +1251,7 @@ This model represents the action of the respiratory muscles during breathing.
     BreathInt_held(t) # Breath interval held to a new breath (s)
     ϕ_wrapped(t) # Wrapped phase of the breathing cycle
     breath_trigger(t) # Trigger for the breath
+    breath_trigger2(t) # Trigger for the end_inspiration
     t0(t) # Time withing the breathing cycle
     TE(t) # Expiration time (s)
     TI(t) # Inspiration time (s)
@@ -1275,6 +1276,8 @@ This model represents the action of the respiratory muscles during breathing.
 
     p_new ~ p + p_chemo
     D(p_held) ~ breath_trigger * (p_new - p_held) / τ_reset
+
+    breath_trigger2 ~ exp(-((ϕ_wrapped - TI / BreathInt_held)^2) / ε)
 
     # Time within the breathing cycle
     Δp ~ ifelse(t0 <= TI, (-p_held/(TI*TE)*t0^2 + p_held*BreathInt_held/(TI*TE)*t0),
@@ -1324,6 +1327,7 @@ This is a complete model of the lung mechanics, based on the work of Albanese (2
     Vr_A(t) # Alveolar flow rate (ml/s)
     α(t) # Angle (radians)
     g(t) # Gravity (m/s^2)
+    V_L(t)
   end
   @equations begin
     in.p ~ pₐₒ
@@ -1346,10 +1350,36 @@ This is a complete model of the lung mechanics, based on the work of Albanese (2
     V_b ~ C_b * (p_b - pₚₗ) + V₀_b
     V_A ~ C_A * (p_A - pₚₗ) + V₀_A
     V_D ~ V_l + V_tr + V_b
+    V_L ~ V_A + V_D
   end
 end
 
+"""
+Tidal Volume Calculator
+"""
 
+@mtkmodel TidalVolume begin
+  @parameters begin
+    τ_reset = 0.01 # Smoothing timescale (s)
+  end
+  @variables begin
+    V_L(t) # Lung volume (ml)
+    VL_min(t) # Min lung volume (ml)
+    VL_max(t) # Peak lung volume (ml)
+    breath_trigger(t) # New pressure (mmHg)
+    breath_trigger2(t) # New pressure (mmHg)
+    VT(t) # Tidal volume (ml)
+  end
+  @equations begin
+    D(VL_min) ~ breath_trigger * (V_L - VL_min) / τ_reset
+    D(VL_max) ~ breath_trigger2 * (V_L - VL_max) / τ_reset
+    VT ~ VL_max - VL_min
+  end
+end
+
+"""
+Lung Gas Exchange
+"""
 
 @mtkmodel LungGasExchange begin
   @parameters begin
@@ -1377,7 +1407,6 @@ end
     _DlCO₂ = DlCO₂ # Diffusion coefficient of CO₂ in blood (ml CO₂/ml blood/mmHg)
   end
   @variables begin
-
     #### Connected from Lung Model
     Vrᵢₙ(t) # Flow rate (ml/s), must be connected externally
     Vr_A(t) # Alveolar flow rate (ml/s), must be connected externally
@@ -1426,11 +1455,8 @@ end
     paCO₂(t) # CO₂ partial pressure in the arterial blood (mmHg)
 
     SaO₂(t) # O₂ saturation in the arterial blood (%)
-
-
   end
   @equations begin
-
     #### Conservation of mass equations
     D(FDO₂) ~ ifelse(Vrᵢₙ >= 0, Vrᵢₙ * (_FIO₂ - FDO₂), Vr_A * (FDO₂ - FAO₂)) / V_D
     D(FDCO₂) ~ ifelse(Vrᵢₙ >= 0, Vrᵢₙ * (_FICO₂ - FDCO₂), Vr_A * (FDCO₂ - FACO₂)) / V_D
@@ -1480,6 +1506,10 @@ end
   end
 end
 
+"""
+Dynamic Heart Power
+"""
+
 @mtkmodel HeartPower begin
   @parameters begin
     Wh₀ = Whₙₒₘ       # Zero pressure volume (ml)
@@ -1500,5 +1530,4 @@ end
     wh ~ - Plv * DVlv - Prv * DVrv
     D(Wh) ~ (wh - Wh) / τw
   end
-
 end
