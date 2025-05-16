@@ -432,4 +432,68 @@ Ursino: Efferent Pathways
   end
 end
 
+"""
+Effectors
+"""
 
+@mtkmodel Effectors begin
+  @parameters begin
+    Gain = 1.0
+    delay = 1.0
+    time = 1.0
+    min = 0.0
+  end
+  @structural_parameters begin
+    delay_order = 2
+  end
+  @variables begin
+    u(t)
+    σθ(t)
+    Δσ(t)
+  end
+  @components begin
+    d = PadeDelay(τ=delay, n=delay_order)
+  end
+  @equations begin
+    u ~ d.u
+    σθ ~ ifelse(d.y >= min, Gain * log(d.y - min + 1), 0)
+    D(Δσ) ~ (-Δσ + σθ) / time
+  end
+end
+
+@mtkmodel EffectorsRR begin
+  @parameters begin
+    Gainₛ = 1.0
+    Gainᵥ = 1.0
+    delayₛ = 1.0
+    delayᵥ = 1.0
+    timeₛ = 1.0
+    timeᵥ = 1.0
+    min = 0.0
+  end
+  @structural_parameters begin
+    delay_order = 2
+  end
+  @variables begin
+    uₛ(t)
+    uᵥ(t)
+    σTₛ(t)
+    σTᵥ(t)
+    ΔTₛ(t)
+    ΔTᵥ(t)
+    ΔT(t)
+  end
+  @components begin
+    dₛ = PadeDelay(τ=delayₛ, n=delay_order)
+    dᵥ = PadeDelay(τ=delayᵥ, n=delay_order)
+  end
+  @equations begin
+    uₛ ~ dₛ.u
+    σTₛ ~ ifelse(dₛ.y >= min, Gainₛ * log(dₛ.y - min + 1), 0)
+    D(ΔTₛ) ~ (-ΔTₛ + σTₛ) / timeₛ
+    uᵥ ~ dᵥ.u
+    σTᵥ ~ Gainᵥ * dᵥ.y
+    D(ΔTᵥ) ~ (-ΔTᵥ + σTᵥ) / timeᵥ
+    ΔT ~ ΔTₛ + ΔTᵥ
+  end
+end
