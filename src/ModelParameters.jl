@@ -589,6 +589,28 @@ Lung Stretch Receptors (Albanese 2016)
 Gasr = 0.01176 # (spikes/ml/s), modified from 23.29
 
 """
+CNS Ischemic Response
+"""
+
+χₛₚ = 6 # (spikes/s)
+χₛᵥ = 6 # (spikes/s)
+χₛₕ = 53 # (spikes/s)
+PO₂nₛₚ = 30 # (mmHg)
+PO₂nₛᵥ = 30 # (mmHg)
+PO₂nₛₕ = 45 # (mmHg)
+kiscₛₚ = 2 # (mmHg)
+kiscₛᵥ = 2 # (mmHg)
+kiscₛₕ = 6 # (mmHg)
+τisc = 30 # (s)
+gccₛₚ = 1.5 # (/mmHg/s)
+gccₛᵥ = 0 # (/mmHg/s)
+gccₛₕ = 1 # (/mmHg/s)
+τcc = 20 # (s)
+θₛₚₙ = 13.32 # (spikes/s)
+θₛᵥₙ = 13.32 # (spikes/s)
+θₛₕₙ = 3.6 # (spikes/s)
+
+"""
 Pulmonary: Central Chemoreceptors (Albanese 2016)
 """
 
@@ -659,16 +681,7 @@ Wcᵥ = 0.2
 Wpᵥ = 0.103
 θᵥ = -0.68 # (spikes/s)
 
-#### CNS Hypoxic Response
-χₘₐₓₛₚ = 13.32 # (spikes/s)
-χₘₐₓₛₕ = 3.59 # (spikes/s)
-τisc = 30 # (s)
-χₘᵢₙₛₚ = 7.33 # (spikes/s)
-χₘᵢₙₛₕ = -49.38 # (spikes/s)
-PO₂nₛₚ = 30 # (mmHg)
-PO₂nₛₕ = 45 # (mmHg)
-kiscₛₚ = 2 # (mmHg)
-kiscₛₕ = 6 # (mmHg)
+
 
 #### Ventilatory Response
 Gv = 0.125 # (l/ν)

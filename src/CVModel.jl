@@ -8,7 +8,7 @@ This model is a simulation of the human cardiovascular system, including a four 
 ### TODO: CV Model:            (1) Vertebral Plexus (2) Dynamic ICP
 ### TODO: Pulmonary Mechanics: (1) Bring Intrathoracic Pressure into Lung Model
 ### TODO: Lung Gas Exchange:   (1) Improve fidelity (https://github.com/baillielab/oxygen_delivery/blob/master/oxygen_delivery.py)
-### TODO: CV Control:          (1) CNS Ischemic Response, (3) Baroreflex (update) (4) CPR (update)
+### TODO: CV Control:          (1) Efferent Pathways, (2) Effectors
 ### TODO: Simulation:          (1) Exercise Model, (2) Other blood parameters (e.g., pH etc.), (3) Altitude, pressure, temperature driver; water vapor etc. (4) Update ICs (negative compliance alters volume)
 ### TODO: Code:                (1) Fix the whole model params thing
 module CVModel
@@ -165,6 +165,11 @@ This section of code instances the compartments used in the model, based on the 
 
 #### Lung Stretch Receptors
 @named LungStretchReceptors = LungStretch()
+
+#### CNS Ischemic Response
+@named IschArterioles = IschemicResponse(_χₛⱼ=χₛₚ, _PaO₂ₛⱼn=PO₂nₛₚ, _kiscₛⱼ=kiscₛₚ, _τisc=τisc, _PaCO₂n=PaCO₂n, _gccₛⱼ=gccₛₚ, _τcc=τcc, _θₛⱼn=θₛₚₙ)
+@named IschVeins = IschemicResponse(_χₛⱼ=χₛᵥ, _PaO₂ₛⱼn=PO₂nₛᵥ, _kiscₛⱼ=kiscₛᵥ, _τisc=τisc, _PaCO₂n=PaCO₂n, _gccₛⱼ=gccₛᵥ, _τcc=τcc, _θₛⱼn=θₛᵥₙ)
+@named IschHeart = IschemicResponse(_χₛⱼ=χₛₕ, _PaO₂ₛⱼn=PO₂nₛₕ, _kiscₛⱼ=kiscₛₕ, _τisc=τisc, _PaCO₂n=PaCO₂n, _gccₛⱼ=gccₛₕ, _τcc=τcc, _θₛⱼn=θₛₕₙ)
 
 #### Pulmonary Reflexes
 @named CentralResp = Chemoreceptors(Delay=Dc, Gain_A=G_cA, Gain_f=G_cf, set_point=PaCO₂n, time_A=τ_cA, time_f=τ_cf, delay_order=reflex_delay_order)
@@ -388,10 +393,10 @@ circ_eqs = [
   UBMuscleAutoreg.uPaCO₂ ~ LungGE.paCO₂,
   LBMuscleAutoreg.uPaCO₂ ~ LungGE.paCO₂,
 
-  #### Arterial Baroreflex
+  #### Afferent: Arterial Baroreflex
   ABR.pb ~ (Asc_A.C.pₜₘ+(BC_A.C.pₜₘ + (ρ_b*gravity_driver.g*(h_cs/100)*sin(alpha_driver.α)*Pa2mmHg)))/2.0,
 
-  #### Cardiopulmonary Reflex
+  #### Afferent: Cardiopulmonary Reflex
   CPR.pr ~ RA.pₜₘ,
 
   #### Afferent: Peripheral Chemoreceptors
@@ -400,6 +405,14 @@ circ_eqs = [
 
   #### Afferent: Lung Stretch Receptors
   TV.VT ~ LungStretchReceptors.VT,
+
+  #### Afferent: CNS Ischemic Response
+  IschArterioles.uPaO₂ ~ LungGE.paO₂,
+  IschArterioles.uPaCO₂ ~ LungGE.paCO₂,
+  IschVeins.uPaO₂ ~ LungGE.paO₂,
+  IschVeins.uPaCO₂ ~ LungGE.paCO₂,
+  IschHeart.uPaO₂ ~ LungGE.paO₂,
+  IschHeart.uPaCO₂ ~ LungGE.paCO₂,
 
   #### Effectors: Arteriole Resistance
   Cor_cap.R ~ Rcc * (1 + HeartAutoreg.xjCO₂) /(1 + HeartAutoreg.xjO₂),
@@ -478,6 +491,7 @@ This section of the code composes the system of ordinary differential equations 
   BrainAutoreg, HeartAutoreg, UBMuscleAutoreg, LBMuscleAutoreg,# Autoregulation
   HeartP, # Heart Power
   ABR, CPR, # Afferent Baroreflex
+  IschArterioles, IschVeins, IschHeart, # CNS Ischemic Response
   ])
 
 circ_sys = structural_simplify(circ_model)
@@ -726,9 +740,18 @@ u0 = [
   #### Heart Dynamic Consumption
   HeartP.Wh => Whₙₒₘ,
 
-  #### Afferent Baroreflex
+  #### Afferent Baroreflex & CPR
   ABR.P => Pn,
   CPR.P => Prn,
+
+  #### Ischemic Response
+  IschArterioles.ΔΘO₂ₛⱼ => 0.0,
+  IschArterioles.ΔΘCO₂ₛⱼ => 0.0,
+  IschVeins.ΔΘO₂ₛⱼ => 0.0,
+  IschVeins.ΔΘCO₂ₛⱼ => 0.0,
+  IschHeart.ΔΘO₂ₛⱼ => 0.0,
+  IschHeart.ΔΘCO₂ₛⱼ => 0.0,
+
 ]
 
 """
@@ -762,6 +785,11 @@ display(plot(Sol, idxs=[Vtotal],
         title = "Total Blood Volume")) # Debugging plot to quickly check volume conservation
 
 display(plot(Sol, idxs=[ABR.fab, LungStretchReceptors.fasr, PeripheralChemo.fapc, CPR.fcpr]))
+display(plot(Sol, idxs=[IschVeins.ΔΘO₂ₛⱼ, IschArterioles.ΔΘO₂ₛⱼ],
+        label = ["IschVeins" "IschArterioles" "IschHeart"],
+        xlabel = "Time (s)",
+        ylabel = "Ischemic Response",
+        title = "CNS Ischemic Response"))
 
 #### Direct from Solution Plots
 

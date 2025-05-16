@@ -367,10 +367,10 @@ Ischemic Response
     θₛⱼ(t)
   end
   @equations begin
-    ωₛⱼ = _χₛⱼ / (1 + exp((uPaO₂ - _PaO₂ₛⱼn) / _kiscₛⱼ))
-    D(ΔΘO₂ₛⱼ) = (-ΔΘO₂ₛⱼ + ωₛⱼ) / _τisc
-    D(ΔΘCO₂ₛⱼ) = (-ΔΘCO₂ₛⱼ + _gccₛⱼ * (uPaCO₂ - _PaCO₂n)) / _τcc
-    θₛⱼ = _θₛⱼn - ΔΘO₂ₛⱼ - ΔΘCO₂ₛⱼ
+    ωₛⱼ ~ _χₛⱼ / (1 + exp((uPaO₂ - _PaO₂ₛⱼn) / _kiscₛⱼ))
+    D(ΔΘO₂ₛⱼ) ~ (-ΔΘO₂ₛⱼ + ωₛⱼ) / _τisc
+    D(ΔΘCO₂ₛⱼ) ~ (-ΔΘCO₂ₛⱼ + _gccₛⱼ * (uPaCO₂ - _PaCO₂n)) / _τcc
+    θₛⱼ ~ _θₛⱼn - ΔΘO₂ₛⱼ - ΔΘCO₂ₛⱼ
   end
 end
 
