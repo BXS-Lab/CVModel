@@ -130,7 +130,7 @@ v0ca = 24.0 # Coronary Artery zero pressure volume (ml)
 Lca = 0.047 # Coronary Artery inductance (mmHg.s^2/ml)
 
 #### Coronary Capillaries
-Rcc = 19.71 # Coronary Capillary microvascular resistance (PRU)
+Rcc = 19.824 # Coronary Capillary microvascular resistance (PRU)
 
 #### Coronary Vein parameters
 Rcv = 0.224 # Coronary Vein resistance (PRU)
@@ -142,11 +142,11 @@ Microvascular Resistances
 These parameters define the baseline microvascular resistances for different compartments of the body, including the upper body, renal, splanchnic, and leg compartments.
 """
 
-R_Head_cap = 6.6667 # Head microvascular resistance (PRU) #TODO: ICs
-R_UpBd_cap = 6.3 # Upper Body microvascular resistance (PRU)
-R_Renal_cap = 1.655 # Renal microvascular resistance (PRU)
-R_Splanchnic_cap = 2.49 # Splanchnic microvascular resistance (PRU) (Increased from 2.8 for coronary arteries)
-R_Leg_cap = 3.15 # Leg microvascular resistance (PRU)# Total microvascular resistance (PRU)
+R_Head_cap = 6.608 # Head microvascular resistance (PRU) #TODO: ICs
+R_UpBd_cap = 5.406 # Upper Body microvascular resistance (PRU)
+R_Renal_cap = 3.498 # Renal microvascular resistance (PRU)
+R_Splanchnic_cap = 1.749 # Splanchnic microvascular resistance (PRU) (Increased from 2.8 for coronary arteries)
+R_Leg_cap = 2.287 # Leg microvascular resistance (PRU)# Total microvascular resistance (PRU)
 
 
 """
@@ -254,10 +254,9 @@ vₘᵢₙ_Renal_vein = 5.0 # The Renal vein has a minimum zero-pressure volume 
 #### Compartment 11: Splanchnic Vein (nonlinear)
 R_Splanchnic_vein = 0.07 # Splanchnic Vein resistance (PRU)
 C_Splanchnic_vein = 50.0 # Splanchnic Vein compliance (ml/mmHg)
-v0_Splanchnic_vein = 1047.8 # Splanchnic Vein zero pressure volume (ml) (Subtracted coronary veins)
+v0_Splanchnic_vein = 1435.4 # Splanchnic Vein zero pressure volume (ml) (Subtracted coronary veins)
 h_Splanchnic_vein = -10.0 # Splanchnic Vein length (cm)
-vM_Splanchnic_vein = 1565.0 # Splanchnic Vein maximum volume (ml)
-
+vM_Splanchnic_vein = 1952.6 # Splanchnic Vein maximum volume (ml)
 
 #### Compartment 13: Leg Vein (nonlinear)
 R_Leg_vein = 0.1 # Leg Vein resistance (PRU)
@@ -604,19 +603,19 @@ DTs = 2 # (s)
 DTv = 0.2 # (s)
 
 #### Arteriole Resistances
-GResistance_UpBd = 7.42 # (mmHg.s/ml/ν)
-GResistance_Renal = 1.94 # (mmHg.s/ml/ν)
-GResistance_Splanchnic = 0.695 # (mmHg.s/ml/ν)
-GResistance_Leg = 3.71 # (mmHg.s/ml/ν)
+GResistance_UpBd = 4.24 # (mmHg.s/ml/ν)
+GResistance_Renal = 5.30 # (mmHg.s/ml/ν)
+GResistance_Splanchnic = 0.73 # (mmHg.s/ml/ν)
+GResistance_Leg = 1.77 # (mmHg.s/ml/ν)
 
 τResistance = 6 # (s)
 DResistance = 2 # (s)
 
 #### Venous Tone
-GVtone_UpBd = -66.5
-GVtone_Renal = -5.5 # (ml/ν)
-GVtone_Splanchnic = -196.6 # (ml/ν)
-GVtone_Leg = -132.3 # (ml/ν)
+GVtone_UpBd = -43.4
+GVtone_Renal = -3.62 # (ml/ν)
+GVtone_Splanchnic = -265.4 # (ml/ν)
+GVtone_Leg = -86.4 # (ml/ν)
 
 τVtone = 20 # (s)
 DVtone = 5 # (s)

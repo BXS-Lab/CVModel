@@ -1027,3 +1027,5 @@ Uncomment the following lines to save the outputs to a CSV file.
 # CSV.write("model_parameters.csv", df_parameters) # Write model parameters to CSV
 
 end
+
+1/(1/2.49+1/1.655+1/2.106+1/19.71 +1/6.67)
