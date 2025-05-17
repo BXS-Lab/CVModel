@@ -17,7 +17,7 @@ using Symbolics
 
 Start_time = 0.0
 Time_step = 0.01
-Stop_time = 200
+Stop_time = 1000
 tspan = (Start_time, Stop_time)
 
 reflex_delay_order = 10 # Order of the Pade delay
@@ -157,6 +157,7 @@ This code section creates a simple driver that generates a dirac delta function 
   end
   @equations begin
     u ~ ifelse(t < width, magnitude, 0.0)
+    # u ~ ifelse(t<10,0,18)
   end
 end
 
@@ -261,7 +262,7 @@ Plot
 This line plots the impulse response for each reflex type.
 """
 
-display(plot(Sol, idxs=[abr_αr.y,abr_αv.y,abr_β.y,abr_para.y,cpr_αr.y,cpr_αv.y], xlims=(0, 60), ylims=(0, 0.2)))
+display(plot(Sol, idxs=[abr_αr.y,abr_αv.y,abr_β.y,abr_para.y,cpr_αr.y,cpr_αv.y], xlims=(0, 200), ylims=(0, 20)))
 
 """
 Debug Script – Unit Impulse
