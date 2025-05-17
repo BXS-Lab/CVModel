@@ -776,13 +776,17 @@ display(plot(Sol, idxs=[Abd_A.C.out.cCO₂, Renal_art.C.out.cCO₂, Splanchnic_a
 
 display(plot(Sol, idxs=[(Wbₛₚ * Efferent.fab) + (Wcₛₚ * Efferent.fapc) + (Wpₛₚ * Efferent.fasr) + (Wrₛₚ * Efferent.fcpr) - Efferent.θₛₕ]))
 
-display(plot(Sol, idxs=[((Wbₛₚ * Efferent.fab) + (Wcₛₚ * Efferent.fapc) + (Wpₛₚ * Efferent.fasr) + (Wrₛₚ * Efferent.fcpr) - Efferent.θₛₕ),((Wbₛₚ * Efferent.fab) + (Wcₛₚ * Efferent.fapc) + (Wrₛₚ * Efferent.fcpr) - Efferent.θₛₕ),Efferent.fₛₚ],
+display(plot(Sol, idxs=[Efferent.fₛᵥ],
         label = ["CPR" "No CPR" "Output"],
         xlabel = "Time (s)",
         ylabel = "Efferent",
         title = "Efferent Pathways"))
 
-display(plot(Sol, idxs=[LungStretchReceptors.fasr]))
+display(plot(Sol, idxs=[EVtone_UpBd.Δσ, EVtone_Renal.Δσ, EVtone_Splanchnic.Δσ, EVtone_Leg.Δσ],
+        label = ["EVtone_UpBd" "EVtone_Renal" "EVtone_Splanchnic" "EVtone_Leg"],
+        xlabel = "Time (s)",
+        ylabel = "Efferent",
+        title = "Efferent Pathways"))
 
 display(plot(Sol, idxs=[(Wbₛₚ * Efferent.fab), (Wcₛₚ * Efferent.fapc), (Wpₛₚ * Efferent.fasr), (Wrₛₚ * Efferent.fcpr)]))
 
