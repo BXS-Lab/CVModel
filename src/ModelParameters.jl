@@ -8,7 +8,7 @@ module ModelParams
 Global System Parameters
 These parameters define global anthropometric and physiological constants for the model.
 """
-HRₙₒₘ = 103  # Nominal Heart Rate (bpm)
+HRₙₒₘ = 60/0.58  # Nominal Heart Rate (bpm)
 TBV = 5300.0 # Total Blood Volume (ml)
 ρ_b = 1060.0 # Blood Density (kg/m^3)
 Pa2mmHg = 0.00750062 # Conversion factor from Pascal to mmHg
@@ -62,7 +62,7 @@ Ees_ra = 0.74 # Right Atrium end systolic elastance (mmHg/ml)
 #### Right Ventricle
 v0_rv = 46.0 # Right Ventricle zero pressure volume (ml)
 Ed_rv = 0.05 # Right Ventricle diastolic elastance (mmHg/ml)
-Ees_rv = 1.3 # Right Ventricle end systolic elastance (mmHg/ml)
+Ees_rv = 1.412 # Right Ventricle end systolic elastance (mmHg/ml)
 Elimit_rv = 3.0 # Right Ventricle elastance limit (mmHg/ml)
 
 #### Left Atrium
@@ -73,7 +73,7 @@ Ees_la = 0.61 # Left Atrium end systolic elastance (mmHg/ml)
 #### Left Ventricle
 v0_lv = 55.0 # Left Ventricle zero pressure volume (ml)
 Ed_lv = 0.11 # Left Ventricle diastolic elastance (mmHg/ml)
-Ees_lv = 2.5 # Left Ventricle end systolic elastance (mmHg/ml)
+Ees_lv = 2.392 # Left Ventricle end systolic elastance (mmHg/ml)
 Elimit_lv = 8.0 # Left Ventricle elastance limit (mmHg/ml)
 
 #### Tricuspid Valve
@@ -142,11 +142,12 @@ Microvascular Resistances
 These parameters define the baseline microvascular resistances for different compartments of the body, including the upper body, renal, splanchnic, and leg compartments.
 """
 
-R_Head_cap = 8.1 # Head microvascular resistance (PRU)
-R_UpBd_cap = 9.7 # Upper Body microvascular resistance (PRU)
-R_Renal_cap = 4.7 # Renal microvascular resistance (PRU)
-R_Splanchnic_cap = 3.1 # Splanchnic microvascular resistance (PRU) (Increased from 2.8 for coronary arteries)
-R_Leg_cap = 4.0 # Leg microvascular resistance (PRU)
+R_Head_cap = 6.6667 # Head microvascular resistance (PRU) #TODO: ICs
+R_UpBd_cap = 6.3 # Upper Body microvascular resistance (PRU)
+R_Renal_cap = 1.655 # Renal microvascular resistance (PRU)
+R_Splanchnic_cap = 2.49 # Splanchnic microvascular resistance (PRU) (Increased from 2.8 for coronary arteries)
+R_Leg_cap = 3.15 # Leg microvascular resistance (PRU)# Total microvascular resistance (PRU)
+
 
 """
 Arterial System Parameters
@@ -475,8 +476,8 @@ Cardiopulmonary Reflex Parameters
 τzr = 6.37
 τpr = 2.076
 Prn = 6
-kcpr = 11.76/18*5
-fcprₘₐₓ = (47.78 - 2.52) * 5 / 18
+kcpr = 11.76
+fcprₘₐₓ = 47.78
 fcprₘᵢₙ = 2.52
 
 """
@@ -561,12 +562,12 @@ Wrₛₕ = 0 # Cardiopulmonary reflex to heart
 Wbₛₚ = -1.1375 # Baroreflex to arterioles
 Wcₛₚ = 1.716 # Chemoreceptors to arterioles
 Wpₛₚ = -0.3997 # Pulmonary stretch receptors to arterioles
-Wrₛₚ = -0.1375 # Cardiopulmonary reflex to arterioles
+Wrₛₚ = -1.1375*5/18 # Cardiopulmonary reflex to arterioles
 
 Wbₛᵥ = -1.0806 # Baroreflex to venous tone
 Wcₛᵥ = 1.716 # Chemoreceptors to venous tone
 Wpₛᵥ = -0.2907 # Pulmonary stretch receptors to venous tone
-Wrₛᵥ = -0.1375 # Cardiopulmonary reflex to venous tone # TODO
+Wrₛᵥ = -1.0806*5/18 # Cardiopulmonary reflex to venous tone
 
 fev₀ = 3.2 # (spikes/s)
 fev∞ = 6.3 # (spikes/s)
@@ -603,18 +604,36 @@ DTs = 2 # (s)
 DTv = 0.2 # (s)
 
 #### Arteriole Resistances
-GResistance = 0.695 # (mmHg.s/ml/ν)
+GResistance_UpBd = 7.42 # (mmHg.s/ml/ν)
+GResistance_Renal = 1.94 # (mmHg.s/ml/ν)
+GResistance_Splanchnic = 0.695 # (mmHg.s/ml/ν)
+GResistance_Leg = 3.71 # (mmHg.s/ml/ν)
+
 τResistance = 6 # (s)
 DResistance = 2 # (s)
 
 #### Venous Tone
-GVtone_UpBd = -58.29 * 18/55
-GVtone_Renal = -74.21 # (ml/ν)
-GVtone_Splanchnic = -265.4 # (ml/ν)
-GVtone_Leg = -58.29 * 37/55 # (ml/ν)
+GVtone_UpBd = -66.5
+GVtone_Renal = -5.5 # (ml/ν)
+GVtone_Splanchnic = -196.6 # (ml/ν)
+GVtone_Leg = -132.3 # (ml/ν)
 
 τVtone = 20 # (s)
 DVtone = 5 # (s)
+
+# GVtone_Renal = -74.21 # (ml/ν)
+# GVtone_Splanchnic = -265.4 # (ml/ν)
+# GVtone_Leg = -58.29 # (ml/ν)
+
+# 74.21 +265.4 + 58.29
+
+# 360 + 30 + 1047.8 + 716
+
+# 716/2153.8 * 397.9
+
+
+# test
+
 
 #### Original ICs from Ursino
 # Emaxlv₀ = 2.392 # (mmHg/ml)
@@ -626,6 +645,41 @@ DVtone = 5 # (s)
 # Vuev₀ = 640.73 # (ml)
 # Vumv₀ = 503.26 # (ml)
 # T₀ = 0.58 # (s)
+
+# Gabr_r = -0.05 # ABR Resistance Gain (PRU/mmHg) (Previous -0.13)
+
+# Gabr_vub = 5.0 # ABR Upper Body Volume Gain (ml/mmHg) (Previous 5.3)
+# Gabr_vre = 2.0 # ABR Renal Volume Gain (ml/mmHg) (Previous 1.3)
+# Gabr_vsp = 13.0 # ABR Splanchnic Volume Gain (ml/mmHg) (Previous 13.3)
+# Gabr_vlb = 7.0 # ABR Lower Body Volume Gain (ml/mmHg) (Previous 6.7)
+
+# Gabr_erv = -0.037 # ABR RV Elastance Gain (1/ml) (Equivalent to contractility gain of 0.022 ml/mmHg^2) (Previous Contractility Gain 0.021)
+# Gabr_elv = -0.044 # ABR LV Elastance Gain (1/ml) (Equivalent to contractility gain of 0.007 ml/mmHg^2) (Previous Contractility Gain 0.014)
+
+# Gabr_rrsymp = 0.009 # ABR RR Interval Sympathetic Gain (s/mmHg) (Previous 0.012)
+# Gabr_rrpara = 0.009 # ABR RR Interval Parasympathetic Gain (s/mmHg)
+
+# #### Cardiopulmonary Reflex
+
+# Gcpr_r = -0.05 # CPR Resistance Gain (PRU/mmHg) (Previous -0.3)
+
+# Gcpr_vub = 13.0 # CPR Upper Body Volume Gain (ml/mmHg) (Previous 13.5)
+# Gcpr_vre = 3.0 # CPR Renal Volume Gain (ml/mmHg) (Previous 2.7)
+# Gcpr_vsp = 64.0 # CPR Splanchnic Volume Gain (ml/mmHg)
+# Gcpr_vlb = 30.0 # CPR Lower Body Volume Gain (ml/mmHg)
+
+# Gub = 18
+# Gr = 5
+# Gsp = 77
+# Glb = 37
+
+# 77/137
+
+# 74.21 + 265.4 + 58.29
+
+# 37/137*397.9
+
+# Total = 18 + 5 + 77 + 37
 
 for name in names(@__MODULE__; all=true, imported=false)
   # Only export if it's not a function or macro and is defined

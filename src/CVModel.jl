@@ -177,7 +177,10 @@ This section of code instances the compartments used in the model, based on the 
 @named ELH = Effectors(Gain=GEmaxlv, delay=DEmaxlv, time=τEmaxlv, min=fesₘᵢₙ, delay_order=reflex_delay_order)
 @named ERR = EffectorsRR(Gainₛ=GTs, Gainᵥ=GTv, delayₛ=DTs, delayᵥ=DTv, timeₛ=τTs, timeᵥ=τTv, min=fesₘᵢₙ, delay_order=reflex_delay_order)
 
-@named EResistance = Effectors(Gain=GResistance, delay=DResistance, time=τResistance, min=fesₘᵢₙ, delay_order=reflex_delay_order)
+@named EResistance_UpBd = Effectors(Gain=GResistance_UpBd, delay=DResistance, time=τResistance, min=fesₘᵢₙ, delay_order=reflex_delay_order)
+@named EResistance_Renal = Effectors(Gain=GResistance_Renal, delay=DResistance, time=τResistance, min=fesₘᵢₙ, delay_order=reflex_delay_order)
+@named EResistance_Splanchnic = Effectors(Gain=GResistance_Splanchnic, delay=DResistance, time=τResistance, min=fesₘᵢₙ, delay_order=reflex_delay_order)
+@named EResistance_Leg = Effectors(Gain=GResistance_Leg, delay=DResistance, time=τResistance, min=fesₘᵢₙ, delay_order=reflex_delay_order)
 
 @named EVtone_UpBd = Effectors(Gain=GVtone_UpBd, delay=DVtone, time=τVtone, min=fesₘᵢₙ, delay_order=reflex_delay_order)
 @named EVtone_Renal = Effectors(Gain=GVtone_Renal, delay=DVtone, time=τVtone, min=fesₘᵢₙ, delay_order=reflex_delay_order)
@@ -427,7 +430,10 @@ circ_eqs = [
   ERR.uₛ ~ Efferent.fₛₕ,
   ERR.uᵥ ~ Efferent.fᵥ,
 
-  EResistance.u ~ Efferent.fₛₚ,
+  EResistance_UpBd.u ~ Efferent.fₛₚ,
+  EResistance_Renal.u ~ Efferent.fₛₚ,
+  EResistance_Splanchnic.u ~ Efferent.fₛₚ,
+  EResistance_Leg.u ~ Efferent.fₛₚ,
 
   EVtone_UpBd.u ~ Efferent.fₛᵥ,
   EVtone_Renal.u ~ Efferent.fₛᵥ,
@@ -438,10 +444,10 @@ circ_eqs = [
   Cor_cap.R ~ Rcc * (1 + HeartAutoreg.xjCO₂) /(1 + HeartAutoreg.xjO₂),
   Head_cap.G ~ Gbpn * (1 + BrainAutoreg.xbO₂ + BrainAutoreg.xbCO₂),
 
-  UpBd_cap.R ~ (R_UpBd_cap + EResistance.Δσ) * (1 + UBMuscleAutoreg.xjCO₂) /(1 + UBMuscleAutoreg.xjO₂),
-  Renal_cap.R ~ R_Renal_cap + EResistance.Δσ,
-  Splanchnic_cap.R ~ R_Splanchnic_cap + EResistance.Δσ,
-  Leg_cap.R ~ (R_Leg_cap + EResistance.Δσ) * (1 + LBMuscleAutoreg.xjCO₂) /(1 + LBMuscleAutoreg.xjO₂),
+  UpBd_cap.R ~ (R_UpBd_cap + EResistance_UpBd.Δσ) * (1 + UBMuscleAutoreg.xjCO₂) /(1 + UBMuscleAutoreg.xjO₂),
+  Renal_cap.R ~ R_Renal_cap + EResistance_Renal.Δσ,
+  Splanchnic_cap.R ~ R_Splanchnic_cap + EResistance_Splanchnic.Δσ,
+  Leg_cap.R ~ (R_Leg_cap + EResistance_Leg.Δσ) * (1 + LBMuscleAutoreg.xjCO₂) /(1 + LBMuscleAutoreg.xjO₂),
 
   #### Effectors: Venous Tone
   UpBd_vein.ΔV ~ EVtone_UpBd.Δσ,
@@ -491,7 +497,7 @@ This section of the code composes the system of ordinary differential equations 
   IschArterioles, IschVeins, IschHeart, # CNS Ischemic Response
   Efferent, # Efferent Pathways
   ERH, ELH, ERR, # Effectors
-  EResistance, # Effectors: Resistance
+  EResistance_UpBd, EResistance_Renal, EResistance_Splanchnic, EResistance_Leg, # Effectors: Arteriole Resistance
   EVtone_UpBd, EVtone_Renal, EVtone_Splanchnic, EVtone_Leg, # Effectors: Venous Tone
   ])
 
@@ -585,19 +591,19 @@ u0 = [
 
   #### Blood Gas O₂ Arterial
 #   Pulm_art.C.out.cO₂ => 0.0,
-  Pulm_vein.C.out.cO₂ => 0.199,
-  LA.out.cO₂ => 0.199,
-  LV.out.cO₂ => 0.199,
+  Pulm_vein.C.out.cO₂ => 0.2,
+  LA.out.cO₂ => 0.2,
+  LV.out.cO₂ => 0.2,
   Cor_art.C.out.cO₂ => 0.152, # After exchange
-  Asc_A.C.out.cO₂ => 0.199,
-  BC_A.C.out.cO₂ => 0.199,
+  Asc_A.C.out.cO₂ => 0.2,
+  BC_A.C.out.cO₂ => 0.2,
   UpBd_art.C.out.cO₂ => 0.152, # After exchange
-  Thor_A.C.out.cO₂ => 0.199,
-  Abd_A.C.out.cO₂ => 0.199,
+  Thor_A.C.out.cO₂ => 0.2,
+  Abd_A.C.out.cO₂ => 0.2,
   Renal_art.C.out.cO₂ => 0.152, # After exchange
   Splanchnic_art.C.out.cO₂ => 0.152, # After exchange
   Leg_art.C.out.cO₂ => 0.152, # After exchange
-  CommonCarotid.C.out.cO₂ => 0.199,
+  CommonCarotid.C.out.cO₂ => 0.2,
   Head_art.C.out.cO₂ => 0.152, # After exchange
   #### Blood Gas O₂ Venous
   Cor_vein.C.out.cO₂ => 0.152,
@@ -701,8 +707,15 @@ u0 = [
   ERR.ΔT => 0.0,
   ERR.dₛ.x => reflex_delay_init,
   ERR.dᵥ.x => reflex_delay_init,
-  EResistance.Δσ => 0.0,
-  EResistance.d.x => reflex_delay_init,
+
+  EResistance_UpBd.Δσ => 0.0,
+  EResistance_UpBd.d.x => reflex_delay_init,
+  EResistance_Renal.Δσ => 0.0,
+  EResistance_Renal.d.x => reflex_delay_init,
+  EResistance_Splanchnic.Δσ => 0.0,
+  EResistance_Splanchnic.d.x => reflex_delay_init,
+  EResistance_Leg.Δσ => 0.0,
+  EResistance_Leg.d.x => reflex_delay_init,
 
   EVtone_UpBd.Δσ => 0.0,
   EVtone_UpBd.d.x => reflex_delay_init,
@@ -745,18 +758,65 @@ display(plot(Sol, idxs=[Vtotal],
         ylabel = "Volume (ml)",
         title = "Total Blood Volume")) # Debugging plot to quickly check volume conservation
 
-display(plot(Sol, idxs=[ABR.fab, LungStretchReceptors.fasr, PeripheralChemo.fapc, CPR.fcpr]))
+display(plot(Sol, idxs=[CentralResp.y_A, CentralResp.y_f, PeripheralResp.y_A, PeripheralResp.y_f],
+        xlabel = "Time (s)",
+        ylabel = "Efferent",
+        title = "Efferent Pathways"))
 display(plot(Sol, idxs=[IschVeins.ΔΘO₂ₛⱼ, IschArterioles.ΔΘO₂ₛⱼ],
         label = ["IschVeins" "IschArterioles" "IschHeart"],
         xlabel = "Time (s)",
         ylabel = "Ischemic Response",
         title = "CNS Ischemic Response"))
 
-display(plot(Sol, idxs=[Efferent.fₛₕ, Efferent.fₛₚ, Efferent.fₛᵥ, Efferent.fᵥ],
-        label = ["Heart" "Arterioles" "Veins" "Vagal"],
+display(plot(Sol, idxs=[Abd_A.C.out.cCO₂, Renal_art.C.out.cCO₂, Splanchnic_art.C.out.cCO₂, Leg_art.C.out.cCO₂],
+        label = ["Abdomen" "Renal" "Splanchnic" "Leg"],
         xlabel = "Time (s)",
         ylabel = "Efferent",
         title = "Efferent Pathways"))
+
+display(plot(Sol, idxs=[(Wbₛₚ * Efferent.fab) + (Wcₛₚ * Efferent.fapc) + (Wpₛₚ * Efferent.fasr) + (Wrₛₚ * Efferent.fcpr) - Efferent.θₛₕ]))
+
+display(plot(Sol, idxs=[((Wbₛₚ * Efferent.fab) + (Wcₛₚ * Efferent.fapc) + (Wpₛₚ * Efferent.fasr) + (Wrₛₚ * Efferent.fcpr) - Efferent.θₛₕ),((Wbₛₚ * Efferent.fab) + (Wcₛₚ * Efferent.fapc) + (Wrₛₚ * Efferent.fcpr) - Efferent.θₛₕ),Efferent.fₛₚ],
+        label = ["CPR" "No CPR" "Output"],
+        xlabel = "Time (s)",
+        ylabel = "Efferent",
+        title = "Efferent Pathways"))
+
+display(plot(Sol, idxs=[LungStretchReceptors.fasr]))
+
+display(plot(Sol, idxs=[(Wbₛₚ * Efferent.fab), (Wcₛₚ * Efferent.fapc), (Wpₛₚ * Efferent.fasr), (Wrₛₚ * Efferent.fcpr)]))
+
+display(plot(Sol, idxs=[ABR.fab, Efferent.fₛₚ, EResistance_Leg.Δσ],
+        label = ["ABR" "Efferent" "EResistance"],
+        xlabel = "Time (s)",
+        ylabel = "Efferent",
+        title = "Efferent Pathways"))
+
+display(plot(Sol, idxs=[Cor_art.C.MO₂dyn]))
+
+display(plot(Sol, idxs=[EResistance_Leg.σθ, EResistance_Leg.u],
+        label = ["EResistance σθ" "EResistance Δσ"],
+        xlabel = "Time (s)",
+        ylabel = "Efferent",
+        title = "Efferent Pathways"))
+
+display(plot(Sol, idxs=[EResistance_UpBd.Δσ, EResistance_Renal.Δσ, EResistance_Splanchnic.Δσ, EResistance_Leg.Δσ],
+        label = ["EResistance" "EVtone_UpBd" "EVtone_Renal" "EVtone_Splanchnic" "EVtone_Leg"],
+        xlabel = "Time (s)",
+        ylabel = "Efferent",
+        title = "Efferent Pathways"))
+
+display(plot(Sol, idxs=[RespMuscles.Δp, RespMuscles.BreathInt_held],
+        label = ["Peripheral" "Central"],
+        xlabel = "Time (s)",
+        ylabel = "Efferent",
+        title = "Efferent Pathways"))
+
+display(plot(Sol, idxs=[ELH.Δσ, ERH.Δσ],
+        label = ["ELH" "ERH"],
+        xlabel = "Time (s)",
+        ylabel = "Sino-Atrial Node",
+        title = "Sino-Atrial Node"))
 
 #### Direct from Solution Plots
 
@@ -836,8 +896,7 @@ p3a = plot(beat_times, [SBP, MAP_integrated, DBP],
              label = ["SBP" "MAP (Integrated)" "DBP"],
              xlabel = "Time (s)",
              ylabel = "Pressure (mmHg)",
-             title = "Arterial Pressure",
-             ylims = (0, 160))
+             title = "Arterial Pressure")
 p3b = plot(beat_times, [CVP],
              label = "CVP",
              xlabel = "Time (s)",
@@ -923,7 +982,10 @@ p4h = plot(Sol, idxs=[Intrathoracic.pth.p], xlims = (0, 250),
 
 display(plot(p4a,p4b,p4c,p4d,p4e,p4f,p4g,p4h, layout=(4,2), size=(900,600), suptitle="Lungs"))
 
-
+display(plot(Sol, idxs=[SA.Eabr_rv_held, SA.Eabr_lv_held],
+        xlabel = "Time (s)",
+        ylabel = "Volume (ml)",
+        title = "Lung Volume"))
 
 
 """
