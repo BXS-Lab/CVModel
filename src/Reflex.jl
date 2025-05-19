@@ -206,7 +206,6 @@ Whittle: Afferent Cardiopulmonary Reflex
 
 @mtkmodel AfferentCPR begin
   @parameters begin
-    _τzr = τzr
     _τpr = τpr
     _Prn = Prn
     _kcpr = kcpr
@@ -219,7 +218,7 @@ Whittle: Afferent Cardiopulmonary Reflex
     fcpr(t)
   end
   @equations begin
-    D(P) ~ (pr + (_τzr * D(pr)) - P) / _τpr
+    D(P) ~ (pr - P) / _τpr
     fcpr ~ (_fcprₘᵢₙ + _fcprₘₐₓ * exp((P - _Prn) / _kcpr)) / (1 + exp((P - _Prn) / _kcpr))
   end
 end
@@ -291,11 +290,8 @@ Ursino: Efferent Pathways
     _Wp_vagal = Wpᵥ
     _θᵥ = θᵥ
 
-    _θₛₕ = 3.6
-    _θₛₚ = 13.32
-    _θₛᵥ = 13.32
     _fasr = 13.578
-    _fapc = 3.7
+
   end
   @variables begin
     fab(t)

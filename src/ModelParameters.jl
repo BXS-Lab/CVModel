@@ -470,12 +470,11 @@ kab = 11.76 # (mmHg)
 Cardiopulmonary Reflex Parameters
 """
 
-τzr = 6.37
 τpr = 2.076
 Prn = 6
-kcpr = 11.76
-fcprₘₐₓ = 47.78
-fcprₘᵢₙ = 2.52
+kcpr = 11.76*5/18
+fcprₘₐₓ = 15
+fcprₘᵢₙ = 1
 
 """
 Peripheral Chemoreceptors (Ursino 2002)
