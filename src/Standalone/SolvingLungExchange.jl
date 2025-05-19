@@ -629,3 +629,15 @@ Take 2
     SaO₂ ~ (caO₂ - paO₂ * _sol_O₂) / (_Hgb * _Hgb_O₂_binding) * 100 # O₂ saturation in arterial blood (%)
   end
 end
+
+"""
+Take 3
+"""
+
+eq = D(FAO₂) ~ (ifelse(Vrᵢₙ >= 0, Vr_A * (FDO₂ - FAO₂),0) - _K * (qpp * (cppO₂ - cvO₂) - Vpp * D(cppO₂))) / V_A
+
+sol2 = solve_for(eq, D(cppO₂))[1]
+
+(((-ifelse(Vrᵢₙ(t) >= 0, (-FAO₂(t) + FDO₂(t))*Vr_A(t), 0) + _K*qpp(t)*(cppO₂(t) - cvO₂(t))) / V_A(t) + Differential(t)(FAO₂(t)))*V_A(t)) / (_K*Vpp(t))
+
+D(FACO₂) ~ (ifelse(Vrᵢₙ >= 0, Vr_A * (FDCO₂ - FACO₂),0) - _K * (qpp * (cppCO₂ - cvCO₂) + _K * Vpp * D(cppCO₂))) / V_A

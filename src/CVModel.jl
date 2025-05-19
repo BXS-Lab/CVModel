@@ -700,30 +700,30 @@ u0 = [
   IschHeart.ΔΘCO₂ₛⱼ => 0.0,
 
   #### Effectors
-  ERH.Δσ => 0.0,
+  ERH.Δσ => 0.45,
   ERH.d.x => reflex_delay_init,
-  ELH.Δσ => 0.0,
+  ELH.Δσ => 0.46,
   ELH.d.x => reflex_delay_init,
-  ERR.ΔT => 0.0,
+  ERR.ΔT => 0.54,
   ERR.dₛ.x => reflex_delay_init,
   ERR.dᵥ.x => reflex_delay_init,
 
-  EResistance_UpBd.Δσ => 0.0,
+  EResistance_UpBd.Δσ => 2.53,
   EResistance_UpBd.d.x => reflex_delay_init,
-  EResistance_Renal.Δσ => 0.0,
+  EResistance_Renal.Δσ => 1.81,
   EResistance_Renal.d.x => reflex_delay_init,
-  EResistance_Splanchnic.Δσ => 0.0,
+  EResistance_Splanchnic.Δσ => 2.17,
   EResistance_Splanchnic.d.x => reflex_delay_init,
-  EResistance_Leg.Δσ => 0.0,
+  EResistance_Leg.Δσ => 1.81,
   EResistance_Leg.d.x => reflex_delay_init,
 
-  EVtone_UpBd.Δσ => 0.0,
+  EVtone_UpBd.Δσ => -95.5,
   EVtone_UpBd.d.x => reflex_delay_init,
-  EVtone_Renal.Δσ => 0.0,
+  EVtone_Renal.Δσ => -31.4,
   EVtone_Renal.d.x => reflex_delay_init,
-  EVtone_Splanchnic.Δσ => 0.0,
+  EVtone_Splanchnic.Δσ => -298.2,
   EVtone_Splanchnic.d.x => reflex_delay_init,
-  EVtone_Leg.Δσ => 0.0,
+  EVtone_Leg.Δσ => -167.9,
   EVtone_Leg.d.x => reflex_delay_init,
 
 ]
@@ -758,69 +758,26 @@ display(plot(Sol, idxs=[Vtotal],
         ylabel = "Volume (ml)",
         title = "Total Blood Volume")) # Debugging plot to quickly check volume conservation
 
-display(plot(Sol, idxs=[CentralResp.y_A, CentralResp.y_f, PeripheralResp.y_A, PeripheralResp.y_f],
+display(plot(Sol, idxs=[Head_veins.cCO₂, Head_veins.cO₂, Head_art.cCO₂, Head_art.cO₂],
+        label = ["vcCO₂" "vcO₂" "acCO₂" "acO₂"],
         xlabel = "Time (s)",
-        ylabel = "Efferent",
-        title = "Efferent Pathways"))
-display(plot(Sol, idxs=[IschVeins.ΔΘO₂ₛⱼ, IschArterioles.ΔΘO₂ₛⱼ],
-        label = ["IschVeins" "IschArterioles" "IschHeart"],
+        ylabel = "Concentration (ml/ml)",
+        title = "Head Veins"))
+
+display(plot(Sol, idxs=[BrainAutoreg.xbO₂, BrainAutoreg.xbCO₂, (1 + BrainAutoreg.xbO₂ + BrainAutoreg.xbCO₂)],
+        label = ["xbO₂" "xbCO₂" "xbO₂ + xbCO₂"],
         xlabel = "Time (s)",
-        ylabel = "Ischemic Response",
-        title = "CNS Ischemic Response"))
+        ylabel = "Concentration (ml/ml)",
+        title = "Brain Autoregulation"))
 
-display(plot(Sol, idxs=[Abd_A.C.out.cCO₂, Renal_art.C.out.cCO₂, Splanchnic_art.C.out.cCO₂, Leg_art.C.out.cCO₂],
-        label = ["Abdomen" "Renal" "Splanchnic" "Leg"],
-        xlabel = "Time (s)",
-        ylabel = "Efferent",
-        title = "Efferent Pathways"))
+display(plot(Sol, idxs=[HeartAutoreg.xjO₂, HeartAutoreg.xjCO₂, ((1+HeartAutoreg.xjCO₂)/(1 + HeartAutoreg.xjO₂))], ylims = (-1,3)))
 
-display(plot(Sol, idxs=[(Wbₛₚ * Efferent.fab) + (Wcₛₚ * Efferent.fapc) + (Wpₛₚ * Efferent.fasr) + (Wrₛₚ * Efferent.fcpr) - Efferent.θₛₕ]))
+display(plot(Sol, idxs=[Head_veins.cO₂]))
 
-display(plot(Sol, idxs=[Efferent.fₛᵥ],
-        label = ["CPR" "No CPR" "Output"],
-        xlabel = "Time (s)",
-        ylabel = "Efferent",
-        title = "Efferent Pathways"))
+display(plot(Sol, idxs=[1/Head_cap.G]))
 
-display(plot(Sol, idxs=[EVtone_UpBd.Δσ, EVtone_Renal.Δσ, EVtone_Splanchnic.Δσ, EVtone_Leg.Δσ],
-        label = ["EVtone_UpBd" "EVtone_Renal" "EVtone_Splanchnic" "EVtone_Leg"],
-        xlabel = "Time (s)",
-        ylabel = "Efferent",
-        title = "Efferent Pathways"))
+display(plot(Sol, idxs=[Leg_cap.R, R_Leg_cap + EResistance_Leg.Δσ, ((1+LBMuscleAutoreg.xjCO₂)/(1+LBMuscleAutoreg.xjO₂))], ylims = (0,20)))
 
-display(plot(Sol, idxs=[(Wbₛₚ * Efferent.fab), (Wcₛₚ * Efferent.fapc), (Wpₛₚ * Efferent.fasr), (Wrₛₚ * Efferent.fcpr)]))
-
-display(plot(Sol, idxs=[ABR.fab, Efferent.fₛₚ, EResistance_Leg.Δσ],
-        label = ["ABR" "Efferent" "EResistance"],
-        xlabel = "Time (s)",
-        ylabel = "Efferent",
-        title = "Efferent Pathways"))
-
-display(plot(Sol, idxs=[Cor_art.C.MO₂dyn]))
-
-display(plot(Sol, idxs=[EResistance_Leg.σθ, EResistance_Leg.u],
-        label = ["EResistance σθ" "EResistance Δσ"],
-        xlabel = "Time (s)",
-        ylabel = "Efferent",
-        title = "Efferent Pathways"))
-
-display(plot(Sol, idxs=[EResistance_UpBd.Δσ, EResistance_Renal.Δσ, EResistance_Splanchnic.Δσ, EResistance_Leg.Δσ],
-        label = ["EResistance" "EVtone_UpBd" "EVtone_Renal" "EVtone_Splanchnic" "EVtone_Leg"],
-        xlabel = "Time (s)",
-        ylabel = "Efferent",
-        title = "Efferent Pathways"))
-
-display(plot(Sol, idxs=[RespMuscles.Δp, RespMuscles.BreathInt_held],
-        label = ["Peripheral" "Central"],
-        xlabel = "Time (s)",
-        ylabel = "Efferent",
-        title = "Efferent Pathways"))
-
-display(plot(Sol, idxs=[ELH.Δσ, ERH.Δσ],
-        label = ["ELH" "ERH"],
-        xlabel = "Time (s)",
-        ylabel = "Sino-Atrial Node",
-        title = "Sino-Atrial Node"))
 
 #### Direct from Solution Plots
 
@@ -986,12 +943,6 @@ p4h = plot(Sol, idxs=[Intrathoracic.pth.p], xlims = (0, 250),
 
 display(plot(p4a,p4b,p4c,p4d,p4e,p4f,p4g,p4h, layout=(4,2), size=(900,600), suptitle="Lungs"))
 
-display(plot(Sol, idxs=[SA.Eabr_rv_held, SA.Eabr_lv_held],
-        xlabel = "Time (s)",
-        ylabel = "Volume (ml)",
-        title = "Lung Volume"))
-
-
 """
 Save Outputs
 Uncomment the following lines to save the outputs to a CSV file.
@@ -1028,4 +979,3 @@ Uncomment the following lines to save the outputs to a CSV file.
 
 end
 
-1/(1/2.49+1/1.655+1/2.106+1/19.71 +1/6.67)

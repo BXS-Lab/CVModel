@@ -974,7 +974,7 @@ This model represents the intrathoracic pressure. It is defined by a baseline pr
     pₚₗ(t)
   end
   @equations begin
-    pth.p ~ pₚₗ - 3.5 * (g / 9.81) * sin(α)
+    pth.p ~ pₚₗ# - 3.5 * (g / 9.81) * sin(α)
   end
 end
 

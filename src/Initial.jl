@@ -9,7 +9,7 @@ BXS Lab, UC Davis. Last updated May 9th, 2025.
 Some time constants for later use
 """
 
-T = RRₙₒₘ
+T = RRₙₒₘ + 0.54
 Tsys = τᵥₛ * sqrt(T)
 Tdias = T - Tsys
 Tatria = τₐᵥ * sqrt(T)
@@ -194,27 +194,27 @@ conab = (π*C_Abd_veins)/(2*vM_Abd_vein)
         p = p_rel
 
         # Equation 1: Ventricular volume match
-        F[1] =((x[26]-p[26])/Ed_lv - (x[27]-p[27])/Ees_lv) - ((x[21]-p[21])/Ed_rv - (x[22]-p[22])/Ees_rv)
+        F[1] =((x[26]-p[26])/Ed_lv - (x[27]-p[27])/(Ees_lv + 0.46)) - ((x[21]-p[21])/Ed_rv - (x[22]-p[22])/(Ees_rv + 0.45))
         # Equations 2–28: Flows across resistances equal stroke volume (with branch divisions)
-        SV = (x[26]-p[26])/Ed_lv - (x[27]-p[27])/Ees_lv
+        SV = (x[26]-p[26])/Ed_lv - (x[27]-p[27])/(Ees_lv + 0.46)
         F[2]  = SV - Tsys * (x[27] - x[1]) / R_Asc_A # SV -> Asc_A
         F[3]  = (Tsys * (x[1] - x[27]) / R_Asc_A) - (T * (x[1] - x[2]) / R_BC_A + T * (x[1] - x[6]) / R_Thor_A + T * (x[1] - x[28]) / Rca) # Asc_A -> BC_A + Thor_A + Cor_art
         F[4] = (T * (x[2] - x[1]) / R_BC_A) - (T * (x[2] - x[3]) / R_UpBd_art + T * (x[2] - x[16]) / R_CCA) # BC_A -> UpBd_art + CCA
-        F[5] = (T * (x[3] - x[2]) / R_UpBd_art) - (T * (x[3] - x[4]) / R_UpBd_cap) # UpBd_art -> UpBd_cap
+        F[5] = (T * (x[3] - x[2]) / R_UpBd_art) - (T * (x[3] - x[4]) / (R_UpBd_cap + 2.53)) # UpBd_art -> UpBd_cap
         F[6] = (T * (x[16] - x[2]) / R_CCA) - (T * (x[16] - x[17]) / R_Head_art) # CCA -> Head_art
         F[7] = (T * (x[17] - x[16]) / R_Head_art) - (T * (x[17] - x[18]) / R_Head_cap) # Head_art -> Head_cap
         F[8] = (T * (x[18] - x[17]) / R_Head_cap) - (T * (x[18] - x[19]) / R_Head_veins) # Head_cap -> Head_veins
         F[9] = (T * (x[19] - x[18]) / R_Head_veins) - (T * (x[19] - x[5]) / (1/(1/R_Jugular_vein + 1/Rᵥₚ))) # Head_veins -> Jugular_vein
-        F[10] = (T * (x[4] - x[3]) / R_UpBd_cap) - (T * (x[4] - x[5]) / R_UpBd_vein) # UpBd_cap -> UpBd_vein
+        F[10] = (T * (x[4] - x[3]) / (R_UpBd_cap + 2.53)) - (T * (x[4] - x[5]) / R_UpBd_vein) # UpBd_cap -> UpBd_vein
         F[11] = (T * (x[5] - x[4]) / R_UpBd_vein + T * (x[5] - x[19]) / (1/(1/R_Jugular_vein + 1/Rᵥₚ))) - (T * (x[5] - x[20]) / R_SVC) # UpBd_vein + Jugular_vein -> SVC
         F[12] = (T * (x[6] - x[1]) / R_Thor_A) - (T * (x[6] - x[7]) / R_Abd_A) # Thor_A -> Abd_A
         F[13] = (T * (x[7] - x[6]) / R_Abd_A) - (T * (x[7] - x[8]) / R_Renal_art + T * (x[7] - x[10]) / R_Splanchnic_art + T * (x[7] - x[12]) / R_Leg_art) # Abd_A -> Renal_art + Splanchnic_art + Leg_art
         # F[14] = (T * (x[7] - x[8]) / R_Renal_art) - (T * (x[8] - x[9]) / R_Renal_cap) # Renal_art -> Renal_cap
-        F[14] = (T * (x[9] - x[8]) / R_Renal_cap) - (T * (x[9] - x[14]) / R_Renal_vein) # Renal_cap -> Renal_vein
-        F[15] = (T * (x[10] - x[7]) / R_Splanchnic_art) - (T * (x[10] - x[11]) / R_Splanchnic_cap) # Splanchnic_art -> Splanchnic_cap
-        F[16] = (T * (x[11] - x[10]) / R_Splanchnic_cap) - (T * (x[11] - x[14]) / R_Splanchnic_vein) # Splanchnic_cap -> Splanchnic_vein
-        F[17] = (T * (x[12] - x[7]) / R_Leg_art) - (T * (x[12] - x[13]) / R_Leg_cap) # Leg_art -> Leg_cap
-        F[18] = (T * (x[13] - x[12]) / R_Leg_cap) - (T * (x[13] - x[14]) / R_Leg_vein) # Leg_cap -> Leg_vein
+        F[14] = (T * (x[9] - x[8]) / (R_Renal_cap + 1.81)) - (T * (x[9] - x[14]) / R_Renal_vein) # Renal_cap -> Renal_vein
+        F[15] = (T * (x[10] - x[7]) / R_Splanchnic_art) - (T * (x[10] - x[11]) / (R_Splanchnic_cap + 2.17)) # Splanchnic_art -> Splanchnic_cap
+        F[16] = (T * (x[11] - x[10]) / (R_Splanchnic_cap + 2.17)) - (T * (x[11] - x[14]) / R_Splanchnic_vein) # Splanchnic_cap -> Splanchnic_vein
+        F[17] = (T * (x[12] - x[7]) / R_Leg_art) - (T * (x[12] - x[13]) / (R_Leg_cap + 1.81)) # Leg_art -> Leg_cap
+        F[18] = (T * (x[13] - x[12]) / (R_Leg_cap + 1.81)) - (T * (x[13] - x[14]) / R_Leg_vein) # Leg_cap -> Leg_vein
         F[19] = (T * (x[14] - x[9]) / R_Renal_vein + T * (x[14] - x[11]) / R_Splanchnic_vein + T * (x[13] - x[14]) / R_Leg_vein) - (T * (x[14] - x[15]) / R_Abd_veins) # Renal_vein + Splanchnic_vein + Leg_vein -> Abd_veins
         F[20] = (T * (x[15] - x[14]) / R_Abd_veins) - (T * (x[15] - x[20]) / R_Thor_IVC) # Abd_veins -> Thor_IVC
         F[21] = (T * (x[20] - x[15]) / R_Thor_IVC + T * (x[20] - x[5]) / R_SVC + T * (x[20] - x[29]) / Rcv) - (Tdias * (x[20] - x[21]) / sqrt(1/(ρ_b / (2 * Ann_tv^2)))) # Thor_IVC + SVC + Cor_vein -> RA
@@ -227,67 +227,69 @@ conab = (π*C_Abd_veins)/(2*vM_Abd_vein)
         F[28] = (T * (x[29] - x[28]) / Rcc) - (T * (x[29] - x[20]) / Rcv) # Cor_cap -> Cor_vein
         # Equation 29: Total blood volume
         F[29] = TBV - (
-            (x[1]-p[1])*C_Asc_A + v0_Asc_A +
-            (x[2]-p[2])*C_BC_A + v0_BC_A +
-            (x[3]-p[3])*C_UpBd_art + v0_UpBd_art +
-            (x[4]-p[4])*C_UpBd_vein + v0_UpBd_vein +
-            (x[5]-p[5])*C_SVC + v0_SVC +
-            (x[6]-p[6])*C_Thor_A + v0_Thor_A +
-            (x[7]-p[7])*C_Abd_A + v0_Abd_A +
-            (x[8]-p[8])*C_Renal_art + v0_Renal_art +
-            (x[9]-p[9])*C_Renal_vein + v0_Renal_vein +
-            (x[10]-p[10])*C_Splanchnic_art + v0_Splanchnic_art +
-            2 * vM_Splanchnic_vein * atan(consp*(x[11]-p[11])) / π + v0_Splanchnic_vein +
-            (x[12]-p[12])*C_Leg_art + v0_Leg_art +
-            2 * vM_Leg_vein * atan(conll*(x[13]-p[13])) / π + v0_Leg_vein +
+            (x[1]-p[1])*ifelse(x[1]-p[1] > 0 , C_Asc_A, v0_Asc_A/p_col) + v0_Asc_A +
+            (x[2]-p[2])*ifelse(x[2]-p[2] > 0 , C_BC_A, v0_BC_A/p_col) + v0_BC_A +
+            (x[3]-p[3])*ifelse(x[3]-p[3] > 0 , C_UpBd_art, v0_UpBd_art/p_col) + v0_UpBd_art +
+            (x[4]-p[4])*ifelse(x[4]-p[4] > 0 , C_UpBd_vein, (v0_UpBd_vein - 95.5)/p_col) + (v0_UpBd_vein - 95.5) +
+            (x[5]-p[5])*ifelse(x[5]-p[5] > 0 , C_SVC, v0_SVC/p_col) + v0_SVC +
+            (x[6]-p[6])*ifelse(x[6]-p[6] > 0 , C_Thor_A, v0_Thor_A/p_col) + v0_Thor_A +
+            (x[7]-p[7])*ifelse(x[7]-p[7] > 0 , C_Abd_A, v0_Abd_A/p_col) + v0_Abd_A +
+            (x[8]-p[8])*ifelse(x[8]-p[8] > 0 , C_Renal_art, v0_Renal_art/p_col) + v0_Renal_art +
+            (x[9]-p[9])*ifelse(x[9]-p[9] > 0 , C_Renal_vein, (v0_Renal_vein - 31.4)/p_col) + (v0_Renal_vein - 31.4) +
+            (x[10]-p[10])*ifelse(x[10]-p[10] > 0 , C_Splanchnic_art, v0_Splanchnic_art/p_col) + v0_Splanchnic_art +
+            2 * vM_Splanchnic_vein * atan(consp*(x[11]-p[11])) / π + (v0_Splanchnic_vein - 298.2) +
+            (x[12]-p[12])*ifelse(x[12]-p[12] > 0 , C_Leg_art, v0_Leg_art/p_col) + v0_Leg_art +
+            2 * vM_Leg_vein * atan(conll*(x[13]-p[13])) / π + (v0_Leg_vein - 167.9) +
             2 * vM_Abd_vein * atan(conab*(x[14]-p[14])) / π + v0_Abd_veins +
-            (x[15]-p[15])*C_Thor_IVC + v0_Thor_IVC +
-            (x[16]-p[16])*C_CCA + v0_CCA +
-            (x[17]-p[17])*C_Head_art + v0_Head_art +
-            (x[18]-p[18])*C_Head_veins + v0_Head_veins +
-            (x[19]-p[19])*C_Jugular_vein + v0_Jugular_vein +
+            (x[15]-p[15])*ifelse(x[15]-p[15] > 0 , C_Thor_IVC, v0_Thor_IVC/p_col) + v0_Thor_IVC +
+            (x[16]-p[16])*ifelse(x[16]-p[16] > 0 , C_CCA, v0_CCA/p_col) + v0_CCA +
+            (x[17]-p[17])*ifelse(x[17]-p[17] > 0 , C_Head_art, v0_Head_art/p_col) + v0_Head_art +
+            (x[18]-p[18])*ifelse(x[18]-p[18] > 0 , C_Head_veins, v0_Head_veins/p_col) + v0_Head_veins +
+            (x[19]-p[19])*ifelse(x[19]-p[19] > 0 , C_Jugular_vein, v0_Jugular_vein/p_col) + v0_Jugular_vein +
             (x[20]-p[20])/Era0 + v0_ra +
             (x[21]-p[21])/Ed_rv + v0_rv +
             (x[23]-p[23])*Cpa + v0pa +
             (x[24]-p[24])*Cpv + v0pv +
             (x[25]-p[25])/Ela0 + v0_la +
             (x[26]-p[26])/Ed_lv + v0_lv +
-            (x[28]-p[28])*Cca + v0ca +
-            (x[29]-p[29])*Ccv + v0cv +
+            (x[28]-p[28])*ifelse(x[28]-p[28] > 0 , Cca, v0ca/p_col) + v0ca +
+            (x[29]-p[29])*ifelse(x[29]-p[29] > 0 , Ccv, v0cv/p_col) + v0cv +
             VintIC
         )
     end
+
+
 
     sol = nlsolve(residuals!, x)
     x_sol = sol.zero
 x = x_sol
 
     TBV - (
-            (x_sol[1]-p_rel[1])*C_Asc_A + v0_Asc_A +
-            (x_sol[2]-p_rel[2])*C_BC_A + v0_BC_A +
-            (x_sol[3]-p_rel[3])*C_UpBd_art + v0_UpBd_art +
-            (x_sol[4]-p_rel[4])*C_UpBd_vein + v0_UpBd_vein +
-            (x_sol[5]-p_rel[5])*C_SVC + v0_SVC +
-            (x_sol[6]-p_rel[6])*C_Thor_A + v0_Thor_A +
-            (x_sol[7]-p_rel[7])*C_Abd_A + v0_Abd_A +
-            (x_sol[8]-p_rel[8])*C_Renal_art + v0_Renal_art +
-            (x_sol[9]-p_rel[9])*C_Renal_vein + v0_Renal_vein +
-            (x_sol[10]-p_rel[10])*C_Splanchnic_art + v0_Splanchnic_art +
-            2 * vM_Splanchnic_vein * atan(consp*(x_sol[11]-p_rel[11])) / π + v0_Splanchnic_vein +
-            (x_sol[12]-p_rel[12])*C_Leg_art + v0_Leg_art +
-            2 * vM_Leg_vein * atan(conll*(x_sol[13]-p_rel[13])) / π + v0_Leg_vein +
-            2 * vM_Abd_vein * atan(conab*(x_sol[14]-p_rel[14])) / π + v0_Abd_veins +
-            (x_sol[15]-p_rel[15])*C_Thor_IVC + v0_Thor_IVC +
-            (x_sol[16]-p_rel[16])*C_CCA + v0_CCA +
-            (x_sol[17]-p_rel[17])*C_Head_art + v0_Head_art +
-            (x_sol[18]-p_rel[18])*C_Head_veins + v0_Head_veins +
-            (x_sol[19]-p_rel[19])*C_Jugular_vein + v0_Jugular_vein +
-            (x_sol[20]-p_rel[20])/Era0 + v0_ra +
-            (x_sol[21]-p_rel[21])/Ed_rv + v0_rv +
-            (x_sol[23]-p_rel[23])*Cpa + v0pa +
-            (x_sol[24]-p_rel[24])*Cpv + v0pv +
-            (x_sol[25]-p_rel[25])/Ela0 + v0_la +
-            (x_sol[26]-p_rel[26])/Ed_lv + v0_lv +
-            (x_sol[28]-p_rel[28])*Cca + v0ca +
-            (x_sol[29]-p_rel[29])*Ccv + v0cv +
+            (x[1]-p_rel[1])*ifelse(x[1]-p_rel[1] > 0 , C_Asc_A, v0_Asc_A/p_col) + v0_Asc_A +
+            (x[2]-p_rel[2])*ifelse(x[2]-p_rel[2] > 0 , C_BC_A, v0_BC_A/p_col) + v0_BC_A +
+            (x[3]-p_rel[3])*ifelse(x[3]-p_rel[3] > 0 , C_UpBd_art, v0_UpBd_art/p_col) + v0_UpBd_art +
+            (x[4]-p_rel[4])*ifelse(x[4]-p_rel[4] > 0 , C_UpBd_vein, v0_UpBd_vein/p_col) + v0_UpBd_vein +
+            (x[5]-p_rel[5])*ifelse(x[5]-p_rel[5] > 0 , C_SVC, v0_SVC/p_col) + v0_SVC +
+            (x[6]-p_rel[6])*ifelse(x[6]-p_rel[6] > 0 , C_Thor_A, v0_Thor_A/p_col) + v0_Thor_A +
+            (x[7]-p_rel[7])*ifelse(x[7]-p_rel[7] > 0 , C_Abd_A, v0_Abd_A/p_col) + v0_Abd_A +
+            (x[8]-p_rel[8])*ifelse(x[8]-p_rel[8] > 0 , C_Renal_art, v0_Renal_art/p_col) + v0_Renal_art +
+            (x[9]-p_rel[9])*ifelse(x[9]-p_rel[9] > 0 , C_Renal_vein, v0_Renal_vein/p_col) + v0_Renal_vein +
+            (x[10]-p_rel[10])*ifelse(x[10]-p_rel[10] > 0 , C_Splanchnic_art, v0_Splanchnic_art/p_col) + v0_Splanchnic_art +
+            2 * vM_Splanchnic_vein * atan(consp*(x[11]-p_rel[11])) / π + v0_Splanchnic_vein +
+            (x[12]-p_rel[12])*ifelse(x[12]-p_rel[12] > 0 , C_Leg_art, v0_Leg_art/p_col) + v0_Leg_art +
+            2 * vM_Leg_vein * atan(conll*(x[13]-p_rel[13])) / π + v0_Leg_vein +
+            2 * vM_Abd_vein * atan(conab*(x[14]-p_rel[14])) / π + v0_Abd_veins +
+            (x[15]-p_rel[15])*ifelse(x[15]-p_rel[15] > 0 , C_Thor_IVC, v0_Thor_IVC/p_col) + v0_Thor_IVC +
+            (x[16]-p_rel[16])*ifelse(x[16]-p_rel[16] > 0 , C_CCA, v0_CCA/p_col) + v0_CCA +
+            (x[17]-p_rel[17])*ifelse(x[17]-p_rel[17] > 0 , C_Head_art, v0_Head_art/p_col) + v0_Head_art +
+            (x[18]-p_rel[18])*ifelse(x[18]-p_rel[18] > 0 , C_Head_veins, v0_Head_veins/p_col) + v0_Head_veins +
+            (x[19]-p_rel[19])*ifelse(x[19]-p_rel[19] > 0 , C_Jugular_vein, v0_Jugular_vein/p_col) + v0_Jugular_vein +
+            (x[20]-p_rel[20])/Era0 + v0_ra +
+            (x[21]-p_rel[21])/Ed_rv + v0_rv +
+            (x[23]-p_rel[23])*Cpa + v0pa +
+            (x[24]-p_rel[24])*Cpv + v0pv +
+            (x[25]-p_rel[25])/Ela0 + v0_la +
+            (x[26]-p_rel[26])/Ed_lv + v0_lv +
+            (x[28]-p_rel[28])*ifelse(x[28]-p_rel[28] > 0 , Cca, v0ca/p_col) + v0ca +
+            (x[29]-p_rel[29])*ifelse(x[29]-p_rel[29] > 0 , Ccv, v0cv/p_col) + v0cv +
             VintIC)
