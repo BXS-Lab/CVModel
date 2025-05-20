@@ -8,7 +8,7 @@ module ModelParams
 Global System Parameters
 These parameters define global anthropometric and physiological constants for the model.
 """
-HRₙₒₘ = 60/0.36  # Nominal Heart Rate (bpm)
+HRₙₒₘ = 67  # Nominal Heart Rate (bpm)
 TBV = 5150.0 # Total Blood Volume (ml)
 ρ_b = 1060.0 # Blood Density (kg/m^3)
 Pa2mmHg = 0.00750062 # Conversion factor from Pascal to mmHg
@@ -49,7 +49,7 @@ These parameters define the heart's properties, including systolic and elastance
 """
 
 #### Cardiac Timings
-RRₙₒₘ = 60.0 / HRₙₒₘ # Nominal RR interval (s)
+RR₀ = 0.36 # Nominal RR interval (s)
 τₐᵥ = 0.12 # PR interval (A-V delay) (s)
 τₐₛ = 0.2 # Atrium systolic contraction time (s)
 τᵥₛ = 0.3 # QT interval (Ventricle systolic contraction time) (s)
@@ -616,6 +616,36 @@ GVtone_Leg = -147.9 # (ml/ν)
 
 τVtone = 20 # (s)
 DVtone = 5 # (s)
+
+
+"""
+Basal Values
+"""
+
+Bas_RR = 60/HRₙₒₘ
+Bas_Eᵣᵥ = 1.3
+Bas_Eₗᵥ = 2.5
+Bas_R_UpBd = 12
+Bas_R_Renal = 4.7
+Bas_R_Splanchnic = 3.3
+Bas_R_Leg = 4
+Bas_V₀_UpBd = 360
+Bas_V₀_Renal = 30
+Bas_V₀_Splanchnic = 1047.8
+Bas_V₀_Leg = 716
+
+IC_RR = Bas_RR - RR₀
+IC_Eᵣᵥ = Bas_Eᵣᵥ - Ees_rv
+IC_Eₗᵥ = Bas_Eₗᵥ - Ees_lv
+IC_R_UpBd = Bas_R_UpBd - R_UpBd_cap
+IC_R_Renal = Bas_R_Renal - R_Renal_cap
+IC_R_Splanchnic = Bas_R_Splanchnic - R_Splanchnic_cap
+IC_R_Leg = Bas_R_Leg - R_Leg_cap
+IC_V₀_UpBd = Bas_V₀_UpBd - v0_UpBd_vein
+IC_V₀_Renal = Bas_V₀_Renal - v0_Renal_vein
+IC_V₀_Splanchnic = Bas_V₀_Splanchnic - v0_Splanchnic_vein
+IC_V₀_Leg = Bas_V₀_Leg - v0_Leg_vein
+
 
 # GVtone_Renal = -74.21 # (ml/ν)
 # GVtone_Splanchnic = -265.4 # (ml/ν)

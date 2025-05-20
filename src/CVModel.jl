@@ -108,8 +108,8 @@ This section of code instances the compartments used in the model, based on the 
 @named Leg_vein = Vein(C=C_Leg_vein, R=R_Leg_vein, V₀=v0_Leg_vein, h=h_Leg_vein, con=con_Leg_vein, has_valve=true, is_nonlinear=true, Flow_div = Flow_Leg_vein, V_max=vM_Leg_vein, has_reflex=true, rad=rad_Leg)
 @named Abd_veins = Vein(C=C_Abd_veins, R=R_Abd_veins, V₀=v0_Abd_veins, h=h_Abd_veins, is_nonlinear=true, Flow_div = Flow_Abd_veins, V_max=vM_Abd_vein, rad=rad_Abd)
 @named Thor_IVC = Vein(C=C_Thor_IVC, R=R_Thor_IVC, V₀=v0_Thor_IVC, h=h_Thor_IVC, has_tissue=false)
-@named Head_veins = Vein(C=C_Head_veins, R=R_Head_veins, V₀=v0_Head_veins, h=h_Head_veins, rad=rad_Head)
-@named Jugular_vein = Vein(C=C_Jugular_vein, R=R_Jugular_vein, V₀=v0_Jugular_vein, h=h_Jugular_vein, rad=rad_Neck, has_valve=true)
+@named Head_veins = Vein(C=C_Head_veins, R=R_Head_veins, V₀=v0_Head_veins, h=h_Head_veins, rad=rad_Head, has_valve=true)
+@named Jugular_vein = Vein(C=C_Jugular_vein, R=R_Jugular_vein, V₀=v0_Jugular_vein, h=h_Jugular_vein, rad=rad_Neck)
 
 #### Vascular Junctions (necessary for blood gas)
 @named Asc_A_Junc = Junction3()
@@ -700,30 +700,30 @@ u0 = [
   IschHeart.ΔΘCO₂ₛⱼ => 0.0,
 
   #### Effectors
-  ERH.Δσ => 0.45,
+  ERH.Δσ => IC_Eᵣᵥ,
   ERH.d.x => reflex_delay_init,
-  ELH.Δσ => 0.46,
+  ELH.Δσ => IC_Eₗᵥ,
   ELH.d.x => reflex_delay_init,
-  ERR.ΔT => 0.54,
+  ERR.ΔT => IC_RR,
   ERR.dₛ.x => reflex_delay_init,
   ERR.dᵥ.x => reflex_delay_init,
 
-  EResistance_UpBd.Δσ => 2.53,
+  EResistance_UpBd.Δσ => IC_R_UpBd,
   EResistance_UpBd.d.x => reflex_delay_init,
-  EResistance_Renal.Δσ => 1.81,
+  EResistance_Renal.Δσ => IC_R_Renal,
   EResistance_Renal.d.x => reflex_delay_init,
-  EResistance_Splanchnic.Δσ => 2.17,
+  EResistance_Splanchnic.Δσ => IC_R_Splanchnic,
   EResistance_Splanchnic.d.x => reflex_delay_init,
-  EResistance_Leg.Δσ => 1.81,
+  EResistance_Leg.Δσ => IC_R_Leg,
   EResistance_Leg.d.x => reflex_delay_init,
 
-  EVtone_UpBd.Δσ => -95.5,
+  EVtone_UpBd.Δσ => IC_V₀_UpBd,
   EVtone_UpBd.d.x => reflex_delay_init,
-  EVtone_Renal.Δσ => -31.4,
+  EVtone_Renal.Δσ => IC_V₀_Renal,
   EVtone_Renal.d.x => reflex_delay_init,
-  EVtone_Splanchnic.Δσ => -298.2,
+  EVtone_Splanchnic.Δσ => IC_V₀_Splanchnic,
   EVtone_Splanchnic.d.x => reflex_delay_init,
-  EVtone_Leg.Δσ => -167.9,
+  EVtone_Leg.Δσ => IC_V₀_Leg,
   EVtone_Leg.d.x => reflex_delay_init,
 
 ]
@@ -758,7 +758,14 @@ display(plot(Sol, idxs=[Vtotal],
         ylabel = "Volume (ml)",
         title = "Total Blood Volume")) # Debugging plot to quickly check volume conservation
 
-display(plot(Sol, idxs=[Head_veins.cCO₂, Head_veins.cO₂, Head_art.cCO₂, Head_art.cO₂],
+display(plot(Sol, idxs=[EResistance_Splanchnic.σθ, EVtone_Splanchnic.σθ, ELH.σθ]))
+
+display(plot(Sol, idxs=[BC_A.q,(UpBd_art.q + CommonCarotid.q)],
+        xlabel = "Time (s)",
+        ylabel = "Concentration (ml/ml)",
+        title = "Head Veins"))
+
+display(plot(Sol, idxs=[Head_veins.pₜₘ, Head_art.pₜₘ],
         label = ["vcCO₂" "vcO₂" "acCO₂" "acO₂"],
         xlabel = "Time (s)",
         ylabel = "Concentration (ml/ml)",
@@ -770,13 +777,11 @@ display(plot(Sol, idxs=[BrainAutoreg.xbO₂, BrainAutoreg.xbCO₂, (1 + BrainAut
         ylabel = "Concentration (ml/ml)",
         title = "Brain Autoregulation"))
 
-display(plot(Sol, idxs=[HeartAutoreg.xjO₂, HeartAutoreg.xjCO₂, ((1+HeartAutoreg.xjCO₂)/(1 + HeartAutoreg.xjO₂))], ylims = (-1,3)))
-
-display(plot(Sol, idxs=[Head_veins.cO₂]))
-
-display(plot(Sol, idxs=[1/Head_cap.G]))
-
-display(plot(Sol, idxs=[Leg_cap.R, R_Leg_cap + EResistance_Leg.Δσ, ((1+LBMuscleAutoreg.xjCO₂)/(1+LBMuscleAutoreg.xjO₂))], ylims = (0,20)))
+display(plot(Sol, idxs=[Efferent.fₛₕ, Efferent.fₛₚ, Efferent.fₛᵥ],
+        label = ["fₛₕ" "fₛₚ" "fₛᵥ"],
+        xlabel = "Time (s)",
+        ylabel = "Concentration (ml/ml)",
+        title = "Spikes"))
 
 
 #### Direct from Solution Plots
@@ -888,6 +893,18 @@ plot(beat_times, [(Head_art_Vmean + Head_veins_Vmean + Jugular_vein_Vmean + Comm
         xlabel = "Time (s)",
         ylabel = "Volume (ml)",
         title = "Average Branch Volumes")
+
+plot(Sol, idxs=[Head_art.C.V, Head_veins.C.V, CommonCarotid.C.V, Jugular_vein.C.V],
+        xlabel = "Time (s)",
+        title = "Head Veins")
+
+plot(Sol, idxs=[Head_art.cCO₂, Head_veins.cCO₂, CommonCarotid.cCO₂, Jugular_vein.cCO₂],
+        xlabel = "Time (s)",
+        title = "Head Veins")
+
+plot(Sol, idxs=[CommonCarotid.cCO₂,UpBd_art.cCO₂, Asc_A.cCO₂])
+plot(Sol, idxs=[CommonCarotid.in.q,UpBd_art.in.q])
+plot(Sol, idxs=[Splanchnic_art.q,Renal_art.q])
 
 #### Pulmonary and Respiratory Plots
 

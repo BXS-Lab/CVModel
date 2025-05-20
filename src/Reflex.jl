@@ -290,8 +290,6 @@ Ursino: Efferent Pathways
     _Wp_vagal = Wpᵥ
     _θᵥ = θᵥ
 
-    _fasr = 13.578
-
   end
   @variables begin
     fab(t)
@@ -307,11 +305,11 @@ Ursino: Efferent Pathways
     fᵥ(t)
   end
   @equations begin
-    fₛₕ ~ min(_fes∞ + (_fes₀ - _fes∞) * exp(_kes * ((_Wbh * fab) + (_Wch * fapc) + (_Wph * _fasr) + (_Wrh * fcpr) - θₛₕ)), _fesₘₐₓ)
-    fₛₚ ~ min(_fes∞ + (_fes₀ - _fes∞) * exp(_kes * ((_Wbp * fab) + (_Wcp * fapc) + (_Wpp * _fasr) + (_Wrp * fcpr) - θₛₚ)), _fesₘₐₓ)
-    fₛᵥ ~ min(_fes∞ + (_fes₀ - _fes∞) * exp(_kes * ((_Wbv * fab) + (_Wcv * fapc) + (_Wpv * _fasr) + (_Wrv * fcpr) - θₛᵥ)), _fesₘₐₓ)
+    fₛₕ ~ min(_fes∞ + (_fes₀ - _fes∞) * exp(_kes * ((_Wbh * fab) + (_Wch * fapc) + (_Wph * fasr) + (_Wrh * fcpr) - θₛₕ)), _fesₘₐₓ)
+    fₛₚ ~ min(_fes∞ + (_fes₀ - _fes∞) * exp(_kes * ((_Wbp * fab) + (_Wcp * fapc) + (_Wpp * fasr) + (_Wrp * fcpr) - θₛₚ)), _fesₘₐₓ)
+    fₛᵥ ~ min(_fes∞ + (_fes₀ - _fes∞) * exp(_kes * ((_Wbv * fab) + (_Wcv * fapc) + (_Wpv * fasr) + (_Wrv * fcpr) - θₛᵥ)), _fesₘₐₓ)
 
-    fᵥ ~ (_fev₀ + _fev∞ * exp((fab - _fab₀) / _kev)) / (1 + exp((fab - _fab₀) / _kev)) + (_Wc_vagal * fapc) + (_Wp_vagal * _fasr) - _θᵥ
+    fᵥ ~ (_fev₀ + _fev∞ * exp((fab - _fab₀) / _kev)) / (1 + exp((fab - _fab₀) / _kev)) + (_Wc_vagal * fapc) + (_Wp_vagal * fasr) - _θᵥ
   end
 end
 
@@ -339,8 +337,8 @@ Effectors
   end
   @equations begin
     u ~ d.u
-    σθ ~ ifelse(d.y >= min, Gain * log(d.y - min + 1), 0)
-    D(Δσ) ~ (-Δσ + σθ) / time
+    σθ ~ ifelse(d.y >= min, log(d.y - min + 1), 0)
+    D(Δσ) ~ (-Δσ + Gain * σθ) / time
   end
 end
 
