@@ -61,7 +61,7 @@ This section of code instances the compartments used in the model, based on the 
 """
 
 #### Sino-Atrial Node
-@named SA = SANode(RR₀=RRₙₒₘ, τₐᵥ = τₐᵥ)
+@named SA = SANode(RR₀=RR₀, τₐᵥ = τₐᵥ)
 
 #### Right Heart
 @named RA = HeldtChamber(V₀=v0_ra, Eₘᵢₙ=Ed_ra, Eₘₐₓ=Ees_ra, τₑₛ=τₐₛ, inP=true)
@@ -442,7 +442,7 @@ circ_eqs = [
 
   #### Effectors: Arteriole Resistance
   Cor_cap.R ~ Rcc * (1 + HeartAutoreg.xjCO₂) /(1 + HeartAutoreg.xjO₂),
-  Head_cap.G ~ Gbpn * (1 + BrainAutoreg.xbO₂ + BrainAutoreg.xbCO₂),
+  Head_cap.G ~ Gbpn, #* (1 + BrainAutoreg.xbO₂ + BrainAutoreg.xbCO₂),
 
   UpBd_cap.R ~ (R_UpBd_cap + EResistance_UpBd.Δσ) * (1 + UBMuscleAutoreg.xjCO₂) /(1 + UBMuscleAutoreg.xjO₂),
   Renal_cap.R ~ R_Renal_cap + EResistance_Renal.Δσ,
@@ -566,7 +566,7 @@ u0 = [
   Interstitial.Vint => VintIC,
 
   #### Sino-Atrial Node
-  SA.RR_held => RRₙₒₘ,
+  SA.RR_held => Bas_RR,
   SA.ϕ => 0.0,
   SA.Eabr_rv_held => 0.0,
   SA.Eabr_lv_held => 0.0,
@@ -783,6 +783,12 @@ display(plot(Sol, idxs=[Efferent.fₛₕ, Efferent.fₛₚ, Efferent.fₛᵥ],
         ylabel = "Concentration (ml/ml)",
         title = "Spikes"))
 
+display(plot(Sol, idxs=[EResistance_Leg.σθ, EResistance_Leg.Δσ, Leg_cap.R],
+        label = ["σθ" "Δσ" "R"],
+        xlabel = "Time (s)",
+        ylabel = "Concentration (ml/ml)",
+        title = "Leg Autoregulation"))
+
 
 #### Direct from Solution Plots
 
@@ -855,6 +861,19 @@ p2d = plot(Sol, idxs=[Asc_A.in.q],
              title = "Left Ventricular Outflow")
 
 display(plot(p2a, p2b, p2c, p2d, layout=(2,2), size=(900,600), suptitle="Hemodynamics"))
+
+plot(Sol, idxs=[UpBd_vein.C.V₀eff],
+        label = ["Asc_A" "BC_A" "UpBd_art" "Thor_A" "Abd_A" "Renal_art" "Splanchnic_art" "Leg_art"],
+        xlabel = "Time (s)",
+        ylabel = "Pressure (mmHg)",
+        title = "Arterial Pressures")
+
+plot(Sol, idxs=[EVtone_UpBd.σθ])
+
+plot(Sol, idxs=[EVtone_UpBd.σθ,Efferent.fₛᵥ],
+        xlabel = "Time (s)",
+        ylabel = "Concentration (ml/ml)",
+        title = "Spikes")
 
 #### Beat-to-Beat Plots
 

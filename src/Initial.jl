@@ -9,7 +9,7 @@ BXS Lab, UC Davis. Last updated May 9th, 2025.
 Some time constants for later use
 """
 
-T = RRₙₒₘ + 0.54
+T = RR₀ + 0.54
 Tsys = τᵥₛ * sqrt(T)
 Tdias = T - Tsys
 Tatria = τₐᵥ * sqrt(T)

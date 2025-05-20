@@ -62,7 +62,7 @@ Ees_ra = 0.74 # Right Atrium end systolic elastance (mmHg/ml)
 #### Right Ventricle
 v0_rv = 46.0 # Right Ventricle zero pressure volume (ml)
 Ed_rv = 0.05 # Right Ventricle diastolic elastance (mmHg/ml)
-Ees_rv = 0.85 # Right Ventricle end systolic elastance (mmHg/ml)
+Ees_rv = 0.36 # Right Ventricle end systolic elastance (mmHg/ml)
 Elimit_rv = 3.0 # Right Ventricle elastance limit (mmHg/ml)
 
 #### Left Atrium
@@ -73,7 +73,7 @@ Ees_la = 0.61 # Left Atrium end systolic elastance (mmHg/ml)
 #### Left Ventricle
 v0_lv = 55.0 # Left Ventricle zero pressure volume (ml)
 Ed_lv = 0.11 # Left Ventricle diastolic elastance (mmHg/ml)
-Ees_lv = 2.04 # Left Ventricle end systolic elastance (mmHg/ml)
+Ees_lv = 1.40 # Left Ventricle end systolic elastance (mmHg/ml)
 Elimit_lv = 8.0 # Left Ventricle elastance limit (mmHg/ml)
 
 #### Tricuspid Valve
@@ -143,10 +143,10 @@ These parameters define the baseline microvascular resistances for different com
 """
 Gbpn = 0.15 # ml/(mmHg.s) baseline brain conductance
 R_Head_cap = 1/Gbpn # Head microvascular resistance (PRU)
-R_UpBd_cap = 9.47 # Upper Body microvascular resistance (PRU)
-R_Renal_cap = 2.89 # Renal microvascular resistance (PRU)
-R_Splanchnic_cap = 1.13 # Splanchnic microvascular resistance (PRU) (Increased from 2.8 for coronary arteries)
-R_Leg_cap = 2.19 # Leg microvascular resistance (PRU)# Total microvascular resistance (PRU)
+R_UpBd_cap = 9.91 # Upper Body microvascular resistance (PRU)
+R_Renal_cap = 2.61 # Renal microvascular resistance (PRU)
+R_Splanchnic_cap = 1.21 # Splanchnic microvascular resistance (PRU) (Increased from 2.8 for coronary arteries)
+R_Leg_cap = 1.91 # Leg microvascular resistance (PRU)# Total microvascular resistance (PRU)
 
 
 """
@@ -234,7 +234,7 @@ These parameters define the properties of the venous system, including the resis
 #### Compartment 4: Upper Body Veins
 R_UpBd_vein = 0.11 # Upper Body Vein resistance (PRU)
 C_UpBd_vein = 1.2 # Upper Body Vein compliance (ml/mmHg)
-v0_UpBd_vein = 455.5 # Upper Body Veins zero pressure volume (ml)
+v0_UpBd_vein = 545 # Upper Body Veins zero pressure volume (ml)
 h_UpBd_vein = -66.0 # Upper Body Veins length (cm)
 con_UpBd_vein = 3.0 # Upper Body Veins hydrostatic conversion
 
@@ -247,21 +247,21 @@ h_SVC = 14.5 # Superior Vena Cava length (cm)
 #### Compartment 9: Renal Vein
 R_Renal_vein = 0.11 # Renal Vein resistance (PRU)
 C_Renal_vein = 5.0 # Renal Vein compliance (ml/mmHg)
-v0_Renal_vein = 61.4 # Renal Vein zero pressure volume (ml)
+v0_Renal_vein = 97 # Renal Vein zero pressure volume (ml)
 h_Renal_vein = 0.0 # Renal Vein length (cm)
 vₘᵢₙ_Renal_vein = 5.0 # The Renal vein has a minimum zero-pressure volume (Zamanian, 2007)
 
 #### Compartment 11: Splanchnic Vein (nonlinear)
 R_Splanchnic_vein = 0.07 # Splanchnic Vein resistance (PRU)
 C_Splanchnic_vein = 50.0 # Splanchnic Vein compliance (ml/mmHg)
-v0_Splanchnic_vein = 1346.0 # Splanchnic Vein zero pressure volume (ml) (Subtracted coronary veins)
+v0_Splanchnic_vein = 1680 # Splanchnic Vein zero pressure volume (ml) (Subtracted coronary veins)
 h_Splanchnic_vein = -10.0 # Splanchnic Vein length (cm)
 vM_Splanchnic_vein = 1565.0 # Splanchnic Vein maximum volume (ml)
 
 #### Compartment 13: Leg Vein (nonlinear)
 R_Leg_vein = 0.1 # Leg Vein resistance (PRU)
 C_Leg_vein = 27.0 # Leg Vein compliance (ml/mmHg)
-v0_Leg_vein = 883.9 # Leg Vein zero pressure volume (ml)
+v0_Leg_vein = 1045 # Leg Vein zero pressure volume (ml)
 h_Leg_vein = -105.0 # Leg Vein length (cm)
 vM_Leg_vein = 1043.0 # Leg Vein maximum volume (ml)
 con_Leg_vein = 3.0 # Leg Vein hydrostatic conversion
@@ -472,7 +472,7 @@ Cardiopulmonary Reflex Parameters
 
 τpr = 2.076
 Prn = 6
-kcpr = 11.76*5/18
+kcpr = 3.638
 fcprₘₐₓ = 15
 fcprₘᵢₙ = 1
 
@@ -555,15 +555,15 @@ Wcₛₕ = 1 # Modified from 5, Chemoreceptors to heart
 Wpₛₕ = 0 # Pulmonary stretch receptors to heart
 Wrₛₕ = 0 # Cardiopulmonary reflex to heart
 
-Wbₛₚ = -1 # Baroreflex to arterioles
+Wbₛₚ = -0.783 # Baroreflex to arterioles
 Wcₛₚ = 5 # Chemoreceptors to arterioles
 Wpₛₚ = -0.34 # Pulmonary stretch receptors to arterioles
-Wrₛₚ = 0 # Cardiopulmonary reflex to arterioles
+Wrₛₚ = -0.217 # Cardiopulmonary reflex to arterioles
 
-Wbₛᵥ = -1 # Baroreflex to venous tone
+Wbₛᵥ = -0.5 # Baroreflex to venous tone
 Wcₛᵥ = 5 # Chemoreceptors to venous tone
 Wpₛᵥ = -0.34 # Pulmonary stretch receptors to venous tone
-Wrₛᵥ = 0 # Cardiopulmonary reflex to venous tone
+Wrₛᵥ = -2 # Cardiopulmonary reflex to venous tone
 
 fev₀ = 3.2 # (spikes/s)
 fev∞ = 6.3 # (spikes/s)
@@ -583,11 +583,11 @@ Effectors
 fesₘᵢₙ = 2.66 # (spikes/s)
 
 #### Cardiac Elastances
-GEmaxlv = 0.42 # (mmHg/ml/ν)
+GEmaxlv = 0.88 # (mmHg/ml/ν)
 τEmaxlv = 8 # (s)
 DEmaxlv = 2 # (s)
 
-GEmaxrv = 0.38 # (mmHg/ml/ν)
+GEmaxrv = 0.75 # (mmHg/ml/ν)
 τEmaxrv = 8 # (s)
 DEmaxrv = 2 # (s)
 
@@ -600,19 +600,19 @@ DTs = 2 # (s)
 DTv = 0.2 # (s)
 
 #### Arteriole Resistances
-GResistance_UpBd = 2.24 # (mmHg.s/ml/ν)
-GResistance_Renal = 1.60 # (mmHg.s/ml/ν)
-GResistance_Splanchnic = 1.92 # (mmHg.s/ml/ν)
-GResistance_Leg = 1.60 # (mmHg.s/ml/ν)
+GResistance_UpBd = 1.32 # (mmHg.s/ml/ν)
+GResistance_Renal = 1.32 # (mmHg.s/ml/ν)
+GResistance_Splanchnic = 1.32 # (mmHg.s/ml/ν)
+GResistance_Leg = 1.32 # (mmHg.s/ml/ν)
 
 τResistance = 6 # (s)
 DResistance = 2 # (s)
 
 #### Venous Tone
-GVtone_UpBd = -83.5
-GVtone_Renal = -27.5 # (ml/ν)
-GVtone_Splanchnic = -263.2 # (ml/ν)
-GVtone_Leg = -147.9 # (ml/ν)
+GVtone_UpBd = -155
+GVtone_Renal = -56 # (ml/ν)
+GVtone_Splanchnic = -520 # (ml/ν)
+GVtone_Leg = -265 # (ml/ν)
 
 τVtone = 20 # (s)
 DVtone = 5 # (s)
