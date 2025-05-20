@@ -24,7 +24,7 @@ Tilt Angle Protocol (α in radians)
     α_min = 0.0 # radians
     t_ramp_start = 100.0   # seconds
     t_ramp_end = 130.0     # seconds
-    α_max = pi/2        # radians
+    α_max = 70*π/180        # radians
   end
 
   @equations begin
