@@ -467,7 +467,7 @@ circ_eqs = [
   PeripheralResp.u ~ PeripheralChemo.fapc,
 
   RespMuscles.RespRate_chemo ~ (CentralResp.y_f + PeripheralResp.y_f),
-  RespMuscles.p_chemo ~ (CentralResp.y_A + PeripheralResp.y_A),
+  RespMuscles.p_chemo ~ - (CentralResp.y_A + PeripheralResp.y_A),
 ]
 
 """

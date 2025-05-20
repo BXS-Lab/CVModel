@@ -555,15 +555,15 @@ Wcₛₕ = 1 # Modified from 5, Chemoreceptors to heart
 Wpₛₕ = 0 # Pulmonary stretch receptors to heart
 Wrₛₕ = 0 # Cardiopulmonary reflex to heart
 
-Wbₛₚ = -0.783 # Baroreflex to arterioles
+Wbₛₚ = -1 # Baroreflex to arterioles
 Wcₛₚ = 5 # Chemoreceptors to arterioles
 Wpₛₚ = -0.34 # Pulmonary stretch receptors to arterioles
-Wrₛₚ = -0.217 # Cardiopulmonary reflex to arterioles
+Wrₛₚ = -0.3 # Cardiopulmonary reflex to arterioles
 
-Wbₛᵥ = -0.5 # Baroreflex to venous tone
+Wbₛᵥ = -1 # Baroreflex to venous tone
 Wcₛᵥ = 5 # Chemoreceptors to venous tone
 Wpₛᵥ = -0.34 # Pulmonary stretch receptors to venous tone
-Wrₛᵥ = -2 # Cardiopulmonary reflex to venous tone
+Wrₛᵥ = -10 # Cardiopulmonary reflex to venous tone
 
 fev₀ = 3.2 # (spikes/s)
 fev∞ = 6.3 # (spikes/s)
