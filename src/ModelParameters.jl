@@ -436,7 +436,7 @@ Local Autoregulation (Magosso 2001)
 PaCO₂n = 40.0 # Set point for paCO₂ (mmHg)
 
 CvbO₂n = 0.14
-gbO₂ = 10 # Raised from 10 by Albanese, ml blood/mlO₂
+gbO₂ = 140 # Raised from 10 by Albanese, ml blood/mlO₂
 A_auto = 20.9
 B_auto = 92.8
 C_auto = 10570
