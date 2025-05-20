@@ -851,6 +851,10 @@ display(plot(Sol, idxs=[Efferent.fₛₕ, Efferent.fₛₚ, Efferent.fₛᵥ, Ef
         ylabel = "Efferent",
         title = "Efferent Pathways"))
 
+display(plot(Sol, idxs=[TV.VT]))
+
+Sol[CPR.fcpr]
+
 display(plot(Sol, idxs=[PeripheralChemo.fapc],
         label = ["UpBd" "Renal" "Splanchnic" "Leg"],
         xlabel = "Time (s)",
