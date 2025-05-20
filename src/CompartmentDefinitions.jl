@@ -376,7 +376,7 @@ Note: due to complexity this is composed as a @component and not a @mtkmodel. It
 
   if has_reflex # This statement defines the effective zero-pressure volume based on the flags
     push!(sts, (@variables ΔV(t))[1])
-    append!(eqs, [V₀eff ~ V₀ + ΔV])
+    append!(eqs, [V₀eff ~ max(V₀ + ΔV,V_min)])
   else
     append!(eqs, [V₀eff ~ V₀])
   end
@@ -974,7 +974,7 @@ This model represents the intrathoracic pressure. It is defined by a baseline pr
     pₚₗ(t)
   end
   @equations begin
-    pth.p ~ pₚₗ - 3.5 * (g / 9.81) * sin(α)
+    pth.p ~ pₚₗ #- 3.5 * (g / 9.81) * sin(α)
   end
 end
 

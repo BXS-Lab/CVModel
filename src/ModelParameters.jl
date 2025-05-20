@@ -8,7 +8,7 @@ module ModelParams
 Global System Parameters
 These parameters define global anthropometric and physiological constants for the model.
 """
-HRₙₒₘ = 103  # Nominal Heart Rate (bpm)
+HRₙₒₘ = 67  # Nominal Heart Rate (bpm)
 TBV = 5300.0 # Total Blood Volume (ml)
 ρ_b = 1060.0 # Blood Density (kg/m^3)
 Pa2mmHg = 0.00750062 # Conversion factor from Pascal to mmHg
@@ -143,9 +143,9 @@ These parameters define the baseline microvascular resistances for different com
 """
 
 R_Head_cap = 8.1 # Head microvascular resistance (PRU)
-R_UpBd_cap = 9.7 # Upper Body microvascular resistance (PRU)
+R_UpBd_cap = 12 # Upper Body microvascular resistance (PRU)
 R_Renal_cap = 4.7 # Renal microvascular resistance (PRU)
-R_Splanchnic_cap = 3.1 # Splanchnic microvascular resistance (PRU) (Increased from 2.8 for coronary arteries)
+R_Splanchnic_cap = 3.3 # Splanchnic microvascular resistance (PRU) (Increased from 2.8 for coronary arteries)
 R_Leg_cap = 4.0 # Leg microvascular resistance (PRU)
 
 """
@@ -525,7 +525,7 @@ PaCO₂n = 40.0 # Set point for paCO₂ (mmHg)
 Gbpn = 0.15 # ml/(mmHg.s)
 
 CvbO₂n = 0.14
-gbO₂ = 140 # Raised from 10 by Albanese, ml blood/mlO₂
+gbO₂ = 10 # Raised from 10 by Albanese, ml blood/mlO₂
 A_auto = 20.9
 B_auto = 92.8
 C_auto = 10570
@@ -533,12 +533,12 @@ D_auto = -5.251
 
 #Rhpn = 19.71 # mmHg.s/ml, same as Rcc
 CvhO₂n = 0.11
-ghO₂ = 490 # Raised from 35 by Albanese, ml blood/mlO₂
+ghO₂ = 35 # Raised from 35 by Albanese, ml blood/mlO₂
 khCO₂ = 11.11 # mmHg
 
 # Rmpn = 4.48 # mmHg.s/ml, replaced by leg and arm microvascular resistances
 CvmO₂n = 0.155
-gmO₂ = 420 # Raised from 30 by Albanese, ml blood/mlO₂
+gmO₂ = 30 # Raised from 30 by Albanese, ml blood/mlO₂
 kmCO₂ = 142.86 # mmHg
 
 τO₂ = 10 # s

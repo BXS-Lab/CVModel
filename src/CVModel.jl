@@ -153,36 +153,36 @@ This section of code instances the compartments used in the model, based on the 
 @named LBMuscleAutoreg = Autoregulation(_gjO₂=gmO₂, _CvjO₂n=CvmO₂n, _τO₂=τO₂, _PaCO₂n=PaCO₂n, _kjCO₂=kmCO₂, _τCO₂=τCO₂)
 
 #### Arterial Baroreflex
-@named ABR = AfferentBaroreflex()
+# @named ABR = AfferentBaroreflex()
 
 #### Cardiopulmonary Reflex
-@named CPR = AfferentCPR()
+# @named CPR = AfferentCPR()
 
 #### Peripheral Chemoreceptors
 @named PeripheralChemo = PeripheralChemoreceptors()
 
 #### Lung Stretch Receptors
-@named LungStretchReceptors = LungStretch()
+# @named LungStretchReceptors = LungStretch()
 
 #### CNS Ischemic Response
-@named IschArterioles = IschemicResponse(_χₛⱼ=χₛₚ, _PaO₂ₛⱼn=PO₂nₛₚ, _kiscₛⱼ=kiscₛₚ, _τisc=τisc, _PaCO₂n=PaCO₂n, _gccₛⱼ=gccₛₚ, _τcc=τcc, _θₛⱼn=θₛₚₙ)
-@named IschVeins = IschemicResponse(_χₛⱼ=χₛᵥ, _PaO₂ₛⱼn=PO₂nₛᵥ, _kiscₛⱼ=kiscₛᵥ, _τisc=τisc, _PaCO₂n=PaCO₂n, _gccₛⱼ=gccₛᵥ, _τcc=τcc, _θₛⱼn=θₛᵥₙ)
-@named IschHeart = IschemicResponse(_χₛⱼ=χₛₕ, _PaO₂ₛⱼn=PO₂nₛₕ, _kiscₛⱼ=kiscₛₕ, _τisc=τisc, _PaCO₂n=PaCO₂n, _gccₛⱼ=gccₛₕ, _τcc=τcc, _θₛⱼn=θₛₕₙ)
+# @named IschArterioles = IschemicResponse(_χₛⱼ=χₛₚ, _PaO₂ₛⱼn=PO₂nₛₚ, _kiscₛⱼ=kiscₛₚ, _τisc=τisc, _PaCO₂n=PaCO₂n, _gccₛⱼ=gccₛₚ, _τcc=τcc, _θₛⱼn=θₛₚₙ)
+# @named IschVeins = IschemicResponse(_χₛⱼ=χₛᵥ, _PaO₂ₛⱼn=PO₂nₛᵥ, _kiscₛⱼ=kiscₛᵥ, _τisc=τisc, _PaCO₂n=PaCO₂n, _gccₛⱼ=gccₛᵥ, _τcc=τcc, _θₛⱼn=θₛᵥₙ)
+# @named IschHeart = IschemicResponse(_χₛⱼ=χₛₕ, _PaO₂ₛⱼn=PO₂nₛₕ, _kiscₛⱼ=kiscₛₕ, _τisc=τisc, _PaCO₂n=PaCO₂n, _gccₛⱼ=gccₛₕ, _τcc=τcc, _θₛⱼn=θₛₕₙ)
 
 #### Efferent Pathways
-@named Efferent = EfferentPathways()
+# @named Efferent = EfferentPathways()
 
 #### Effectors
-@named ERH = Effectors(Gain=GEmaxrv, delay=DEmaxrv, time=τEmaxrv, min=fesₘᵢₙ, delay_order=reflex_delay_order)
-@named ELH = Effectors(Gain=GEmaxlv, delay=DEmaxlv, time=τEmaxlv, min=fesₘᵢₙ, delay_order=reflex_delay_order)
-@named ERR = EffectorsRR(Gainₛ=GTs, Gainᵥ=GTv, delayₛ=DTs, delayᵥ=DTv, timeₛ=τTs, timeᵥ=τTv, min=fesₘᵢₙ, delay_order=reflex_delay_order)
+# @named ERH = Effectors(Gain=GEmaxrv, delay=DEmaxrv, time=τEmaxrv, min=fesₘᵢₙ, delay_order=reflex_delay_order)
+# @named ELH = Effectors(Gain=GEmaxlv, delay=DEmaxlv, time=τEmaxlv, min=fesₘᵢₙ, delay_order=reflex_delay_order)
+# @named ERR = EffectorsRR(Gainₛ=GTs, Gainᵥ=GTv, delayₛ=DTs, delayᵥ=DTv, timeₛ=τTs, timeᵥ=τTv, min=fesₘᵢₙ, delay_order=reflex_delay_order)
 
-@named EResistance = Effectors(Gain=GResistance, delay=DResistance, time=τResistance, min=fesₘᵢₙ, delay_order=reflex_delay_order)
+# @named EResistance = Effectors(Gain=GResistance, delay=DResistance, time=τResistance, min=fesₘᵢₙ, delay_order=reflex_delay_order)
 
-@named EVtone_UpBd = Effectors(Gain=GVtone_UpBd, delay=DVtone, time=τVtone, min=fesₘᵢₙ, delay_order=reflex_delay_order)
-@named EVtone_Renal = Effectors(Gain=GVtone_Renal, delay=DVtone, time=τVtone, min=fesₘᵢₙ, delay_order=reflex_delay_order)
-@named EVtone_Splanchnic = Effectors(Gain=GVtone_Splanchnic, delay=DVtone, time=τVtone, min=fesₘᵢₙ, delay_order=reflex_delay_order)
-@named EVtone_Leg = Effectors(Gain=GVtone_Leg, delay=DVtone, time=τVtone, min=fesₘᵢₙ, delay_order=reflex_delay_order)
+# @named EVtone_UpBd = Effectors(Gain=GVtone_UpBd, delay=DVtone, time=τVtone, min=fesₘᵢₙ, delay_order=reflex_delay_order)
+# @named EVtone_Renal = Effectors(Gain=GVtone_Renal, delay=DVtone, time=τVtone, min=fesₘᵢₙ, delay_order=reflex_delay_order)
+# @named EVtone_Splanchnic = Effectors(Gain=GVtone_Splanchnic, delay=DVtone, time=τVtone, min=fesₘᵢₙ, delay_order=reflex_delay_order)
+# @named EVtone_Leg = Effectors(Gain=GVtone_Leg, delay=DVtone, time=τVtone, min=fesₘᵢₙ, delay_order=reflex_delay_order)
 
 #### Pulmonary Reflexes
 @named CentralResp = Chemoreceptors(Delay=Dc, Gain_A=G_cA, Gain_f=G_cf, set_point=PaCO₂n, time_A=τ_cA, time_f=τ_cf, delay_order=reflex_delay_order)
@@ -407,69 +407,69 @@ circ_eqs = [
   LBMuscleAutoreg.uPaCO₂ ~ LungGE.paCO₂,
 
   #### Afferent: Arterial Baroreflex
-  ABR.pb ~ (Asc_A.C.pₜₘ+(BC_A.C.pₜₘ + (ρ_b*gravity_driver.g*(h_cs/100)*sin(alpha_driver.α)*Pa2mmHg)))/2.0,
+  ABRafferent.e ~ (Asc_A.C.pₜₘ+(BC_A.C.pₜₘ + (ρ_b*gravity_driver.g*(h_cs/100)*sin(alpha_driver.α)*Pa2mmHg)))/2.0,
 
   #### Afferent: Cardiopulmonary Reflex
-  CPR.pr ~ RA.pₜₘ,
+  CPRafferent.e ~ (RA.pₜₘ),
 
   #### Afferent: Peripheral Chemoreceptors
   PeripheralChemo.uSaO₂ ~ LungGE.SaO₂,
   PeripheralChemo.ucaCO₂ ~ LungGE.caCO₂,
 
   #### Afferent: Lung Stretch Receptors
-  TV.VT ~ LungStretchReceptors.VT,
+  # TV.VT ~ LungStretchReceptors.VT,
 
   #### Afferent: CNS Ischemic Response
-  IschArterioles.uPaO₂ ~ LungGE.paO₂,
-  IschArterioles.uPaCO₂ ~ LungGE.paCO₂,
-  IschVeins.uPaO₂ ~ LungGE.paO₂,
-  IschVeins.uPaCO₂ ~ LungGE.paCO₂,
-  IschHeart.uPaO₂ ~ LungGE.paO₂,
-  IschHeart.uPaCO₂ ~ LungGE.paCO₂,
+  # IschArterioles.uPaO₂ ~ LungGE.paO₂,
+  # IschArterioles.uPaCO₂ ~ LungGE.paCO₂,
+  # IschVeins.uPaO₂ ~ LungGE.paO₂,
+  # IschVeins.uPaCO₂ ~ LungGE.paCO₂,
+  # IschHeart.uPaO₂ ~ LungGE.paO₂,
+  # IschHeart.uPaCO₂ ~ LungGE.paCO₂,
 
   #### Efferent Pathways
-  Efferent.fab ~ ABR.fab,
-  Efferent.fcpr ~ CPR.fcpr,
-  Efferent.fapc ~ PeripheralChemo.fapc,
-  Efferent.fasr ~ LungStretchReceptors.fasr,
-  Efferent.θₛₕ ~ IschHeart.θₛⱼ,
-  Efferent.θₛₚ ~ IschArterioles.θₛⱼ,
-  Efferent.θₛᵥ ~ IschVeins.θₛⱼ,
+  # Efferent.fab ~ ABR.fab,
+  # Efferent.fcpr ~ CPR.fcpr,
+  # Efferent.fapc ~ PeripheralChemo.fapc,
+  # Efferent.fasr ~ LungStretchReceptors.fasr,
+  # Efferent.θₛₕ ~ IschHeart.θₛⱼ,
+  # Efferent.θₛₚ ~ IschArterioles.θₛⱼ,
+  # Efferent.θₛᵥ ~ IschVeins.θₛⱼ,
 
   #### Effectors
-  ERH.u ~ Efferent.fₛₕ,
-  ELH.u ~ Efferent.fₛₕ,
-  ERR.uₛ ~ Efferent.fₛₕ,
-  ERR.uᵥ ~ Efferent.fᵥ,
+  # ERH.u ~ Efferent.fₛₕ,
+  # ELH.u ~ Efferent.fₛₕ,
+  # ERR.uₛ ~ Efferent.fₛₕ,
+  # ERR.uᵥ ~ Efferent.fᵥ,
 
-  EResistance.u ~ Efferent.fₛₚ,
+  # EResistance.u ~ Efferent.fₛₚ,
 
-  EVtone_UpBd.u ~ Efferent.fₛᵥ,
-  EVtone_Renal.u ~ Efferent.fₛᵥ,
-  EVtone_Splanchnic.u ~ Efferent.fₛᵥ,
-  EVtone_Leg.u ~ Efferent.fₛᵥ,
+  # EVtone_UpBd.u ~ Efferent.fₛᵥ,
+  # EVtone_Renal.u ~ Efferent.fₛᵥ,
+  # EVtone_Splanchnic.u ~ Efferent.fₛᵥ,
+  # EVtone_Leg.u ~ Efferent.fₛᵥ,
 
   #### Effectors: Arteriole Resistance
   Cor_cap.R ~ Rcc * (1 + HeartAutoreg.xjCO₂) /(1 + HeartAutoreg.xjO₂),
   Head_cap.G ~ Gbpn * (1 + BrainAutoreg.xbO₂ + BrainAutoreg.xbCO₂),
 
-  UpBd_cap.R ~ (R_UpBd_cap + EResistance.Δσ) * (1 + UBMuscleAutoreg.xjCO₂) /(1 + UBMuscleAutoreg.xjO₂),
-  Renal_cap.R ~ R_Renal_cap + EResistance.Δσ,
-  Splanchnic_cap.R ~ R_Splanchnic_cap + EResistance.Δσ,
-  Leg_cap.R ~ (R_Leg_cap + EResistance.Δσ) * (1 + LBMuscleAutoreg.xjCO₂) /(1 + LBMuscleAutoreg.xjO₂),
+  UpBd_cap.R ~ (R_UpBd_cap + (Gabr_r * abr_αr.y) + (Gcpr_r * cpr_αr.y)) * (1 + UBMuscleAutoreg.xjCO₂) /(1 + UBMuscleAutoreg.xjO₂),
+  Renal_cap.R ~ R_Renal_cap + (Gabr_r * abr_αr.y) + (Gcpr_r * cpr_αr.y),
+  Splanchnic_cap.R ~ R_Splanchnic_cap + (Gabr_r * abr_αr.y) + (Gcpr_r * cpr_αr.y),
+  Leg_cap.R ~ (R_Leg_cap + (Gabr_r * abr_αr.y) + (Gcpr_r * cpr_αr.y)) * (1 + LBMuscleAutoreg.xjCO₂) /(1 + LBMuscleAutoreg.xjO₂),
 
   #### Effectors: Venous Tone
-  UpBd_vein.ΔV ~ EVtone_UpBd.Δσ,
-  Renal_vein.ΔV ~ EVtone_Renal.Δσ,
-  Splanchnic_vein.ΔV ~ EVtone_Splanchnic.Δσ,
-  Leg_vein.ΔV ~ EVtone_Leg.Δσ,
+  UpBd_vein.ΔV ~ Gabr_vub * abr_αv.y + Gcpr_vub * cpr_αv.y,
+  Renal_vein.ΔV ~ Gabr_vre * abr_αv.y + Gcpr_vre * cpr_αv.y,
+  Splanchnic_vein.ΔV ~ Gabr_vsp * abr_αv.y + Gcpr_vsp * cpr_αv.y,
+  Leg_vein.ΔV ~ Gabr_vlb * abr_αv.y + Gcpr_vlb * cpr_αv.y,
 
   #### Effectors: Ventricular Contractility
-  SA.Eabr_rv ~ ERH.Δσ,
-  SA.Eabr_lv ~ ELH.Δσ,
+  SA.Eabr_rv ~ Gabr_erv * abr_β.y,
+  SA.Eabr_lv ~ Gabr_elv * abr_β.y,
 
   #### Effectors: Heart Rate
-  SA.RRabr ~ ERR.ΔT,
+  SA.RRabr ~ (Gabr_rrsymp * abr_β.y) + (Gabr_rrpara * abr_para.y),
 
   #### Pulmonary Reflexes
   CentralResp.u ~ LungGE.paCO₂,
@@ -482,9 +482,6 @@ circ_eqs = [
   # Heldt Reflexes
   ################
 
-  #### Reflex Arc Afferent Inputs (Sensed Pressures)
-  CPRafferent.e ~ (RA.pₜₘ),
-  ABRafferent.e ~ (Asc_A.C.pₜₘ+(BC_A.C.pₜₘ + (ρ_b*gravity_driver.g*(h_cs/100)*sin(alpha_driver.α)*Pa2mmHg)))/2.0,
 
   #### Reflex Arc Afferent Outputs Connected to Transfer Function Inputs
   ABRafferent.δ ~ abr_αr.u,
@@ -518,15 +515,15 @@ This section of the code composes the system of ordinary differential equations 
   alpha_driver, gravity_driver, lbnp_driver, # Design of Experiments Drivers
   Lungs, RespMuscles, LungGE, TV, # Lung Model Breathing ChestWall
   CentralResp, PeripheralResp,
-  PeripheralChemo, LungStretchReceptors, # Respiratory Control
+  PeripheralChemo,# LungStretchReceptors, # Respiratory Control
   BrainAutoreg, HeartAutoreg, UBMuscleAutoreg, LBMuscleAutoreg,# Autoregulation
   HeartP, # Heart Power
-  ABR, CPR, # Afferent Baroreflex
-  IschArterioles, IschVeins, IschHeart, # CNS Ischemic Response
-  Efferent, # Efferent Pathways
-  ERH, ELH, ERR, # Effectors
-  EResistance, # Effectors: Resistance
-  EVtone_UpBd, EVtone_Renal, EVtone_Splanchnic, EVtone_Leg, # Effectors: Venous Tone
+  # ABR, CPR, # Afferent Baroreflex
+  # IschArterioles, IschVeins, IschHeart, # CNS Ischemic Response
+  # Efferent, # Efferent Pathways
+  # ERH, ELH, ERR, # Effectors
+  # EResistance, # Effectors: Resistance
+  # EVtone_UpBd, EVtone_Renal, EVtone_Splanchnic, EVtone_Leg, # Effectors: Venous Tone
   ])
 
 circ_sys = structural_simplify(circ_model)
@@ -748,7 +745,7 @@ u0 = [
   PeripheralChemo.ϕc => 0.0,
 
   #### Lung Stretch Receptors
-  LungStretchReceptors.fasr => 0.0,
+  # LungStretchReceptors.fasr => 0.0,
 
   #### Respiratory Control
   CentralResp.delay.x => reflex_delay_init,
@@ -776,36 +773,36 @@ u0 = [
   HeartP.Wh => Whₙₒₘ,
 
   #### Afferent Baroreflex & CPR
-  ABR.P => Pn,
-  CPR.P => Prn,
+  # ABR.P => Pn,
+  # CPR.P => Prn,
 
   #### Ischemic Response
-  IschArterioles.ΔΘO₂ₛⱼ => 0.0,
-  IschArterioles.ΔΘCO₂ₛⱼ => 0.0,
-  IschVeins.ΔΘO₂ₛⱼ => 0.0,
-  IschVeins.ΔΘCO₂ₛⱼ => 0.0,
-  IschHeart.ΔΘO₂ₛⱼ => 0.0,
-  IschHeart.ΔΘCO₂ₛⱼ => 0.0,
+  # IschArterioles.ΔΘO₂ₛⱼ => 0.0,
+  # IschArterioles.ΔΘCO₂ₛⱼ => 0.0,
+  # IschVeins.ΔΘO₂ₛⱼ => 0.0,
+  # IschVeins.ΔΘCO₂ₛⱼ => 0.0,
+  # IschHeart.ΔΘO₂ₛⱼ => 0.0,
+  # IschHeart.ΔΘCO₂ₛⱼ => 0.0,
 
   #### Effectors
-  ERH.Δσ => 0.0,
-  ERH.d.x => reflex_delay_init,
-  ELH.Δσ => 0.0,
-  ELH.d.x => reflex_delay_init,
-  ERR.ΔT => 0.0,
-  ERR.dₛ.x => reflex_delay_init,
-  ERR.dᵥ.x => reflex_delay_init,
-  EResistance.Δσ => 0.0,
-  EResistance.d.x => reflex_delay_init,
+  # ERH.Δσ => 0.0,
+  # ERH.d.x => reflex_delay_init,
+  # ELH.Δσ => 0.0,
+  # ELH.d.x => reflex_delay_init,
+  # ERR.ΔT => 0.0,
+  # ERR.dₛ.x => reflex_delay_init,
+  # ERR.dᵥ.x => reflex_delay_init,
+  # EResistance.Δσ => 0.0,
+  # EResistance.d.x => reflex_delay_init,
 
-  EVtone_UpBd.Δσ => 0.0,
-  EVtone_UpBd.d.x => reflex_delay_init,
-  EVtone_Renal.Δσ => 0.0,
-  EVtone_Renal.d.x => reflex_delay_init,
-  EVtone_Splanchnic.Δσ => 0.0,
-  EVtone_Splanchnic.d.x => reflex_delay_init,
-  EVtone_Leg.Δσ => 0.0,
-  EVtone_Leg.d.x => reflex_delay_init,
+  # EVtone_UpBd.Δσ => 0.0,
+  # EVtone_UpBd.d.x => reflex_delay_init,
+  # EVtone_Renal.Δσ => 0.0,
+  # EVtone_Renal.d.x => reflex_delay_init,
+  # EVtone_Splanchnic.Δσ => 0.0,
+  # EVtone_Splanchnic.d.x => reflex_delay_init,
+  # EVtone_Leg.Δσ => 0.0,
+  # EVtone_Leg.d.x => reflex_delay_init,
 
 ]
 
@@ -962,6 +959,13 @@ plot(beat_times, [(Head_art_Vmean + Head_veins_Vmean + Jugular_vein_Vmean + Comm
         xlabel = "Time (s)",
         ylabel = "Volume (ml)",
         title = "Average Branch Volumes")
+
+plot(Sol, idxs=[
+        Renal_vein.C.V₀eff, Renal_vein.C.V],
+        label = ["Head" "Upper Body" "Renal" "Splanchnic" "Leg" "Coronary" "Thoracic" "Cardiopulmonary"],
+        xlabel = "Time (s)",
+        ylabel = "Volume (ml)",
+        title = "Average Branch Volumes", xlims = (140,150))
 
 #### Pulmonary and Respiratory Plots
 
