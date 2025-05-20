@@ -483,7 +483,7 @@ circ_eqs = [
   PeripheralResp.u ~ PeripheralChemo.fapc,
 
   RespMuscles.RespRate_chemo ~ (CentralResp.y_f + PeripheralResp.y_f),
-  RespMuscles.p_chemo ~ (CentralResp.y_A + PeripheralResp.y_A),
+  RespMuscles.p_chemo ~ - (CentralResp.y_A + PeripheralResp.y_A),
 
   ################
   # Heldt Reflexes
@@ -851,11 +851,17 @@ display(plot(Sol, idxs=[Efferent.fₛₕ, Efferent.fₛₚ, Efferent.fₛᵥ, Ef
         ylabel = "Efferent",
         title = "Efferent Pathways"))
 
-display(plot(Sol, idxs=[UpBd_vein.C.V₀eff, Renal_vein.C.V₀eff, Splanchnic_vein.C.V₀eff, Leg_vein.C.V₀eff],
+display(plot(Sol, idxs=[PeripheralChemo.fapc],
         label = ["UpBd" "Renal" "Splanchnic" "Leg"],
         xlabel = "Time (s)",
         ylabel = "V₀eff",
         title = "V₀eff"))
+
+display(plot(Sol, idxs=[(CentralResp.delay.y - PaCO₂n)],
+        label = ["Central" "Peripheral"],
+        xlabel = "Time (s)",
+        ylabel = "Resp Rate",
+        title = "Respiratory Rate"))
 
 display(plot(Sol, idxs=[Abd_veins.C.V]))
 
