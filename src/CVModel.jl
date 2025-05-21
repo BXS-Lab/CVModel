@@ -30,6 +30,7 @@ Model Parameters
 This file loads all of the model parameters.
 """
 
+
 include("ModelParameters.jl")
 using .ModelParams
 
@@ -568,8 +569,8 @@ u0 = [
   #### Sino-Atrial Node
   SA.RR_held => Bas_RR,
   SA.ϕ => 0.0,
-  SA.Eabr_rv_held => 0.0,
-  SA.Eabr_lv_held => 0.0,
+  SA.Eabr_rv_held => Bas_Eᵣᵥ,
+  SA.Eabr_lv_held => Bas_Eₗᵥ,
 
   #### Valves
   R_tricuspid.ζ => 1,
@@ -652,15 +653,15 @@ u0 = [
   #### Lung Fractional Concentrations
   LungGE.FDO₂ => FIO₂,
   LungGE.FDCO₂ => FICO₂,
-  LungGE.FAO₂ => FIO₂,
-  LungGE.FACO₂ => FICO₂,
+  LungGE.FAO₂ => 0.15,
+  LungGE.FACO₂ => 0.05,
 
   #### Peripheral Chemoreceptors
   PeripheralChemo.ϕCO₂dyn => 0.0,
-  PeripheralChemo.ϕc => 0.0,
+  PeripheralChemo.ϕc => 3.7,
 
   #### Lung Stretch Receptors
-  LungStretchReceptors.fasr => 0.0,
+  LungStretchReceptors.fasr => 540*0.01176,
 
   #### Respiratory Control
   CentralResp.delay.x => reflex_delay_init,
@@ -765,17 +766,21 @@ display(plot(Sol, idxs=[EResistance_Splanchnic.σθ, EVtone_Splanchnic.σθ, ELH
 #         ylabel = "Concentration (ml/ml)",
 #         title = "Head Veins"))
 
-# display(plot(Sol, idxs=[Head_veins.pₜₘ, Head_art.pₜₘ],
-#         label = ["vcCO₂" "vcO₂" "acCO₂" "acO₂"],
-#         xlabel = "Time (s)",
-#         ylabel = "Concentration (ml/ml)",
-#         title = "Head Veins"))
+display(plot(Sol, idxs=[PeripheralChemo.fapc],
+        xlabel = "Time (s)",
+        ylabel = "Concentration (ml/ml)",
+        title = "Head Veins"))
 
-# display(plot(Sol, idxs=[Efferent.fasr, Efferent.fapc, Efferent.fab, Efferent.fcpr], ylims = (0,70),
-#         label = ["fasr" "fapc" "fab" "fcpr"],
-#         xlabel = "Time (s)",
-#         ylabel = "Concentration (ml/ml)",
-#         title = "Brain Autoregulation"))
+display(plot(Sol, idxs=[LungGE.FACO₂, LungGE.FDO₂, LungGE.FAO₂, LungGE.FDCO₂],
+        xlabel = "Time (s)",
+        ylabel = "Concentration (ml/ml)",
+        title = "Lung Gas Exchange"))
+
+display(plot(Sol, idxs=[Efferent.fasr, Efferent.fapc, Efferent.fab, Efferent.fcpr], ylims = (0,70),
+        label = ["fasr" "fapc" "fab" "fcpr"],
+        xlabel = "Time (s)",
+        ylabel = "Concentration (ml/ml)",
+        title = "Brain Autoregulation"))
 
 display(plot(Sol, idxs=[Efferent.fₛₕ, Efferent.fₛₚ, Efferent.fₛᵥ],
         label = ["fₛₕ" "fₛₚ" "fₛᵥ"],
@@ -789,7 +794,7 @@ ylims = (0, 12),
         ylabel = "Regulation (ml/ml)",
         title = "Leg Autoregulation"))
 
-display(plot(Sol, idxs=[Head_veins.C.cCO₂]))
+display(plot(Sol, idxs=[Cor_cap.R]))
 
 
 #### Direct from Solution Plots

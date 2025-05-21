@@ -8,7 +8,7 @@ Simulation Time (seconds)
 
 Start_time = 0.0
 Time_step = 0.01
-Stop_time = 200.0
+Stop_time = 400.0
 tspan = (Start_time, Stop_time)
 
 """
@@ -22,8 +22,8 @@ Tilt Angle Protocol (α in radians)
 
   @parameters begin
     α_min = 0.0 # radians
-    t_ramp_start = 100.0   # seconds
-    t_ramp_end = 130.0     # seconds
+    t_ramp_start = 200.0   # seconds
+    t_ramp_end = 230.0     # seconds
     α_max = pi/2        # radians
   end
 
