@@ -376,7 +376,7 @@ Note: due to complexity this is composed as a @component and not a @mtkmodel. It
 
   if has_reflex # This statement defines the effective zero-pressure volume based on the flags
     push!(sts, (@variables ΔV(t))[1])
-    append!(eqs, [V₀eff ~ V₀ + ΔV])
+    append!(eqs, [V₀eff ~ max(V₀ + ΔV,V_min)])
   else
     append!(eqs, [V₀eff ~ V₀])
   end
@@ -784,7 +784,7 @@ This model represents a venous compartment. It is a lumped compartment consistin
     C = 1.0
     p₀ = 0.0
     V₀ = 1.0
-    V_min = 0.0
+    V_min = 1e-8
     ρ = ρ_b
     h = 10.0
     con = 2.0

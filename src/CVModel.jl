@@ -7,7 +7,7 @@ This model is a simulation of the human cardiovascular system, including a four 
 """
 ### TODO: CV Model:            (1) Vertebral Plexus (2) Dynamic ICP
 ### TODO: Pulmonary Mechanics: (1) Bring Intrathoracic Pressure into Lung Model
-### TODO: Simulation:          (1) Exercise Model, (2) Other blood parameters (e.g., pH etc.), (https://github.com/baillielab/oxygen_delivery/blob/master/oxygen_delivery.py) (3) Altitude, pressure, temperature driver; water vapor etc. (4) Update ICs (negative compliance alters volume)
+### TODO: Simulation:          (1) Exercise Model, (2) Other blood parameters (e.g., pH etc.), (https://github.com/baillielab/oxygen_delivery/blob/master/oxygen_delivery.py) (3) Altitude, pressure, temperature driver; water vapor etc.
 ### TODO: Code:                (1) Fix the whole model params thing
 module CVModel
 display("Cardiovascular Model v3.3.0 (May 14th, 2025) - BXS Lab, UC Davis")
@@ -913,7 +913,7 @@ plot(beat_times, [(Head_art_Vmean + Head_veins_Vmean + Jugular_vein_Vmean + Comm
         ylabel = "Volume (ml)",
         title = "Average Branch Volumes")
 
-plot(Sol, idxs=[Head_art.C.V, Head_veins.C.V, CommonCarotid.C.V, Jugular_vein.C.V],
+plot(Sol, idxs=[Head_cap.G],
         xlabel = "Time (s)",
         title = "Head Veins")
 
