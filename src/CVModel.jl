@@ -437,10 +437,7 @@ circ_eqs = [
   ERR.uₛ ~ Efferent.fₛₕ,
   ERR.uᵥ ~ Efferent.fᵥ,
 
-  EResistance_UpBd.u ~ Efferent.fₛₚ,
-  EResistance_Renal.u ~ Efferent.fₛₚ,
-  EResistance_Splanchnic.u ~ Efferent.fₛₚ,
-  EResistance_Leg.u ~ Efferent.fₛₚ,
+  EResistance.u ~ Efferent.fₛₚ,
 
   EVtone_UpBd.u ~ Efferent.fₛᵥ,
   EVtone_Renal.u ~ Efferent.fₛᵥ,
@@ -504,7 +501,7 @@ This section of the code composes the system of ordinary differential equations 
   IschArterioles, IschVeins, IschHeart, # CNS Ischemic Response
   Efferent, # Efferent Pathways
   ERH, ELH, ERR, # Effectors
-  EResistance_UpBd, EResistance_Renal, EResistance_Splanchnic, EResistance_Leg, # Effectors: Arteriole Resistance
+  EResistance, # Effectors: Arteriole Resistance
   EVtone_UpBd, EVtone_Renal, EVtone_Splanchnic, EVtone_Leg, # Effectors: Venous Tone
   ])
 
@@ -715,14 +712,8 @@ u0 = [
   ERR.dₛ.x => reflex_delay_init,
   ERR.dᵥ.x => reflex_delay_init,
 
-  EResistance_UpBd.Δσ => IC_R_UpBd,
-  EResistance_UpBd.d.x => reflex_delay_init,
-  EResistance_Renal.Δσ => IC_R_Renal,
-  EResistance_Renal.d.x => reflex_delay_init,
-  EResistance_Splanchnic.Δσ => IC_R_Splanchnic,
-  EResistance_Splanchnic.d.x => reflex_delay_init,
-  EResistance_Leg.Δσ => IC_R_Leg,
-  EResistance_Leg.d.x => reflex_delay_init,
+  EResistance.Δσ => IC_R_UpBd,
+  EResistance.d.x => reflex_delay_init,
 
   EVtone_UpBd.Δσ => IC_V₀_UpBd,
   EVtone_UpBd.d.x => reflex_delay_init,
@@ -811,6 +802,20 @@ p1d = plot(Sol, idxs=[RV.Eₘₐₓeff, LV.Eₘₐₓeff],
 
 display(plot(p1a, p1b, p1c, p1d, layout=(2,2), size=(900,600), suptitle="Reflex Action"))
 
+plot(Sol, idxs=[1/(1/UpBd_cap.R + 1/Renal_cap.R + 1/Splanchnic_cap.R + 1/Leg_cap.R + 1/Cor_cap.R + 0.15)],
+        label = ["Asc_A" "BC_A" "UpBd_art" "Thor_A" "Abd_A" "Renal_art" "Splanchnic_art" "Leg_art"],
+        xlabel = "Time (s)",
+        ylabel = "Q (ml/s)",
+        title = "Arterial Flows")
+
+plot(Sol, idxs=[UBMuscleAutoreg.xjO₂, LBMuscleAutoreg.xjO₂],
+        label = ["UBMuscleAutoreg" "LBMuscleAutoreg"],
+        xlabel = "Time (s)",
+        ylabel = "xjO₂",
+        title = "Muscle Autoregulation")
+
+plot(Sol, idxs=[1/Head_cap.G], ylims=(0,10))
+
 p2a = plot(Sol, idxs=[Vtotal, Vvessel, Vinterstitial],
              label = ["Vtotal" "Vvessel" "Vinterstitial"],
              xlabel = "Time (s)",
@@ -888,10 +893,16 @@ plot(beat_times, [(Head_art_Vmean + Head_veins_Vmean + Jugular_vein_Vmean + Comm
         ylabel = "Volume (ml)",
         title = "Average Branch Volumes")
 
+
 plot(Sol, idxs=[Efferent.fapc, Efferent.fasr, Efferent.fcpr, Efferent.θₛₕ, Efferent.θₛₚ, Efferent.θₛᵥ],
         label = ["fapc" "fasr" "fcpr" "θₛₕ" "θₛₚ" "θₛᵥ"],
         xlabel = "Time (s)",
         title = "Efferent Pathways")
+
+plot(Sol, idxs=[Head_art.C.p, Head_veins.C.p],
+        xlabel = "Time (s)",
+        title = "Efferent Pathways")
+
 
 Offsetᵣ = Wcₛₚ * Efferent.fapc + Wpₛₚ * Efferent.fasr - Efferent.θₛₚ
 
@@ -970,7 +981,7 @@ display(plot(p4a,p4b,p4c,p4d,p4e,p4f,p4g,p4h, layout=(4,2), size=(900,600), supt
 
 # plot(Sol, idxs=[TV.VT], xlims = (0, 250))
 
-display(plot(Sol, idxs=[EResistance_Splanchnic.σθ, EVtone_Splanchnic.σθ, ELH.σθ]))
+display(plot(Sol, idxs=[EResistance.σθ, EVtone_Splanchnic.σθ, ELH.σθ]))
 
 # display(plot(Sol, idxs=[BC_A.q,(UpBd_art.q + CommonCarotid.q)],
 #         xlabel = "Time (s)",
@@ -989,6 +1000,11 @@ display(plot(Sol, idxs=[LungGE.FACO₂, LungGE.FDO₂, LungGE.FAO₂, LungGE.FDC
 
 display(plot(Sol, idxs=[Efferent.fasr, Efferent.fapc, Efferent.fcpr], ylims = (0,10),
         label = ["fasr" "fapc" "fcpr"],
+        xlabel = "Time (s)",
+        ylabel = "Concentration (ml/ml)",
+        title = "Brain Autoregulation"))
+
+display(plot(Sol, idxs=[Head_cap.G, BrainAutoreg.xbO₂, BrainAutoreg.uCvbO₂],
         xlabel = "Time (s)",
         ylabel = "Concentration (ml/ml)",
         title = "Brain Autoregulation"))

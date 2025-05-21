@@ -62,7 +62,7 @@ Ees_ra = 0.74 # Right Atrium end systolic elastance (mmHg/ml)
 #### Right Ventricle
 v0_rv = 46.0 # Right Ventricle zero pressure volume (ml)
 Ed_rv = 0.05 # Right Ventricle diastolic elastance (mmHg/ml)
-Ees_rv = 0.36 # Right Ventricle end systolic elastance (mmHg/ml)
+Ees_rv = 0.16 # Right Ventricle end systolic elastance (mmHg/ml)
 Elimit_rv = 3.0 # Right Ventricle elastance limit (mmHg/ml)
 
 #### Left Atrium
@@ -73,7 +73,7 @@ Ees_la = 0.61 # Left Atrium end systolic elastance (mmHg/ml)
 #### Left Ventricle
 v0_lv = 55.0 # Left Ventricle zero pressure volume (ml)
 Ed_lv = 0.11 # Left Ventricle diastolic elastance (mmHg/ml)
-Ees_lv = 1.40 # Left Ventricle end systolic elastance (mmHg/ml)
+Ees_lv = 1.20 # Left Ventricle end systolic elastance (mmHg/ml)
 Elimit_lv = 8.0 # Left Ventricle elastance limit (mmHg/ml)
 
 #### Tricuspid Valve
@@ -220,7 +220,7 @@ L_CCA = 0.0007 # Common Carotid Artery inductance (mmHg.s^2/ml)
 R_Head_art = 0.014 # Head Artery resistance (PRU)
 C_Head_art = 0.08 # Head Artery compliance (ml/mmHg)
 v0_Head_art = 108.0 # Head Artery zero pressure volume (ml)
-h_Head_art = -20.0 # Head Artery length (cm)
+h_Head_art = -10.0 # Head Artery length (cm)
 L_Head_art = 0.0007 # Head Artery inductance (mmHg.s^2/ml)
 
 """
@@ -280,7 +280,7 @@ h_Thor_IVC = -6.0 # Thoracic IVC length (cm)
 R_Head_veins = 0.05 # Head Vein resistance (PRU)
 C_Head_veins = 3.35 # Head Vein compliance (ml/mmHg)
 v0_Head_veins = 250.0 # Head Vein zero pressure volume (ml)
-h_Head_veins = 20.0 # Head Vein length (cm)
+h_Head_veins = 10.0 # Head Vein length (cm)
 
 #### Compartment H4: Jugular Veins
 R_Jugular_vein = 0.05 # Jugular Vein resistance (PRU)
@@ -433,7 +433,7 @@ Local Autoregulation (Magosso 2001)
 PaCO₂n = 40.0 # Set point for paCO₂ (mmHg)
 
 CvbO₂n = 0.14
-gbO₂ = 140 # Raised from 10 by Albanese, ml blood/mlO₂
+gbO₂ = 10#140 # Raised from 10 by Albanese, ml blood/mlO₂
 A_auto = 20.9
 B_auto = 92.8
 C_auto = 10570
@@ -552,15 +552,15 @@ Wcₛₕ = 1 # Modified from 5, Chemoreceptors to heart
 Wpₛₕ = 0 # Pulmonary stretch receptors to heart
 Wrₛₕ = 0 # Cardiopulmonary reflex to heart
 
-Wbₛₚ = -1 # Baroreflex to arterioles
-Wcₛₚ = 5 # Chemoreceptors to arterioles
-Wpₛₚ = -0.34 # Pulmonary stretch receptors to arterioles
-Wrₛₚ = -1 # Cardiopulmonary reflex to arterioles
+Wbₛₚ = -0.5 # Baroreflex to arterioles
+Wcₛₚ = 2.5 # Chemoreceptors to arterioles
+Wpₛₚ = -0.17 # Pulmonary stretch receptors to arterioles
+Wrₛₚ = -0.5 # Cardiopulmonary reflex to arterioles
 
-Wbₛᵥ = -1 # Baroreflex to venous tone
-Wcₛᵥ = 5 # Chemoreceptors to venous tone
-Wpₛᵥ = -0.34 # Pulmonary stretch receptors to venous tone
-Wrₛᵥ = -2 # Cardiopulmonary reflex to venous tone
+Wbₛᵥ = -0.5 # Baroreflex to venous tone
+Wcₛᵥ = 2.5 # Chemoreceptors to venous tone
+Wpₛᵥ = -0.17 # Pulmonary stretch receptors to venous tone
+Wrₛᵥ = -1.5 # Cardiopulmonary reflex to venous tone
 
 fev₀ = 3.2 # (spikes/s)
 fev∞ = 6.3 # (spikes/s)
@@ -600,12 +600,12 @@ DTv = 0.2 # (s)
 τResistance = 6 # (s)
 DResistance = 2 # (s)
 
-GResistance = 0.943 # (mmHg.s/ml/ν)
+GResistance = 3.49 # (mmHg.s/ml/ν)
 
-R_UpBd_cap = 11.17 # Upper Body microvascular resistance (PRU)
-R_Renal_cap = 3.87 # Renal microvascular resistance (PRU)
-R_Splanchnic_cap = 2.47 # Splanchnic microvascular resistance (PRU) (Increased from 2.8 for coronary arteries)
-R_Leg_cap = 3.17 # Leg microvascular resistance (PRU)# Total microvascular resistance (PRU)
+R_UpBd_cap = 6.95 # Upper Body microvascular resistance (PRU)
+R_Renal_cap = -0.35 # Renal microvascular resistance (PRU)
+R_Splanchnic_cap = -1.75 # Splanchnic microvascular resistance (PRU) (Increased from 2.8 for coronary arteries)
+R_Leg_cap = -1.05 # Leg microvascular resistance (PRU)# Total microvascular resistance (PRU)
 
 
 
@@ -618,17 +618,17 @@ Vsplit_Renal = 2/31 # Renal Veins volume split
 Vsplit_Splanchnic = 15/31 # Splanchnic Veins volume split
 Vsplit_Leg = 8/31 # Leg Veins volume split
 
-GVtone = -779.7 # (ml/ν) # Total venous tone gain (ml/ν)
+GVtone = -1156.6 # (ml/ν) # Total venous tone gain (ml/ν)
 
 GVtone_UpBd = GVtone*Vsplit_UpBd # (ml/ν)
 GVtone_Renal = GVtone*Vsplit_Renal # (ml/ν)
 GVtone_Splanchnic = GVtone*Vsplit_Splanchnic # (ml/ν)
 GVtone_Leg = GVtone*Vsplit_Leg # (ml/ν)
 
-v0_UpBd_vein = 379.2 # Upper Body Veins zero pressure volume (ml)
-v0_Renal_vein = 36.4 # Renal Vein zero pressure volume (ml)
-v0_Splanchnic_vein = 1095.8 # Splanchnic Vein zero pressure volume (ml) (Subtracted coronary veins)
-v0_Leg_vein = 741.6 # Leg Vein zero pressure volume (ml)
+v0_UpBd_vein = 567.6 # Upper Body Veins zero pressure volume (ml)
+v0_Renal_vein = 99.2 # Renal Vein zero pressure volume (ml)
+v0_Splanchnic_vein = 1566.8 # Splanchnic Vein zero pressure volume (ml) (Subtracted coronary veins)
+v0_Leg_vein = 992.8 # Leg Vein zero pressure volume (ml)
 
 
 """
