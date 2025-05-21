@@ -1,16 +1,25 @@
 """
-Cardiovascular Model
-Version 3.3.0 (May 14th, 2025)
+Cardiopulmonary Model
+Version 3.4.0 (May 21st, 2025)
 BXS Lab, UC Davis; Authors: RS Whittle, AJ Kondoor, HS Vellore
 Contact info: Dr. Rich Whittle – Department of Mechanical and Aerospace Engineering, UC Davis, One Shields Ave, Davis CA 95616 (rswhittle@ucdavis.edu)
-This model is a simulation of the human cardiovascular system, including a four chamber heart, arteries, veins, and microcirculation. It includes reflex control for the arterial baroreflex (ABR) and cardiopulmonary reflex (CPR), as well as hydrostatic effects, interstitial fluid flow, and external tissue pressures. The model is designed to simulate various physiological scenarios, including a tilt angle protocol, altered-gravity environment, and lower body negative pressure (LBNP) protocol. The underlying equations are based on the work of Heldt (2004), Zamanian (2007), Diaz Artiles (2015), Albanese (2016), and Whittle (2023). The model is implemented using the ModelingToolkit.jl package in Julia.
+This model is a simulation of the human cardiopulmonary system. Model features:
+Cardiovascular system: four chamber heart, dynamic valves, arteries and veins (including vascular collapse and nonlinearities in the large veins) across 6 branches (head/brain, upper body, coronary, renal, splanchnic, legs), and microcirculation.
+Pulmonary system: Hydrostatic pulmonary blood flow (parallel starling resistors), 4 compartment lung model with pressures based on breathing dynamics.
+Gas exchange: Gas exchange (O₂ and CO₂) in the lungs and peripheral tissues, O₂ and CO₂ dissociation curves, dynamic O₂ consumption in the heart.
+Respiratory control: Frequency and depth control based on central and peripheral chemoreceptors.
+CV control: Arterial baroreflex, cardiopulmonary reflex, peripheral chemoreceptors, lung stretch receptors, CNS ischemic response, autoregulation in the brain, heart, and skeletal muscles.
+Simulation scenarios: tilt angle protocol, altered-gravity environment, and lower body negative pressure (LBNP) protocol.
+The underlying equations are based on the work of Ursino (2000, 2002), Magosso (2001), Heldt (2004), Zamanian (2007), Diaz Artiles (2015), Albanese (2016), and Whittle (2023). The model is implemented using the ModelingToolkit.jl package in Julia.
 """
-### TODO: CV Model:            (1) Vertebral Plexus (2) Dynamic ICP
+
+### TODO: CV Model:            (1) Refine Model Parameters (2) Vertebral Plexus (3) Dynamic ICP
+### TODO: CV Control:          (1) Add cardiopulmonary reflex (adjust synaptic weights)
 ### TODO: Pulmonary Mechanics: (1) Bring Intrathoracic Pressure into Lung Model
 ### TODO: Simulation:          (1) Exercise Model, (2) Other blood parameters (e.g., pH etc.), (https://github.com/baillielab/oxygen_delivery/blob/master/oxygen_delivery.py) (3) Altitude, pressure, temperature driver; water vapor etc.
 ### TODO: Code:                (1) Fix the whole model params thing
 module CVModel
-display("Cardiovascular Model v3.3.0 (May 14th, 2025) - BXS Lab, UC Davis")
+display("Cardiopulmonary Model v3.4.0 (May 21st, 2025) - BXS Lab, UC Davis")
 
 """
 Preamble
@@ -759,44 +768,6 @@ display(plot(Sol, idxs=[Vtotal],
         ylabel = "Volume (ml)",
         title = "Total Blood Volume")) # Debugging plot to quickly check volume conservation
 
-display(plot(Sol, idxs=[EResistance_Splanchnic.σθ, EVtone_Splanchnic.σθ, ELH.σθ]))
-
-# display(plot(Sol, idxs=[BC_A.q,(UpBd_art.q + CommonCarotid.q)],
-#         xlabel = "Time (s)",
-#         ylabel = "Concentration (ml/ml)",
-#         title = "Head Veins"))
-
-display(plot(Sol, idxs=[PeripheralChemo.fapc],
-        xlabel = "Time (s)",
-        ylabel = "Concentration (ml/ml)",
-        title = "Head Veins"))
-
-display(plot(Sol, idxs=[LungGE.FACO₂, LungGE.FDO₂, LungGE.FAO₂, LungGE.FDCO₂],
-        xlabel = "Time (s)",
-        ylabel = "Concentration (ml/ml)",
-        title = "Lung Gas Exchange"))
-
-display(plot(Sol, idxs=[Efferent.fasr, Efferent.fapc, Efferent.fab, Efferent.fcpr], ylims = (0,70),
-        label = ["fasr" "fapc" "fab" "fcpr"],
-        xlabel = "Time (s)",
-        ylabel = "Concentration (ml/ml)",
-        title = "Brain Autoregulation"))
-
-display(plot(Sol, idxs=[Efferent.fₛₕ, Efferent.fₛₚ, Efferent.fₛᵥ],
-        label = ["fₛₕ" "fₛₚ" "fₛᵥ"],
-        xlabel = "Time (s)",
-        ylabel = "Concentration (ml/ml)",
-        title = "Spikes"))
-
-display(plot(Sol, idxs=[UpBd_cap.R, Renal_cap.R, Splanchnic_cap.R, Leg_cap.R, 1/Head_cap.G],
-ylims = (0, 12),
-        xlabel = "Time (s)",
-        ylabel = "Regulation (ml/ml)",
-        title = "Leg Autoregulation"))
-
-display(plot(Sol, idxs=[Cor_cap.R]))
-
-
 #### Direct from Solution Plots
 
 p0a = plot(Sol, idxs=[alpha_driver.α * 180 / π],
@@ -989,6 +960,43 @@ display(plot(p4a,p4b,p4c,p4d,p4e,p4f,p4g,p4h, layout=(4,2), size=(900,600), supt
 # plot(Sol, idxs=[Renal_vein.C.V₀eff], xlims = (0, 250))
 
 # plot(Sol, idxs=[TV.VT], xlims = (0, 250))
+
+display(plot(Sol, idxs=[EResistance_Splanchnic.σθ, EVtone_Splanchnic.σθ, ELH.σθ]))
+
+# display(plot(Sol, idxs=[BC_A.q,(UpBd_art.q + CommonCarotid.q)],
+#         xlabel = "Time (s)",
+#         ylabel = "Concentration (ml/ml)",
+#         title = "Head Veins"))
+
+display(plot(Sol, idxs=[PeripheralChemo.fapc],
+        xlabel = "Time (s)",
+        ylabel = "Concentration (ml/ml)",
+        title = "Head Veins"))
+
+display(plot(Sol, idxs=[LungGE.FACO₂, LungGE.FDO₂, LungGE.FAO₂, LungGE.FDCO₂],
+        xlabel = "Time (s)",
+        ylabel = "Concentration (ml/ml)",
+        title = "Lung Gas Exchange"))
+
+display(plot(Sol, idxs=[Efferent.fasr, Efferent.fapc, Efferent.fab, Efferent.fcpr], ylims = (0,70),
+        label = ["fasr" "fapc" "fab" "fcpr"],
+        xlabel = "Time (s)",
+        ylabel = "Concentration (ml/ml)",
+        title = "Brain Autoregulation"))
+
+display(plot(Sol, idxs=[Efferent.fₛₕ, Efferent.fₛₚ, Efferent.fₛᵥ],
+        label = ["fₛₕ" "fₛₚ" "fₛᵥ"],
+        xlabel = "Time (s)",
+        ylabel = "Concentration (ml/ml)",
+        title = "Spikes"))
+
+display(plot(Sol, idxs=[UpBd_cap.R, Renal_cap.R, Splanchnic_cap.R, Leg_cap.R, 1/Head_cap.G],
+ylims = (0, 12),
+        xlabel = "Time (s)",
+        ylabel = "Regulation (ml/ml)",
+        title = "Leg Autoregulation"))
+
+display(plot(Sol, idxs=[Cor_cap.R]))
 """
 Save Outputs
 Uncomment the following lines to save the outputs to a CSV file.
