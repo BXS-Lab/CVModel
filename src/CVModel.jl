@@ -758,7 +758,7 @@ display(plot(Sol, idxs=[Vtotal],
         ylabel = "Volume (ml)",
         title = "Total Blood Volume")) # Debugging plot to quickly check volume conservation
 
-# display(plot(Sol, idxs=[EResistance_Splanchnic.σθ, EVtone_Splanchnic.σθ, ELH.σθ]))
+display(plot(Sol, idxs=[EResistance_Splanchnic.σθ, EVtone_Splanchnic.σθ, ELH.σθ]))
 
 # display(plot(Sol, idxs=[BC_A.q,(UpBd_art.q + CommonCarotid.q)],
 #         xlabel = "Time (s)",
