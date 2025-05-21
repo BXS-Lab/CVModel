@@ -758,24 +758,24 @@ display(plot(Sol, idxs=[Vtotal],
         ylabel = "Volume (ml)",
         title = "Total Blood Volume")) # Debugging plot to quickly check volume conservation
 
-display(plot(Sol, idxs=[EResistance_Splanchnic.σθ, EVtone_Splanchnic.σθ, ELH.σθ]))
+# display(plot(Sol, idxs=[EResistance_Splanchnic.σθ, EVtone_Splanchnic.σθ, ELH.σθ]))
 
-display(plot(Sol, idxs=[BC_A.q,(UpBd_art.q + CommonCarotid.q)],
-        xlabel = "Time (s)",
-        ylabel = "Concentration (ml/ml)",
-        title = "Head Veins"))
+# display(plot(Sol, idxs=[BC_A.q,(UpBd_art.q + CommonCarotid.q)],
+#         xlabel = "Time (s)",
+#         ylabel = "Concentration (ml/ml)",
+#         title = "Head Veins"))
 
-display(plot(Sol, idxs=[Head_veins.pₜₘ, Head_art.pₜₘ],
-        label = ["vcCO₂" "vcO₂" "acCO₂" "acO₂"],
-        xlabel = "Time (s)",
-        ylabel = "Concentration (ml/ml)",
-        title = "Head Veins"))
+# display(plot(Sol, idxs=[Head_veins.pₜₘ, Head_art.pₜₘ],
+#         label = ["vcCO₂" "vcO₂" "acCO₂" "acO₂"],
+#         xlabel = "Time (s)",
+#         ylabel = "Concentration (ml/ml)",
+#         title = "Head Veins"))
 
-display(plot(Sol, idxs=[Efferent.fasr, Efferent.fapc, Efferent.fab, Efferent.fcpr], ylims = (0,70),
-        label = ["fasr" "fapc" "fab" "fcpr"],
-        xlabel = "Time (s)",
-        ylabel = "Concentration (ml/ml)",
-        title = "Brain Autoregulation"))
+# display(plot(Sol, idxs=[Efferent.fasr, Efferent.fapc, Efferent.fab, Efferent.fcpr], ylims = (0,70),
+#         label = ["fasr" "fapc" "fab" "fcpr"],
+#         xlabel = "Time (s)",
+#         ylabel = "Concentration (ml/ml)",
+#         title = "Brain Autoregulation"))
 
 display(plot(Sol, idxs=[Efferent.fₛₕ, Efferent.fₛₚ, Efferent.fₛᵥ],
         label = ["fₛₕ" "fₛₚ" "fₛᵥ"],
@@ -783,11 +783,13 @@ display(plot(Sol, idxs=[Efferent.fₛₕ, Efferent.fₛₚ, Efferent.fₛᵥ],
         ylabel = "Concentration (ml/ml)",
         title = "Spikes"))
 
-display(plot(Sol, idxs=[EResistance_Leg.σθ, EVtone_Leg.σθ, ELH.σθ],
-        label = ["fsp" "fsv" "fsh"],
+display(plot(Sol, idxs=[UpBd_cap.R, Renal_cap.R, Splanchnic_cap.R, Leg_cap.R, 1/Head_cap.G],
+ylims = (0, 12),
         xlabel = "Time (s)",
         ylabel = "Regulation (ml/ml)",
         title = "Leg Autoregulation"))
+
+display(plot(Sol, idxs=[Head_veins.C.cCO₂]))
 
 
 #### Direct from Solution Plots
@@ -862,18 +864,18 @@ p2d = plot(Sol, idxs=[Asc_A.in.q],
 
 display(plot(p2a, p2b, p2c, p2d, layout=(2,2), size=(900,600), suptitle="Hemodynamics"))
 
-plot(Sol, idxs=[UpBd_vein.C.V₀eff],
-        label = ["Asc_A" "BC_A" "UpBd_art" "Thor_A" "Abd_A" "Renal_art" "Splanchnic_art" "Leg_art"],
-        xlabel = "Time (s)",
-        ylabel = "Pressure (mmHg)",
-        title = "Arterial Pressures")
+# plot(Sol, idxs=[UpBd_vein.C.V₀eff],
+#         label = ["Asc_A" "BC_A" "UpBd_art" "Thor_A" "Abd_A" "Renal_art" "Splanchnic_art" "Leg_art"],
+#         xlabel = "Time (s)",
+#         ylabel = "Pressure (mmHg)",
+#         title = "Arterial Pressures")
 
-plot(Sol, idxs=[EVtone_UpBd.σθ])
+# plot(Sol, idxs=[EVtone_UpBd.σθ])
 
-plot(Sol, idxs=[EVtone_UpBd.σθ,Efferent.fₛᵥ],
-        xlabel = "Time (s)",
-        ylabel = "Concentration (ml/ml)",
-        title = "Spikes")
+# plot(Sol, idxs=[EVtone_UpBd.σθ,Efferent.fₛᵥ],
+#         xlabel = "Time (s)",
+#         ylabel = "Concentration (ml/ml)",
+#         title = "Spikes")
 
 #### Beat-to-Beat Plots
 
@@ -913,17 +915,17 @@ plot(beat_times, [(Head_art_Vmean + Head_veins_Vmean + Jugular_vein_Vmean + Comm
         ylabel = "Volume (ml)",
         title = "Average Branch Volumes")
 
-plot(Sol, idxs=[Head_cap.G],
-        xlabel = "Time (s)",
-        title = "Head Veins")
+# plot(Sol, idxs=[Head_cap.G],
+#         xlabel = "Time (s)",
+#         title = "Head Veins")
 
-plot(Sol, idxs=[Head_art.cO₂, Head_veins.cO₂, CommonCarotid.cO₂, Jugular_vein.cO₂],
-        xlabel = "Time (s)",
-        title = "Head Veins")
+# plot(Sol, idxs=[Head_art.cO₂, Head_veins.cO₂, CommonCarotid.cO₂, Jugular_vein.cO₂],
+#         xlabel = "Time (s)",
+#         title = "Head Veins")
 
-plot(Sol, idxs=[CommonCarotid.cCO₂,UpBd_art.cCO₂, Asc_A.cCO₂])
-plot(Sol, idxs=[CommonCarotid.in.q,UpBd_art.in.q])
-plot(Sol, idxs=[Splanchnic_art.q,Renal_art.q])
+# plot(Sol, idxs=[CommonCarotid.cCO₂,UpBd_art.cCO₂, Asc_A.cCO₂])
+# plot(Sol, idxs=[CommonCarotid.in.q,UpBd_art.in.q])
+# plot(Sol, idxs=[Splanchnic_art.q,Renal_art.q])
 
 #### Pulmonary and Respiratory Plots
 
@@ -979,9 +981,9 @@ p4h = plot(Sol, idxs=[Intrathoracic.pth.p], xlims = (0, 250),
 
 display(plot(p4a,p4b,p4c,p4d,p4e,p4f,p4g,p4h, layout=(4,2), size=(900,600), suptitle="Lungs"))
 
-plot(Sol, idxs=[Renal_vein.C.V₀eff], xlims = (0, 250))
+# plot(Sol, idxs=[Renal_vein.C.V₀eff], xlims = (0, 250))
 
-plot(Sol, idxs=[TV.VT], xlims = (0, 250))
+# plot(Sol, idxs=[TV.VT], xlims = (0, 250))
 """
 Save Outputs
 Uncomment the following lines to save the outputs to a CSV file.
