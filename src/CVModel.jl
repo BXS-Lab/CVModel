@@ -891,9 +891,21 @@ plot(beat_times, [(Head_art_Vmean + Head_veins_Vmean + Jugular_vein_Vmean + Comm
         ylabel = "Volume (ml)",
         title = "Average Branch Volumes")
 
-# plot(Sol, idxs=[Head_cap.G],
-#         xlabel = "Time (s)",
-#         title = "Head Veins")
+plot(Sol, idxs=[Efferent.fapc, Efferent.fasr, Efferent.fcpr, Efferent.θₛₕ, Efferent.θₛₚ, Efferent.θₛᵥ],
+        label = ["fapc" "fasr" "fcpr" "θₛₕ" "θₛₚ" "θₛᵥ"],
+        xlabel = "Time (s)",
+        title = "Efferent Pathways")
+
+Offsetᵣ = Wcₛₚ * Efferent.fapc + Wpₛₚ * Efferent.fasr - Efferent.θₛₚ
+
+plot(Sol, idxs=[Offsetᵣ],
+        label = "Offset",
+        xlabel = "Time (s)",
+        title = "Offset")
+
+plot(Sol, idxs=[IschHeart.ΔΘCO₂ₛⱼ, IschHeart.uPaCO₂],
+        xlabel = "Time (s)",
+        title = "Head Veins")
 
 # plot(Sol, idxs=[Head_art.cO₂, Head_veins.cO₂, CommonCarotid.cO₂, Jugular_vein.cO₂],
 #         xlabel = "Time (s)",
@@ -978,8 +990,8 @@ display(plot(Sol, idxs=[LungGE.FACO₂, LungGE.FDO₂, LungGE.FAO₂, LungGE.FDC
         ylabel = "Concentration (ml/ml)",
         title = "Lung Gas Exchange"))
 
-display(plot(Sol, idxs=[Efferent.fasr, Efferent.fapc, Efferent.fab, Efferent.fcpr], ylims = (0,70),
-        label = ["fasr" "fapc" "fab" "fcpr"],
+display(plot(Sol, idxs=[Efferent.fasr, Efferent.fapc, Efferent.fcpr], ylims = (0,10),
+        label = ["fasr" "fapc" "fcpr"],
         xlabel = "Time (s)",
         ylabel = "Concentration (ml/ml)",
         title = "Brain Autoregulation"))

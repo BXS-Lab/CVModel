@@ -472,9 +472,9 @@ Cardiopulmonary Reflex Parameters
 
 τpr = 2.076
 Prn = 6
-kcpr = 3.638
-fcprₘₐₓ = 15
-fcprₘᵢₙ = 1
+kcpr = 3.27
+fcprₘₐₓ = 13.27
+fcprₘᵢₙ = 0.70
 
 """
 Peripheral Chemoreceptors (Ursino 2002)
@@ -512,9 +512,9 @@ kiscₛₚ = 2 # (mmHg)
 kiscₛᵥ = 2 # (mmHg)
 kiscₛₕ = 6 # (mmHg)
 τisc = 30 # (s)
-gccₛₚ = 0#1.5 # (/mmHg/s)
+gccₛₚ = 1.5 # (/mmHg/s)
 gccₛᵥ = 0 # (/mmHg/s)
-gccₛₕ = 0#1 # (/mmHg/s)
+gccₛₕ = 1 # (/mmHg/s)
 τcc = 20 # (s)
 θₛₚₙ = 13.32 # (spikes/s)
 θₛᵥₙ = 13.32 # (spikes/s)
@@ -558,12 +558,12 @@ Wrₛₕ = 0 # Cardiopulmonary reflex to heart
 Wbₛₚ = -1 # Baroreflex to arterioles
 Wcₛₚ = 5 # Chemoreceptors to arterioles
 Wpₛₚ = -0.34 # Pulmonary stretch receptors to arterioles
-Wrₛₚ = 0 # Cardiopulmonary reflex to arterioles
+Wrₛₚ = -1 # Cardiopulmonary reflex to arterioles
 
 Wbₛᵥ = -1 # Baroreflex to venous tone
 Wcₛᵥ = 5 # Chemoreceptors to venous tone
 Wpₛᵥ = -0.34 # Pulmonary stretch receptors to venous tone
-Wrₛᵥ = 0 # Cardiopulmonary reflex to venous tone
+Wrₛᵥ = -3.2 # Cardiopulmonary reflex to venous tone
 
 fev₀ = 3.2 # (spikes/s)
 fev∞ = 6.3 # (spikes/s)
@@ -600,19 +600,19 @@ DTs = 2 # (s)
 DTv = 0.2 # (s)
 
 #### Arteriole Resistances
-GResistance_UpBd = 1.5 # (mmHg.s/ml/ν)
-GResistance_Renal = 1.5 # (mmHg.s/ml/ν)
-GResistance_Splanchnic = 1.5 # (mmHg.s/ml/ν)
-GResistance_Leg = 1.5 # (mmHg.s/ml/ν)
+GResistance_UpBd = 0.943 # (mmHg.s/ml/ν)
+GResistance_Renal = 0.943 # (mmHg.s/ml/ν)
+GResistance_Splanchnic = 0.943 # (mmHg.s/ml/ν)
+GResistance_Leg = 0.943 # (mmHg.s/ml/ν)
 
 τResistance = 6 # (s)
 DResistance = 2 # (s)
 
 #### Venous Tone
-GVtone_UpBd = -309.8
-GVtone_Renal = -237.9 # (ml/ν)
-GVtone_Splanchnic = -567.7 # (ml/ν)
-GVtone_Leg = -385.8 # (ml/ν)
+GVtone_UpBd = -779.7*6/31 # (ml/ν)
+GVtone_Renal = -779.7*2/31 # (ml/ν)
+GVtone_Splanchnic = -779.7*15/31 # (ml/ν)
+GVtone_Leg = -779.7*8/31 # (ml/ν)
 
 τVtone = 20 # (s)
 DVtone = 5 # (s)
