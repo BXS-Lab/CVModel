@@ -442,7 +442,7 @@ circ_eqs = [
 
   #### Effectors: Arteriole Resistance
   Cor_cap.R ~ Rcc * (1 + HeartAutoreg.xjCO₂) /(1 + HeartAutoreg.xjO₂),
-  Head_cap.G ~ Gbpn, #* (1 + BrainAutoreg.xbO₂ + BrainAutoreg.xbCO₂),
+  Head_cap.G ~ Gbpn * (1 + BrainAutoreg.xbO₂ + BrainAutoreg.xbCO₂),
 
   UpBd_cap.R ~ (R_UpBd_cap + EResistance_UpBd.Δσ) * (1 + UBMuscleAutoreg.xjCO₂) /(1 + UBMuscleAutoreg.xjO₂),
   Renal_cap.R ~ R_Renal_cap + EResistance_Renal.Δσ,
@@ -917,7 +917,7 @@ plot(Sol, idxs=[Head_cap.G],
         xlabel = "Time (s)",
         title = "Head Veins")
 
-plot(Sol, idxs=[Head_art.cCO₂, Head_veins.cCO₂, CommonCarotid.cCO₂, Jugular_vein.cCO₂],
+plot(Sol, idxs=[Head_art.cO₂, Head_veins.cO₂, CommonCarotid.cO₂, Jugular_vein.cO₂],
         xlabel = "Time (s)",
         title = "Head Veins")
 
@@ -980,6 +980,8 @@ p4h = plot(Sol, idxs=[Intrathoracic.pth.p], xlims = (0, 250),
 display(plot(p4a,p4b,p4c,p4d,p4e,p4f,p4g,p4h, layout=(4,2), size=(900,600), suptitle="Lungs"))
 
 plot(Sol, idxs=[Renal_vein.C.V₀eff], xlims = (0, 250))
+
+plot(Sol, idxs=[TV.VT], xlims = (0, 250))
 """
 Save Outputs
 Uncomment the following lines to save the outputs to a CSV file.
