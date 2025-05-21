@@ -143,10 +143,7 @@ These parameters define the baseline microvascular resistances for different com
 """
 Gbpn = 0.15 # ml/(mmHg.s) baseline brain conductance
 R_Head_cap = 1/Gbpn # Head microvascular resistance (PRU)
-R_UpBd_cap = 11.17 # Upper Body microvascular resistance (PRU)
-R_Renal_cap = 3.87 # Renal microvascular resistance (PRU)
-R_Splanchnic_cap = 2.47 # Splanchnic microvascular resistance (PRU) (Increased from 2.8 for coronary arteries)
-R_Leg_cap = 3.17 # Leg microvascular resistance (PRU)# Total microvascular resistance (PRU)
+
 
 
 """
@@ -234,7 +231,7 @@ These parameters define the properties of the venous system, including the resis
 #### Compartment 4: Upper Body Veins
 R_UpBd_vein = 0.11 # Upper Body Vein resistance (PRU)
 C_UpBd_vein = 1.2 # Upper Body Vein compliance (ml/mmHg)
-v0_UpBd_vein = 379.2 # Upper Body Veins zero pressure volume (ml)
+
 h_UpBd_vein = -66.0 # Upper Body Veins length (cm)
 con_UpBd_vein = 3.0 # Upper Body Veins hydrostatic conversion
 
@@ -247,21 +244,21 @@ h_SVC = 14.5 # Superior Vena Cava length (cm)
 #### Compartment 9: Renal Vein
 R_Renal_vein = 0.11 # Renal Vein resistance (PRU)
 C_Renal_vein = 5.0 # Renal Vein compliance (ml/mmHg)
-v0_Renal_vein = 36.4 # Renal Vein zero pressure volume (ml)
+
 h_Renal_vein = 0.0 # Renal Vein length (cm)
 vₘᵢₙ_Renal_vein = 5.0 # The Renal vein has a minimum zero-pressure volume (Zamanian, 2007)
 
 #### Compartment 11: Splanchnic Vein (nonlinear)
 R_Splanchnic_vein = 0.07 # Splanchnic Vein resistance (PRU)
 C_Splanchnic_vein = 50.0 # Splanchnic Vein compliance (ml/mmHg)
-v0_Splanchnic_vein = 1095.8 # Splanchnic Vein zero pressure volume (ml) (Subtracted coronary veins)
+
 h_Splanchnic_vein = -10.0 # Splanchnic Vein length (cm)
 vM_Splanchnic_vein = 1565.0 # Splanchnic Vein maximum volume (ml)
 
 #### Compartment 13: Leg Vein (nonlinear)
 R_Leg_vein = 0.1 # Leg Vein resistance (PRU)
 C_Leg_vein = 27.0 # Leg Vein compliance (ml/mmHg)
-v0_Leg_vein = 741.6 # Leg Vein zero pressure volume (ml)
+
 h_Leg_vein = -105.0 # Leg Vein length (cm)
 vM_Leg_vein = 1193.0 # Leg Vein maximum volume (ml)
 con_Leg_vein = 3.0 # Leg Vein hydrostatic conversion
@@ -563,7 +560,7 @@ Wrₛₚ = -1 # Cardiopulmonary reflex to arterioles
 Wbₛᵥ = -1 # Baroreflex to venous tone
 Wcₛᵥ = 5 # Chemoreceptors to venous tone
 Wpₛᵥ = -0.34 # Pulmonary stretch receptors to venous tone
-Wrₛᵥ = -3.2 # Cardiopulmonary reflex to venous tone
+Wrₛᵥ = -2 # Cardiopulmonary reflex to venous tone
 
 fev₀ = 3.2 # (spikes/s)
 fev∞ = 6.3 # (spikes/s)
@@ -600,22 +597,38 @@ DTs = 2 # (s)
 DTv = 0.2 # (s)
 
 #### Arteriole Resistances
-GResistance_UpBd = 0.943 # (mmHg.s/ml/ν)
-GResistance_Renal = 0.943 # (mmHg.s/ml/ν)
-GResistance_Splanchnic = 0.943 # (mmHg.s/ml/ν)
-GResistance_Leg = 0.943 # (mmHg.s/ml/ν)
-
 τResistance = 6 # (s)
 DResistance = 2 # (s)
 
-#### Venous Tone
-GVtone_UpBd = -779.7*6/31 # (ml/ν)
-GVtone_Renal = -779.7*2/31 # (ml/ν)
-GVtone_Splanchnic = -779.7*15/31 # (ml/ν)
-GVtone_Leg = -779.7*8/31 # (ml/ν)
+GResistance = 0.943 # (mmHg.s/ml/ν)
 
+R_UpBd_cap = 11.17 # Upper Body microvascular resistance (PRU)
+R_Renal_cap = 3.87 # Renal microvascular resistance (PRU)
+R_Splanchnic_cap = 2.47 # Splanchnic microvascular resistance (PRU) (Increased from 2.8 for coronary arteries)
+R_Leg_cap = 3.17 # Leg microvascular resistance (PRU)# Total microvascular resistance (PRU)
+
+
+
+#### Venous Tone
 τVtone = 20 # (s)
 DVtone = 5 # (s)
+
+Vsplit_UpBd = 6/31 # Upper Body Veins volume split
+Vsplit_Renal = 2/31 # Renal Veins volume split
+Vsplit_Splanchnic = 15/31 # Splanchnic Veins volume split
+Vsplit_Leg = 8/31 # Leg Veins volume split
+
+GVtone = -779.7 # (ml/ν) # Total venous tone gain (ml/ν)
+
+GVtone_UpBd = GVtone*Vsplit_UpBd # (ml/ν)
+GVtone_Renal = GVtone*Vsplit_Renal # (ml/ν)
+GVtone_Splanchnic = GVtone*Vsplit_Splanchnic # (ml/ν)
+GVtone_Leg = GVtone*Vsplit_Leg # (ml/ν)
+
+v0_UpBd_vein = 379.2 # Upper Body Veins zero pressure volume (ml)
+v0_Renal_vein = 36.4 # Renal Vein zero pressure volume (ml)
+v0_Splanchnic_vein = 1095.8 # Splanchnic Vein zero pressure volume (ml) (Subtracted coronary veins)
+v0_Leg_vein = 741.6 # Leg Vein zero pressure volume (ml)
 
 
 """

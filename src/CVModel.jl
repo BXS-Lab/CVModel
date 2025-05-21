@@ -187,10 +187,7 @@ This section of code instances the compartments used in the model, based on the 
 @named ELH = Effectors(Gain=GEmaxlv, delay=DEmaxlv, time=τEmaxlv, min=fesₘᵢₙ, delay_order=reflex_delay_order)
 @named ERR = EffectorsRR(Gainₛ=GTs, Gainᵥ=GTv, delayₛ=DTs, delayᵥ=DTv, timeₛ=τTs, timeᵥ=τTv, min=fesₘᵢₙ, delay_order=reflex_delay_order)
 
-@named EResistance_UpBd = Effectors(Gain=GResistance_UpBd, delay=DResistance, time=τResistance, min=fesₘᵢₙ, delay_order=reflex_delay_order)
-@named EResistance_Renal = Effectors(Gain=GResistance_Renal, delay=DResistance, time=τResistance, min=fesₘᵢₙ, delay_order=reflex_delay_order)
-@named EResistance_Splanchnic = Effectors(Gain=GResistance_Splanchnic, delay=DResistance, time=τResistance, min=fesₘᵢₙ, delay_order=reflex_delay_order)
-@named EResistance_Leg = Effectors(Gain=GResistance_Leg, delay=DResistance, time=τResistance, min=fesₘᵢₙ, delay_order=reflex_delay_order)
+@named EResistance = Effectors(Gain=GResistance, delay=DResistance, time=τResistance, min=fesₘᵢₙ, delay_order=reflex_delay_order)
 
 @named EVtone_UpBd = Effectors(Gain=GVtone_UpBd, delay=DVtone, time=τVtone, min=fesₘᵢₙ, delay_order=reflex_delay_order)
 @named EVtone_Renal = Effectors(Gain=GVtone_Renal, delay=DVtone, time=τVtone, min=fesₘᵢₙ, delay_order=reflex_delay_order)
@@ -454,10 +451,10 @@ circ_eqs = [
   Cor_cap.R ~ Rcc * (1 + HeartAutoreg.xjCO₂) /(1 + HeartAutoreg.xjO₂),
   Head_cap.G ~ Gbpn * (1 + BrainAutoreg.xbO₂ + BrainAutoreg.xbCO₂),
 
-  UpBd_cap.R ~ (R_UpBd_cap + EResistance_UpBd.Δσ) * (1 + UBMuscleAutoreg.xjCO₂) /(1 + UBMuscleAutoreg.xjO₂),
-  Renal_cap.R ~ R_Renal_cap + EResistance_Renal.Δσ,
-  Splanchnic_cap.R ~ R_Splanchnic_cap + EResistance_Splanchnic.Δσ,
-  Leg_cap.R ~ (R_Leg_cap + EResistance_Leg.Δσ) * (1 + LBMuscleAutoreg.xjCO₂) /(1 + LBMuscleAutoreg.xjO₂),
+  UpBd_cap.R ~ (R_UpBd_cap + EResistance.Δσ) * (1 + UBMuscleAutoreg.xjCO₂) /(1 + UBMuscleAutoreg.xjO₂),
+  Renal_cap.R ~ R_Renal_cap + EResistance.Δσ,
+  Splanchnic_cap.R ~ R_Splanchnic_cap + EResistance.Δσ,
+  Leg_cap.R ~ (R_Leg_cap + EResistance.Δσ) * (1 + LBMuscleAutoreg.xjCO₂) /(1 + LBMuscleAutoreg.xjO₂),
 
   #### Effectors: Venous Tone
   UpBd_vein.ΔV ~ EVtone_UpBd.Δσ,
