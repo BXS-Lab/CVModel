@@ -771,8 +771,8 @@ display(plot(Sol, idxs=[Head_veins.pₜₘ, Head_art.pₜₘ],
         ylabel = "Concentration (ml/ml)",
         title = "Head Veins"))
 
-display(plot(Sol, idxs=[BrainAutoreg.xbO₂, BrainAutoreg.xbCO₂, (1 + BrainAutoreg.xbO₂ + BrainAutoreg.xbCO₂)],
-        label = ["xbO₂" "xbCO₂" "xbO₂ + xbCO₂"],
+display(plot(Sol, idxs=[Efferent.fasr, Efferent.fapc, Efferent.fab, Efferent.fcpr], ylims = (0,70),
+        label = ["fasr" "fapc" "fab" "fcpr"],
         xlabel = "Time (s)",
         ylabel = "Concentration (ml/ml)",
         title = "Brain Autoregulation"))
@@ -783,10 +783,10 @@ display(plot(Sol, idxs=[Efferent.fₛₕ, Efferent.fₛₚ, Efferent.fₛᵥ],
         ylabel = "Concentration (ml/ml)",
         title = "Spikes"))
 
-display(plot(Sol, idxs=[EResistance_Leg.σθ, EResistance_Leg.Δσ, Leg_cap.R],
-        label = ["σθ" "Δσ" "R"],
+display(plot(Sol, idxs=[EResistance_Leg.σθ, EVtone_Leg.σθ, ELH.σθ],
+        label = ["fsp" "fsv" "fsh"],
         xlabel = "Time (s)",
-        ylabel = "Concentration (ml/ml)",
+        ylabel = "Regulation (ml/ml)",
         title = "Leg Autoregulation"))
 
 
@@ -979,6 +979,7 @@ p4h = plot(Sol, idxs=[Intrathoracic.pth.p], xlims = (0, 250),
 
 display(plot(p4a,p4b,p4c,p4d,p4e,p4f,p4g,p4h, layout=(4,2), size=(900,600), suptitle="Lungs"))
 
+plot(Sol, idxs=[Renal_vein.C.V₀eff], xlims = (0, 250))
 """
 Save Outputs
 Uncomment the following lines to save the outputs to a CSV file.
