@@ -41,11 +41,6 @@ This repository contains a simulation of the human cardiopulmonary system develo
     - Cerebral, coronary, and muscular autoregulation
 
 
-
-![Reflex Plot](Images/reflex.png)
-
-*Figure: Arterial Baroreflex and Cardiopulmonary Reflex action on arteriole resistance, heart rate, venous tone, and ventricular contractility in a 90° stand test.*
-
 ## Simulation Scenarios
 
 The model supports simulation of:
@@ -54,9 +49,39 @@ The model supports simulation of:
 - Altered-gravity environments
 - Lower body negative pressure (LBNP) protocols
 
-![Reflex Plot](Images/hemodynamics.png)
+![DOE Plot](Images/doe.png)
 
-*Figure: Interstitial volume (90° stand test), left heart pressures, cardiac elastances, and ventricular outflow.*
+*Figure: Design of experiments showing a 90° stand test at 200 seconds under terrestrial gravity.*
+
+## Images
+
+![Reflex1 Plot](Images/reflex1.png)
+
+*Figure: Major cardiovascular control effectors: arteriole resistance, venous tone, heart rate, and ventricular contractility.*
+
+![Reflex2 Plot](Images/reflex2.png)
+
+*Figure: Detail of the reflex model showing efferent pathways for the arterial baroreflex, cardiopulmonary reflex, pulmonary stretch reflex, peripheral chemoreceptors, and CNS ischemic offset. Cerebral autoregulation is also demonstrated (note: autoregulation is also applied to the coronary and skeletal muscle microcirculations).*
+
+![Hemodynamics Plot](Images/hemodynamics.png)
+
+*Figure: Major hemodynamics showing interstitial volume change in tilt, and detail of elastances, arterial pressure waveform and ventricular outflow demonstrating valve action.*
+
+![Beat2Beat Plot](Images/beat2beat.png)
+
+*Figure: Beat to beat hemodynamics for a 90° stand test. Note: for this WIP release the parameters still need to be tweaked to reduce pressure in supine and better maintain it in tilt.*
+
+![Volumes Plot](Images/volumes.png)
+
+*Figure: Average compartment volumes during stand test. Note the rise in volumes in the lower body, fall in venous return, and maintenance of head blood flow due to cerebral autoregulation.*
+
+![Lungs Plot](Images/lungs.png)
+
+*Figure: Pulmonary Mechanics.*
+
+![Gas Exchange Plot](Images/gas_exchange.png)
+
+*Figure: Gas exchange dynamics showing fractional concentrations of oxygen and carbon dioxide in the dead space and alveoli, arterial saturation, the pulmonary shunt, dynamic tissue demand, and zonal blood flow in the lungs.*
 
 ## Model Basis
 

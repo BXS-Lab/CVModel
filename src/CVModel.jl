@@ -13,11 +13,6 @@ Simulation scenarios: tilt angle protocol, altered-gravity environment, and lowe
 The underlying equations are based on the work of Ursino (2000, 2002), Magosso (2001), Heldt (2004), Zamanian (2007), Diaz Artiles (2015), Albanese (2016), and Whittle (2023). The model is implemented using the ModelingToolkit.jl package in Julia.
 """
 
-### TODO: CV Model:            (1) Refine Model Parameters (2) Vertebral Plexus (3) Dynamic ICP
-### TODO: CV Control:          (1) Add cardiopulmonary reflex (adjust synaptic weights)
-### TODO: Pulmonary Mechanics: (1) Bring Intrathoracic Pressure into Lung Model
-### TODO: Simulation:          (1) Exercise Model, (2) Other blood parameters (e.g., pH etc.), (https://github.com/baillielab/oxygen_delivery/blob/master/oxygen_delivery.py) (3) Altitude, pressure, temperature driver; water vapor etc.
-### TODO: Code:                (1) Fix the whole model params thing
 module CVModel
 display("Cardiopulmonary Model v3.4.0 (May 21st, 2025) - BXS Lab, UC Davis")
 
@@ -723,7 +718,6 @@ u0 = [
   EVtone_Splanchnic.d.x => reflex_delay_init,
   EVtone_Leg.Δσ => IC_V₀_Leg,
   EVtone_Leg.d.x => reflex_delay_init,
-
 ]
 
 """
@@ -743,7 +737,6 @@ This section calculates the beat-to-beat values, along with some global values (
 """
 
 include("PostSolve.jl")
-
 
 """
 Plots
@@ -778,6 +771,7 @@ p0c = plot(Sol, idxs=[lbnp_driver.p_lbnp],
              ylims = (-50, 0))
 
 display(plot(p0a, p0b, p0c, layout=(2,2), size=(900,600), suptitle="Design of Experiments"))
+# savefig("Images/doe.png")
 
 p1a = plot(Sol, idxs=[TPR],
              label = "TPR",
@@ -800,21 +794,34 @@ p1d = plot(Sol, idxs=[RV.Eₘₐₓeff, LV.Eₘₐₓeff],
              ylabel = "End-Systolic E (mmHg/ml)",
              title = "Ventricular Contractility")
 
-display(plot(p1a, p1b, p1c, p1d, layout=(2,2), size=(900,600), suptitle="Reflex Action"))
+p1e = plot(Sol, idxs=[Head_cap.G, Head_veins.cO₂],
+             label = ["Brain Vascular Conductance" "Concentration of O₂ in Head Veins"],
+             xlabel = "Time (s)",
+             ylabel = "G (ml/s/mmHg), cO₂ (ml/ml)",
+             title = "Cerebral Autoregulation")
 
-plot(Sol, idxs=[1/(1/UpBd_cap.R + 1/Renal_cap.R + 1/Splanchnic_cap.R + 1/Leg_cap.R + 1/Cor_cap.R + 0.15)],
-        label = ["Asc_A" "BC_A" "UpBd_art" "Thor_A" "Abd_A" "Renal_art" "Splanchnic_art" "Leg_art"],
-        xlabel = "Time (s)",
-        ylabel = "Q (ml/s)",
-        title = "Arterial Flows")
+p1f = plot(Sol, idxs=[Efferent.fapc, Efferent.fasr, Efferent.fcpr, Efferent.θₛₕ, Efferent.θₛₚ, Efferent.θₛᵥ],
+             label = ["Peripheral Chemoreceptors" "Pulmonary Stretch Receptors" "Cardiopulmonary Reflex" "Ischemic to β-Sympathetic" "Ischemic to α-Sympathetic (R)" "Ischemic to α-Sympathetic (V)"],
+             xlabel = "Time (s)",
+             ylabel = "Spikes/s",
+             title = "Afferent Pathways (Excluding Baroreflex)")
 
-plot(Sol, idxs=[UBMuscleAutoreg.xjO₂, LBMuscleAutoreg.xjO₂],
-        label = ["UBMuscleAutoreg" "LBMuscleAutoreg"],
-        xlabel = "Time (s)",
-        ylabel = "xjO₂",
-        title = "Muscle Autoregulation")
+p1g = plot(Sol, idxs=[Efferent.fab],
+             label = "Arterial Baroreflex",
+             xlabel = "Time (s)",
+             ylabel = "Spikes/s",
+             title = "Arterial Baroreflex Afferent Pathway")
 
-plot(Sol, idxs=[1/Head_cap.G], ylims=(0,10))
+p1h = plot(Sol, idxs=[Efferent.fₛₕ, Efferent.fₛₚ, Efferent.fₛᵥ, Efferent.fᵥ],
+             label = ["β-Sympathetic" "α-Sympathetic (R)" "α-Sympathetic (V)" "Vagal"],
+             xlabel = "Time (s)",
+             ylabel = "Spikes/s",
+             title = "Efferent Pathways")
+
+display(plot(p1a, p1b, p1c, p1d, layout=(2,2), size=(900,600), suptitle="Reflex Action (1)"))
+# savefig("Images/reflex1.png")
+display(plot(p1e, p1f, p1g, p1h, layout=(2,2), size=(900,600), suptitle="Reflex Action (2)"))
+# savefig("Images/reflex2.png")
 
 p2a = plot(Sol, idxs=[Vtotal, Vvessel, Vinterstitial],
              label = ["Vtotal" "Vvessel" "Vinterstitial"],
@@ -841,19 +848,7 @@ p2d = plot(Sol, idxs=[Asc_A.in.q],
              title = "Left Ventricular Outflow")
 
 display(plot(p2a, p2b, p2c, p2d, layout=(2,2), size=(900,600), suptitle="Hemodynamics"))
-
-# plot(Sol, idxs=[UpBd_vein.C.V₀eff],
-#         label = ["Asc_A" "BC_A" "UpBd_art" "Thor_A" "Abd_A" "Renal_art" "Splanchnic_art" "Leg_art"],
-#         xlabel = "Time (s)",
-#         ylabel = "Pressure (mmHg)",
-#         title = "Arterial Pressures")
-
-# plot(Sol, idxs=[EVtone_UpBd.σθ])
-
-# plot(Sol, idxs=[EVtone_UpBd.σθ,Efferent.fₛᵥ],
-#         xlabel = "Time (s)",
-#         ylabel = "Concentration (ml/ml)",
-#         title = "Spikes")
+# savefig("Images/hemodynamics.png")
 
 #### Beat-to-Beat Plots
 
@@ -879,6 +874,7 @@ p3d = plot(beat_times, [SV],
              title = "Stroke Volume")
 
 display(plot(p3a, p3b, p3c, p3d, layout=(2,2), size=(900,600), suptitle="Beat-to-Beat Trends"))
+# savefig("Images/beat2beat.png")
 
 plot(beat_times, [(Head_art_Vmean + Head_veins_Vmean + Jugular_vein_Vmean + CommonCarotid_Vmean),
         (UpBd_art_Vmean + UpBd_vein_Vmean),
@@ -893,36 +889,7 @@ plot(beat_times, [(Head_art_Vmean + Head_veins_Vmean + Jugular_vein_Vmean + Comm
         ylabel = "Volume (ml)",
         title = "Average Branch Volumes")
 
-
-plot(Sol, idxs=[Efferent.fapc, Efferent.fasr, Efferent.fcpr, Efferent.θₛₕ, Efferent.θₛₚ, Efferent.θₛᵥ],
-        label = ["fapc" "fasr" "fcpr" "θₛₕ" "θₛₚ" "θₛᵥ"],
-        xlabel = "Time (s)",
-        title = "Efferent Pathways")
-
-plot(Sol, idxs=[Head_art.C.p, Head_veins.C.p],
-        xlabel = "Time (s)",
-        title = "Efferent Pathways")
-
-
-Offsetᵣ = Wcₛₚ * Efferent.fapc + Wpₛₚ * Efferent.fasr - Efferent.θₛₚ
-
-plot(Sol, idxs=[Offsetᵣ],
-        label = "Offset",
-        xlabel = "Time (s)",
-        title = "Offset")
-
-plot(Sol, idxs=[IschHeart.ΔΘCO₂ₛⱼ, IschHeart.uPaCO₂],
-        xlabel = "Time (s)",
-        title = "Head Veins")
-
-# plot(Sol, idxs=[Head_art.cO₂, Head_veins.cO₂, CommonCarotid.cO₂, Jugular_vein.cO₂],
-#         xlabel = "Time (s)",
-#         title = "Head Veins")
-
-# plot(Sol, idxs=[CommonCarotid.cCO₂,UpBd_art.cCO₂, Asc_A.cCO₂])
-# plot(Sol, idxs=[CommonCarotid.in.q,UpBd_art.in.q])
-# plot(Sol, idxs=[Splanchnic_art.q,Renal_art.q])
-
+# savefig("Images/volumes.png")
 #### Pulmonary and Respiratory Plots
 
 p4a = plot(Sol, idxs=[RespMuscles.out.p], xlims = (0, 250),
@@ -943,85 +910,80 @@ p4c = plot(Sol, idxs=[Lungs.p_A], xlims = (0, 250),
         ylabel = "Pressure (mmHg)",
         title = "Alveolar Pressure")
 
-p4d = plot(Sol, idxs=[Lungs.Vrᵢₙ], xlims = (0, 250),
+p4d = plot(Sol, idxs=[Lungs.Vrᵢₙ],
         label = "Air Flow",
         xlabel = "Time (s)",
         ylabel = "Flow (ml/s)",
         title = "Air Flow")
 
-p4e = plot(Sol, idxs=[Lungs.V_A + Lungs.V_D], xlims = (0, 250),
+p4e = plot(Sol, idxs=[Lungs.V_A + Lungs.V_D],
         label = "V_L",
         xlabel = "Time (s)",
         ylabel = "Volume (ml)",
         title = "Lung Volume")
 
-p4f = plot(Sol, idxs=[Lungs.V_A], xlims = (0, 250),
+p4f = plot(Sol, idxs=[Lungs.V_A],
         label = "V_A",
         xlabel = "Time (s)",
         ylabel = "Volume (ml)",
         title = "Alveolar Volume")
 
-p4g = plot(Sol, idxs=[Lungs.V_D], xlims = (0, 250),
+p4g = plot(Sol, idxs=[Lungs.V_D],
         label = "V_D",
         xlabel = "Time (s)",
         ylabel = "Volume (ml)",
         title = "Dead Space Volume")
 
-p4h = plot(Sol, idxs=[Intrathoracic.pth.p], xlims = (0, 250),
-      label = "pₜₕ",
+p4h = plot(Sol, idxs=[TV.VT],
+      label = "Vₜ",
       xlabel = "Time (s)",
-      ylabel = "Pressure (mmHg)",
-      title = "Intrathoracic Pressure")
+      ylabel = "Volume (ml)",
+      title = "Tidal Volume")
 
       # plot(Sol , idxs=[Lungs.VT])
 
 display(plot(p4a,p4b,p4c,p4d,p4e,p4f,p4g,p4h, layout=(4,2), size=(900,600), suptitle="Lungs"))
+# savefig("Images/lungs.png")
 
-# plot(Sol, idxs=[Renal_vein.C.V₀eff], xlims = (0, 250))
+p5a = plot(Sol, idxs=[LungGE.FAO₂, LungGE.FACO₂, LungGE.FDO₂, LungGE.FDCO₂],
+        label = ["FAO₂" "FACO₂" "FDO₂" "FDCO₂"],
+        xlabel = "Time (s)",
+        ylabel = "Fraction",
+        title = "Gas Mix (Alveoli, Dead Space)")
 
-# plot(Sol, idxs=[TV.VT], xlims = (0, 250))
+p5b = plot(Sol, idxs=[LungGE.SaO₂],
+        label = "SaO₂",
+        xlabel = "Time (s)",
+        ylabel = "Saturation",
+        title = "Arterial Saturation")
 
-display(plot(Sol, idxs=[EResistance.σθ, EVtone_Splanchnic.σθ, ELH.σθ]))
+p5c = plot(Sol, idxs=[LungGE.pppO₂, LungGE.pppCO₂, LungGE.paO₂, LungGE.paCO₂],
+        label = ["Lung ppO₂" "Lung ppCO₂" "Arterial ppO₂" "Arterial ppCO₂"],
+        xlabel = "Time (s)",
+        ylabel = "Partial Pressure (mmHg)",
+        title = "Pulmonary Shunt")
 
-# display(plot(Sol, idxs=[BC_A.q,(UpBd_art.q + CommonCarotid.q)],
-#         xlabel = "Time (s)",
-#         ylabel = "Concentration (ml/ml)",
-#         title = "Head Veins"))
-
-display(plot(Sol, idxs=[PeripheralChemo.fapc],
+p5d = plot(Sol, idxs=[LungGE.cvO₂, LungGE.cvCO₂, LungGE.caO₂, LungGE.caCO₂],
+        label = ["Mixed Venous O₂" "Mixed Venous CO₂" "Arterial O₂" "Arterial CO₂"],
         xlabel = "Time (s)",
         ylabel = "Concentration (ml/ml)",
-        title = "Head Veins"))
+        title = "Lung Gas Exchange")
 
-display(plot(Sol, idxs=[LungGE.FACO₂, LungGE.FDO₂, LungGE.FAO₂, LungGE.FDCO₂],
+p5e = plot(Sol, idxs=[60*(Cor_art.C.MO₂dyn + UpBd_art.C.MO₂ + Head_art.C.MO₂ + Renal_art.C.MO₂ + Splanchnic_art.C.MO₂ + Leg_art.C.MO₂), RQ₀*60*(Cor_art.C.MO₂dyn + UpBd_art.C.MO₂ + Head_art.C.MO₂ + Renal_art.C.MO₂ + Splanchnic_art.C.MO₂ + Leg_art.C.MO₂)],
+        label = ["O₂ Consumption" "CO₂ Production"],
         xlabel = "Time (s)",
-        ylabel = "Concentration (ml/ml)",
-        title = "Lung Gas Exchange"))
+        ylabel = "Rate (ml/min)",
+        title = "Tissue Gas Exchange")
 
-display(plot(Sol, idxs=[Efferent.fasr, Efferent.fapc, Efferent.fcpr], ylims = (0,10),
-        label = ["fasr" "fapc" "fcpr"],
+p5f = plot(Sol, idxs=[Pulm_cap.l₁, Pulm_cap.l₂],
+        label = ["Zone II/III Boundary" "Zone I/II Boundary"],
         xlabel = "Time (s)",
-        ylabel = "Concentration (ml/ml)",
-        title = "Brain Autoregulation"))
+        ylabel = "Height above pa/pv (cm)",
+        title = "Zonal Pulmonary Flow")
 
-display(plot(Sol, idxs=[Head_cap.G, BrainAutoreg.xbO₂, BrainAutoreg.uCvbO₂],
-        xlabel = "Time (s)",
-        ylabel = "Concentration (ml/ml)",
-        title = "Brain Autoregulation"))
+display(plot(p5a,p5b,p5c,p5d,p5e,p5f, layout=(3,2), size=(900,900), suptitle="Gas Exchange"))
+# savefig("Images/gas_exchange.png")
 
-display(plot(Sol, idxs=[Efferent.fₛₕ, Efferent.fₛₚ, Efferent.fₛᵥ],
-        label = ["fₛₕ" "fₛₚ" "fₛᵥ"],
-        xlabel = "Time (s)",
-        ylabel = "Concentration (ml/ml)",
-        title = "Spikes"))
-
-display(plot(Sol, idxs=[UpBd_cap.R, Renal_cap.R, Splanchnic_cap.R, Leg_cap.R, 1/Head_cap.G],
-ylims = (0, 12),
-        xlabel = "Time (s)",
-        ylabel = "Regulation (ml/ml)",
-        title = "Leg Autoregulation"))
-
-display(plot(Sol, idxs=[Cor_cap.R]))
 """
 Save Outputs
 Uncomment the following lines to save the outputs to a CSV file.
@@ -1058,3 +1020,7 @@ Uncomment the following lines to save the outputs to a CSV file.
 
 end
 
+### TODO: CV Model:            (1) Refine Model Parameters (2) Vertebral Plexus (3) Dynamic ICP
+### TODO: Pulmonary Mechanics: (1) Bring Intrathoracic Pressure into Lung Model
+### TODO: Simulation:          (1) Exercise Model, (2) Other blood parameters (e.g., pH etc.), (https://github.com/baillielab/oxygen_delivery/blob/master/oxygen_delivery.py) (3) Altitude, pressure, temperature driver; water vapor etc.
+### TODO: Code:                (1) Fix the whole model params thing

@@ -12,7 +12,7 @@ D = Differential(t)
 
 """
 Pin
-This is a simple pin model with two variables: pressure (p, mmHg) and blood flow (q, ml/s). The flow is connected in accordance with Kirchhoff's laws.
+This is a simple pin model with two variables: pressure (p, mmHg) and blood flow (q, ml/s). The flow is connected in accordance with Kirchhoff's laws. O₂ and CO₂ concentrations are also included as stream variables, which are carried by the flow. A separate PresPin model is defined for pressure-only connections (e.g., in the lung mechanics or tissue pressures).
 """
 
 @connector Pin begin
@@ -155,6 +155,11 @@ The Variable Resistor model extends the One Port model and represents a resistiv
   end
 end
 
+"""
+Variable Conductor
+Same as the variable resistor but in conductance (G=1/R). This is used in the head capillaries where cerebral autoregulation affects conductance in a linear fashion.
+"""
+
 @mtkmodel VarConductor begin
   @extend OnePort()
 
@@ -166,6 +171,11 @@ end
     q ~ -Δp * G
   end
 end
+
+"""
+Vessel Collapse models
+These are resistors that exhibit vessel collapse behavior as defined by Zamanian (2007). Separate models are required for veins and arteries with the pressure-flow relationship reversed in order to avoid algebraic loops.
+"""
 
 @mtkmodel VesselCollapseVein begin
   @extend OnePort()
@@ -220,6 +230,11 @@ The Resistor Diode model extends the One Port model and represents a resistive e
     q ~ -Δp / R * (Δp < 0)
   end
 end
+
+"""
+Vessel Collapse Diode
+The Vessel Collapse Diode model extends the resistor diode model to include a vessel collapse mechanic based on volume in a connected compliance. It is used in the arteries and veins with valves.
+"""
 
 @mtkmodel VesselCollapseDiode begin
   @extend OnePort()
@@ -879,6 +894,7 @@ end
 
 """
 Vertebral Plexus
+Currently not implemented.
 """
 
 @mtkmodel VertebralPlexus begin
@@ -958,7 +974,7 @@ end
 
 """
 Intrathoracic Pressure
-This model represents the intrathoracic pressure. It is defined by a baseline pressure (pₜₕ) and adjusted by time-varying gravity and tilt effects as defined by Heldt (2004).
+This model represents the intrathoracic pressure. It currently just connects the cardivascular model to the lung model. Hydrostatic effects are WIP.
 """
 
 @mtkmodel IntrathoracicPressure begin
@@ -1342,6 +1358,7 @@ end
 
 """
 Tidal Volume Calculator
+This model calculates the tidal volume based on the lung volume and the minimum and maximum lung volumes. It uses a breath hold trigger to update the minimum and maximum lung volumes based on the new detected inspiration/expiration.
 """
 
 @mtkmodel TidalVolume begin
@@ -1365,6 +1382,10 @@ end
 
 """
 Lung Gas Exchange
+This model represents the gas exchange in the lungs. It is based on the work of Albanese (2016) and gas transfer through the dead space and across the alveoli to the pulmonary capillaries. The long equations significantly slow down the simulation, they are there to avoid the algebraic loop that is created by the D(cppO₂) and D(cppCO₂) terms in the equations:
+D(FAO₂) ~ (ifelse(Vrᵢₙ >= 0, Vr_A * (FDO₂ - FAO₂),0) - _K * (qpp * (cppO₂ - cvO₂) - Vpp * D(cppO₂))) / V_A
+D(FACO₂) ~ (ifelse(Vrᵢₙ >= 0, Vr_A * (FDCO₂ - FACO₂),0) - _K * (qpp * (cppCO₂ - cvCO₂) + _K * Vpp * D(cppCO₂))) / V_A
+See the standalone SolvingLungGasExchange.jl for a more detailed description of the workflow to remove the algebraic loop..
 """
 
 @mtkmodel LungGasExchange begin
@@ -1482,6 +1503,7 @@ end
 
 """
 Dynamic Heart Power
+This model calculates the instantaneous oxygen consumption of the heart based on the left and right ventricle pressures and volumes.
 """
 
 @mtkmodel HeartPower begin

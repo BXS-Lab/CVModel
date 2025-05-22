@@ -600,12 +600,12 @@ DTv = 0.2 # (s)
 τResistance = 6 # (s)
 DResistance = 2 # (s)
 
-GResistance = 3.49 # (mmHg.s/ml/ν)
+GResistance = 1.744 # (mmHg.s/ml/ν)
 
-R_UpBd_cap = 6.95 # Upper Body microvascular resistance (PRU)
-R_Renal_cap = -0.35 # Renal microvascular resistance (PRU)
-R_Splanchnic_cap = -1.75 # Splanchnic microvascular resistance (PRU) (Increased from 2.8 for coronary arteries)
-R_Leg_cap = -1.05 # Leg microvascular resistance (PRU)# Total microvascular resistance (PRU)
+R_UpBd_cap = 9.68 # Upper Body microvascular resistance (PRU)
+R_Renal_cap = 2.38 # Renal microvascular resistance (PRU)
+R_Splanchnic_cap = 0.98 # Splanchnic microvascular resistance (PRU) (Increased from 2.8 for coronary arteries)
+R_Leg_cap = 1.68 # Leg microvascular resistance (PRU)# Total microvascular resistance (PRU)
 
 
 

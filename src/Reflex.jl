@@ -28,7 +28,7 @@ end
 
 """
 NEW Reflexes
-Here are the reflexes that are not included in the original model. These are the ones that are not included in the original model, but are necessary for the simulation.
+Included for the 3.4.0 update, removing the Heldt-style reflexes and replacing with the Ursino style with spikes and synaptic connections.
 """
 
 """
