@@ -105,3 +105,19 @@ This project is licensed under the [MIT License](LICENSE).
 ## DOI
 
 [![DOI](https://zenodo.org/badge/894082810.svg)](https://doi.org/10.5281/zenodo.15338311)
+
+## Citation
+
+Whittle RS, Kondoor AJ, Vellore HS. BXS-Lab/CVModel: v3.4.0. Zenodo; 2025. doi: [10.5281/zenodo.15486814](https://doi.org/10.5281/zenodo.15486814).
+
+### BibTeX
+
+```bibtex
+@software{whittle2025cvmodel,
+  author       = {Whittle, R. S. and Kondoor, A. J. and Vellore, H. S.},
+  title        = {BXS-Lab/CVModel: v3.4.0},
+  year         = 2025,
+  publisher    = {Zenodo},
+  doi          = {10.5281/zenodo.15486814},
+  url          = {https://doi.org/10.5281/zenodo.15486814}
+}
