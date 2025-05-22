@@ -749,6 +749,12 @@ display(plot(Sol, idxs=[Vtotal],
         ylabel = "Volume (ml)",
         title = "Total Blood Volume")) # Debugging plot to quickly check volume conservation
 
+display(plot(Sol, idxs=[EResistance.σθ, EVtone_Splanchnic.σθ, ELH.σθ, ERR.ΔTₛ, ERR.ΔTᵥ],
+        label = ["Resistance" "Venous Tone" "Contractility" "RR-symp" "RR-para"],
+        xlabel = "Time (s)",
+        ylabel = "Spikes/s",
+        title = "Effectors")) # Debugging plot to quickly check resistance conservation
+
 #### Direct from Solution Plots
 
 p0a = plot(Sol, idxs=[alpha_driver.α * 180 / π],
