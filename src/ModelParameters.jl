@@ -600,12 +600,12 @@ DTv = 0.2 # (s)
 τResistance = 6 # (s)
 DResistance = 2 # (s)
 
-GResistance = 2.5 # (mmHg.s/ml/ν)
+GResistance = 2.0 # (mmHg.s/ml/ν)
 
-R_UpBd_cap = 4.5 # Upper Body microvascular resistance (PRU)
-R_Renal_cap = 1.5 # Renal microvascular resistance (PRU)
-R_Splanchnic_cap = 0.75 # Splanchnic microvascular resistance (PRU) (Increased from 2.8 for coronary arteries)
-R_Leg_cap = 1.5 # Leg microvascular resistance (PRU)# Total microvascular resistance (PRU)
+R_UpBd_cap = 11.2 # Upper Body microvascular resistance (PRU)
+R_Renal_cap = 4.8 # Renal microvascular resistance (PRU)
+R_Splanchnic_cap = 2.4 # Splanchnic microvascular resistance (PRU) (Increased from 2.8 for coronary arteries)
+R_Leg_cap = 4.0 # Leg microvascular resistance (PRU)# Total microvascular resistance (PRU)
 
 
 
@@ -618,17 +618,17 @@ Vsplit_Renal = 2/31 # Renal Veins volume split
 Vsplit_Splanchnic = 15/31 # Splanchnic Veins volume split
 Vsplit_Leg = 8/31 # Leg Veins volume split
 
-GVtone = -1156.6 # (ml/ν) # Total venous tone gain (ml/ν)
+GVtone = -800 # (ml/ν) # Total venous tone gain (ml/ν)
 
 GVtone_UpBd = GVtone*Vsplit_UpBd # (ml/ν)
 GVtone_Renal = GVtone*Vsplit_Renal # (ml/ν)
 GVtone_Splanchnic = GVtone*Vsplit_Splanchnic # (ml/ν)
 GVtone_Leg = GVtone*Vsplit_Leg # (ml/ν)
 
-v0_UpBd_vein = 620.4 # Upper Body Veins zero pressure volume (ml)
-v0_Renal_vein = 108.4 # Renal Vein zero pressure volume (ml)
-v0_Splanchnic_vein = 1712.5 # Splanchnic Vein zero pressure volume (ml) (Subtracted coronary veins)
-v0_Leg_vein = 1085.1 # Leg Vein zero pressure volume (ml)
+v0_UpBd_vein = 456 # Upper Body Veins zero pressure volume (ml)
+v0_Renal_vein = 76 # Renal Vein zero pressure volume (ml)
+v0_Splanchnic_vein = 1200 # Splanchnic Vein zero pressure volume (ml) (Subtracted coronary veins)
+v0_Leg_vein = 760 # Leg Vein zero pressure volume (ml)
 
 tot = v0_UpBd_vein + v0_Renal_vein + v0_Splanchnic_vein + v0_Leg_vein
 3226.4
