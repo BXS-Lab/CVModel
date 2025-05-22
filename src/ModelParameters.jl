@@ -49,7 +49,7 @@ These parameters define the heart's properties, including systolic and elastance
 """
 
 #### Cardiac Timings
-RR₀ = 0.58 # Nominal RR interval (s)
+RR₀ = 0.5 # Nominal RR interval (s)
 τₐᵥ = 0.12 # PR interval (A-V delay) (s)
 τₐₛ = 0.2 # Atrium systolic contraction time (s)
 τᵥₛ = 0.3 # QT interval (Ventricle systolic contraction time) (s)
@@ -600,12 +600,12 @@ DTv = 0.2 # (s)
 τResistance = 6 # (s)
 DResistance = 2 # (s)
 
-GResistance = 1.744 # (mmHg.s/ml/ν)
+GResistance = 2.5 # (mmHg.s/ml/ν)
 
-R_UpBd_cap = 9.68 # Upper Body microvascular resistance (PRU)
-R_Renal_cap = 2.38 # Renal microvascular resistance (PRU)
-R_Splanchnic_cap = 0.98 # Splanchnic microvascular resistance (PRU) (Increased from 2.8 for coronary arteries)
-R_Leg_cap = 1.68 # Leg microvascular resistance (PRU)# Total microvascular resistance (PRU)
+R_UpBd_cap = 4.5 # Upper Body microvascular resistance (PRU)
+R_Renal_cap = 1.5 # Renal microvascular resistance (PRU)
+R_Splanchnic_cap = 0.75 # Splanchnic microvascular resistance (PRU) (Increased from 2.8 for coronary arteries)
+R_Leg_cap = 1.5 # Leg microvascular resistance (PRU)# Total microvascular resistance (PRU)
 
 
 
