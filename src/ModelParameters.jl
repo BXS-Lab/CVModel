@@ -552,10 +552,10 @@ Wcₛₕ = 1 # Modified from 5, Chemoreceptors to heart
 Wpₛₕ = 0 # Pulmonary stretch receptors to heart
 Wrₛₕ = 0 # Cardiopulmonary reflex to heart
 
-Wbₛₚ = -0.5 # Baroreflex to arterioles
-Wcₛₚ = 2.5 # Chemoreceptors to arterioles
-Wpₛₚ = -0.17 # Pulmonary stretch receptors to arterioles
-Wrₛₚ = -0.5 # Cardiopulmonary reflex to arterioles
+Wbₛₚ = -1 # Baroreflex to arterioles
+Wcₛₚ = 5 # Chemoreceptors to arterioles
+Wpₛₚ = -0.34 # Pulmonary stretch receptors to arterioles
+Wrₛₚ = -1 # Cardiopulmonary reflex to arterioles
 
 Wbₛᵥ = -0.5 # Baroreflex to venous tone
 Wcₛᵥ = 2.5 # Chemoreceptors to venous tone
@@ -625,12 +625,22 @@ GVtone_Renal = GVtone*Vsplit_Renal # (ml/ν)
 GVtone_Splanchnic = GVtone*Vsplit_Splanchnic # (ml/ν)
 GVtone_Leg = GVtone*Vsplit_Leg # (ml/ν)
 
-v0_UpBd_vein = 567.6 # Upper Body Veins zero pressure volume (ml)
-v0_Renal_vein = 99.2 # Renal Vein zero pressure volume (ml)
-v0_Splanchnic_vein = 1566.8 # Splanchnic Vein zero pressure volume (ml) (Subtracted coronary veins)
-v0_Leg_vein = 992.8 # Leg Vein zero pressure volume (ml)
+v0_UpBd_vein = 620.4 # Upper Body Veins zero pressure volume (ml)
+v0_Renal_vein = 108.4 # Renal Vein zero pressure volume (ml)
+v0_Splanchnic_vein = 1712.5 # Splanchnic Vein zero pressure volume (ml) (Subtracted coronary veins)
+v0_Leg_vein = 1085.1 # Leg Vein zero pressure volume (ml)
 
-
+tot = v0_UpBd_vein + v0_Renal_vein + v0_Splanchnic_vein + v0_Leg_vein
+3226.4
+ub=567.6/tot
+ren=99.2/tot
+spl=1566.8/tot
+leg=992.8/tot
+totn=tot+300
+ub*totn
+ren*totn
+spl*totn
+leg*totn
 """
 Basal Values
 """
