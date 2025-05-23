@@ -76,7 +76,7 @@ Here we use the previously extracted initial angle and gravity to determine the 
 pt0_Head = ρ_fft * gravity_val_numeric * (rad_Head/100) * cos(α_val_numeric) * Pa2mmHg
 pt0_Neck = ρ_fft * gravity_val_numeric * (rad_Neck/100) * cos(α_val_numeric) * Pa2mmHg
 pt0_UB = ρ_fft * gravity_val_numeric * (rad_UB/100) * cos(α_val_numeric) * Pa2mmHg
-# pt0_Thor = ρ_fft * gravity_val_numeric * (rad_Thor/100) * cos(α_val_numeric) * Pa2mmHg
+pt0_Thor = ρ_fft * gravity_val_numeric * (rad_Thor/100) * cos(α_val_numeric) * Pa2mmHg
 pt0_Abd = ρ_fft * gravity_val_numeric * (rad_Abd/100) * cos(α_val_numeric) * Pa2mmHg
 pt0_Leg = ρ_fft * gravity_val_numeric * (rad_Leg/100) * cos(α_val_numeric) * Pa2mmHg
 
@@ -151,12 +151,12 @@ Create External Pressure Vector
 """
 
 p_rel = zeros(N_STATE)
-p_rel[1] = pₜₕ₀
-p_rel[2] = pₜₕ₀
+p_rel[1] = pₜₕ₀ + pt0_Thor
+p_rel[2] = pₜₕ₀ + pt0_Thor
 p_rel[3] = pt0_UB
 p_rel[4] = pt0_UB
-p_rel[5] = pₜₕ₀
-p_rel[6] = pₜₕ₀
+p_rel[5] = pₜₕ₀ + pt0_Thor
+p_rel[6] = pₜₕ₀ + pt0_Thor
 p_rel[7] = pt0_Abd
 p_rel[8] = pt0_Abd
 p_rel[9] = pt0_Abd
@@ -165,21 +165,21 @@ p_rel[11] = pt0_Abd
 p_rel[12] = pt0_Leg
 p_rel[13] = pt0_Leg
 p_rel[14] = pt0_Abd
-p_rel[15] = pₜₕ₀
+p_rel[15] = pₜₕ₀ + pt0_Thor
 p_rel[16] = pt0_Neck
 p_rel[17] = pt0_Head + p_icp
 p_rel[18] = pt0_Head + p_icp
 p_rel[19] = pt0_Neck
-p_rel[20] = pₜₕ₀
-p_rel[21] = pₜₕ₀
-p_rel[22] = pₜₕ₀
-p_rel[23] = pₜₕ₀
-p_rel[24] = pₜₕ₀
-p_rel[25] = pₜₕ₀
-p_rel[26] = pₜₕ₀
-p_rel[27] = pₜₕ₀
-p_rel[28] = pₜₕ₀
-p_rel[29] = pₜₕ₀
+p_rel[20] = pₜₕ₀ + pt0_Thor
+p_rel[21] = pₜₕ₀ + pt0_Thor
+p_rel[22] = pₜₕ₀ + pt0_Thor
+p_rel[23] = pₜₕ₀ + pt0_Thor
+p_rel[24] = pₜₕ₀ + pt0_Thor
+p_rel[25] = pₜₕ₀ + pt0_Thor
+p_rel[26] = pₜₕ₀ + pt0_Thor
+p_rel[27] = pₜₕ₀ + pt0_Thor
+p_rel[28] = pₜₕ₀ + pt0_Thor
+p_rel[29] = pₜₕ₀ + pt0_Thor
 
 """
 Determine the nonlinear effective compliance equations

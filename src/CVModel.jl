@@ -75,9 +75,9 @@ This section of code instances the compartments used in the model, based on the 
 @named R_pulmonary = MynardValve_SemiLunar(Leff=Leff_pv, Ann=Ann_pv, Kvc=Kvc_pv, Kvo=Kvo_pv)
 
 #### Pulmonary Circulation
-@named Pulm_art = Artery(C=Cpa, R=Rpa, V₀=v0pa, has_hydrostatic=false, has_tissue=false, has_inertia=false, is_pulmonary=true)
+@named Pulm_art = Artery(C=Cpa, R=Rpa, V₀=v0pa, has_hydrostatic=false, has_tissue=true, has_inertia=false, is_pulmonary=true, rad=rad_Thor)
 @named Pulm_cap = StarlingResistor(R=Rpc, h=h_Lungs)
-@named Pulm_vein = Vein(C=Cpv, R=Rpv, V₀=v0pv, has_hydrostatic=false, has_tissue=false)
+@named Pulm_vein = Vein(C=Cpv, R=Rpv, V₀=v0pv, has_hydrostatic=false, has_tissue=true, rad=rad_Thor)
 
 #### Left Heart
 @named LA = HeldtChamber(V₀=v0_la, Eₘᵢₙ=Ed_la, Eₘₐₓ=Ees_la, τₑₛ=τₐₛ, inP=true)
@@ -85,19 +85,26 @@ This section of code instances the compartments used in the model, based on the 
 @named LV = HeldtChamber(V₀=v0_lv, Eₘᵢₙ=Ed_lv, Eₘₐₓ=Ees_lv, Elimit = Elimit_lv, τₑₛ=τᵥₛ, inP=true, has_abr=true)
 @named R_aortic = MynardValve_SemiLunar(Leff=Leff_av, Ann=Ann_av, Kvc=Kvc_av, Kvo=Kvo_av)
 
+#### Heart Tissue Pressures
+# These create the external thoracic tissue weight on the heart (all arteries and veins already have this lumped in to their models).
+@named RA_tissue = TissuePressure(rad=rad_Thor)
+@named RV_tissue = TissuePressure(rad=rad_Thor)
+@named LA_tissue = TissuePressure(rad=rad_Thor)
+@named LV_tissue = TissuePressure(rad=rad_Thor)
+
 #### Coronary Circulation
-@named Cor_art = Artery(C=Cca, R=Rca, V₀=v0ca, has_hydrostatic=false, has_tissue=false, is_heart=true, Vₜ=Vₜ_heart, RQ=RQ₀)
+@named Cor_art = Artery(C=Cca, R=Rca, V₀=v0ca, has_hydrostatic=false, has_tissue=true, is_heart=true, Vₜ=Vₜ_heart, RQ=RQ₀, rad=rad_Thor)
 @named Cor_cap = VarResistor()
-@named Cor_vein = Vein(C=Ccv, R=Rcv, V₀=v0cv, has_hydrostatic=false, has_tissue=false)
+@named Cor_vein = Vein(C=Ccv, R=Rcv, V₀=v0cv, has_hydrostatic=false, has_tissue=true, rad=rad_Thor)
 
 #### Dynamic Heart Power
 @named HeartP = HeartPower()
 
 #### Arterial Circulation
-@named Asc_A = Artery(C=C_Asc_A, R=R_Asc_A, V₀=v0_Asc_A, h=h_Asc_A, has_tissue=false, has_inertia=false)
-@named BC_A = Artery(C=C_BC_A, R=R_BC_A, V₀=v0_BC_A, h=h_BC_A, has_tissue=false, L=L_BC_A)
+@named Asc_A = Artery(C=C_Asc_A, R=R_Asc_A, V₀=v0_Asc_A, h=h_Asc_A, has_tissue=true, has_inertia=false, rad=rad_Thor)
+@named BC_A = Artery(C=C_BC_A, R=R_BC_A, V₀=v0_BC_A, h=h_BC_A, has_tissue=true, L=L_BC_A, rad=rad_Thor)
 @named UpBd_art = Artery(C=C_UpBd_art, R=R_UpBd_art, V₀=v0_UpBd_art, h=h_UpBd_art, con=con_UpBd_art, rad=rad_UB, L=L_UpBd_art, has_gasexchange=true, Vₜ=Vₜ_ub, MO₂=MO₂_ub, RQ=RQ₀)
-@named Thor_A = Artery(C=C_Thor_A, R=R_Thor_A, V₀=v0_Thor_A, h=h_Thor_A, has_tissue=false, L=L_Thor_A)
+@named Thor_A = Artery(C=C_Thor_A, R=R_Thor_A, V₀=v0_Thor_A, h=h_Thor_A, has_tissue=true, L=L_Thor_A, rad=rad_Thor)
 @named Abd_A = Artery(C=C_Abd_A, R=R_Abd_A, V₀=v0_Abd_A, h=h_Abd_A, rad=rad_Abd, L=L_Abd_A)
 @named Renal_art = Artery(C=C_Renal_art, R=R_Renal_art, V₀=v0_Renal_art, h=h_Renal_art, rad=rad_Abd, L=L_Renal_art, has_gasexchange=true, Vₜ=Vₜ_renal, MO₂=MO₂_renal, RQ=RQ₀)
 @named Splanchnic_art = Artery(C=C_Splanchnic_art, R=R_Splanchnic_art, V₀=v0_Splanchnic_art, h=h_Splanchnic_art, rad=rad_Abd, L=L_Splanchnic_art, has_gasexchange=true, Vₜ=Vₜ_splanchnic, MO₂=MO₂_splanchnic, RQ=RQ₀)
@@ -107,12 +114,12 @@ This section of code instances the compartments used in the model, based on the 
 
 #### Venous Circulation
 @named UpBd_vein = Vein(C=C_UpBd_vein, R=R_UpBd_vein, V₀=v0_UpBd_vein, h=h_UpBd_vein, con=con_UpBd_vein, has_valve=true, has_reflex=true, rad=rad_UB)
-@named SVC = Vein(C=C_SVC, R=R_SVC, V₀=v0_SVC, h=h_SVC, has_tissue=false)
+@named SVC = Vein(C=C_SVC, R=R_SVC, V₀=v0_SVC, h=h_SVC, has_tissue=true, rad=rad_Thor)
 @named Renal_vein = Vein(C=C_Renal_vein, R=R_Renal_vein, V₀=v0_Renal_vein, h=h_Renal_vein, has_reflex=true, rad=rad_Abd, V_min=vₘᵢₙ_Renal_vein)
 @named Splanchnic_vein = Vein(C=C_Splanchnic_vein, R=R_Splanchnic_vein, V₀=v0_Splanchnic_vein, h=h_Splanchnic_vein, is_nonlinear=true, Flow_div = Flow_Splanchnic_vein, V_max=vM_Splanchnic_vein, has_reflex=true, rad=rad_Abd)
 @named Leg_vein = Vein(C=C_Leg_vein, R=R_Leg_vein, V₀=v0_Leg_vein, h=h_Leg_vein, con=con_Leg_vein, has_valve=true, is_nonlinear=true, Flow_div = Flow_Leg_vein, V_max=vM_Leg_vein, has_reflex=true, rad=rad_Leg)
 @named Abd_veins = Vein(C=C_Abd_veins, R=R_Abd_veins, V₀=v0_Abd_veins, h=h_Abd_veins, is_nonlinear=true, Flow_div = Flow_Abd_veins, V_max=vM_Abd_vein, rad=rad_Abd)
-@named Thor_IVC = Vein(C=C_Thor_IVC, R=R_Thor_IVC, V₀=v0_Thor_IVC, h=h_Thor_IVC, has_tissue=false)
+@named Thor_IVC = Vein(C=C_Thor_IVC, R=R_Thor_IVC, V₀=v0_Thor_IVC, h=h_Thor_IVC, has_tissue=true, rad=rad_Thor)
 @named Head_veins = Vein(C=C_Head_veins, R=R_Head_veins, V₀=v0_Head_veins, h=h_Head_veins, rad=rad_Head, has_valve=true)
 @named Jugular_vein = Vein(C=C_Jugular_vein, R=R_Jugular_vein, V₀=v0_Jugular_vein, h=h_Jugular_vein, rad=rad_Neck)
 
@@ -258,6 +265,12 @@ circ_eqs = [
   connect(Cor_art.out, Cor_cap.in),
   connect(Cor_cap.out, Cor_vein.in),
 
+  #### Heart Tissue Pressures
+  connect(RA.ep, RA_tissue.out),
+  connect(RV.ep, RV_tissue.out),
+  connect(LA.ep, LA_tissue.out),
+  connect(LV.ep, LV_tissue.out),
+
   #### Heart Power
   HeartP.Plv ~ LV.pₜₘ,
   HeartP.Prv ~ RV.pₜₘ,
@@ -289,7 +302,7 @@ circ_eqs = [
   connect(Thor_IVC.out, SVC.out, Cor_vein.out, RA.in),
 
   #### External Pressures
-  connect(Intrathoracic.pth, Asc_A.ep, BC_A.ep, Thor_A.ep, SVC.ep, Thor_IVC.ep, RA.ep, RV.ep, Pulm_art.ep, Pulm_vein.ep, LA.ep, LV.ep, Cor_art.ep, Cor_vein.ep),
+  connect(Intrathoracic.pth, Asc_A.ep, BC_A.ep, Thor_A.ep, SVC.ep, Thor_IVC.ep, RA_tissue.in, RV_tissue.in, Pulm_art.ep, Pulm_vein.ep, LA_tissue.in, LV_tissue.in, Cor_art.ep, Cor_vein.ep),
   connect(Abdominal.pabd, Abd_A.ep, Renal_art.ep, Splanchnic_art.ep, Renal_vein.ep, Splanchnic_vein.ep, Abd_veins.ep),
   connect(External.pext, UpBd_art.ep, UpBd_vein.ep, CommonCarotid.ep, Jugular_vein.ep, Lungs.in, RespMuscles.in),
   connect(ExternalLBNP.pext, Leg_art.ep, Leg_vein.ep),
@@ -342,6 +355,8 @@ circ_eqs = [
   Head_art.α ~ alpha_driver.α,
   Head_veins.α ~ alpha_driver.α,
   Jugular_vein.α ~ alpha_driver.α,
+  Cor_art.α ~ alpha_driver.α,
+  Cor_vein.α ~ alpha_driver.α,
 #   VP.α ~ alpha_driver.α,
   Interstitial.α ~ alpha_driver.α,
   Intrathoracic.α ~ alpha_driver.α,
@@ -349,6 +364,11 @@ circ_eqs = [
   Pulm_vein.α ~ alpha_driver.α,
   Pulm_cap.α ~ alpha_driver.α,
   Lungs.α ~ alpha_driver.α,
+  RA_tissue.α ~ alpha_driver.α,
+  RV_tissue.α ~ alpha_driver.α,
+  LA_tissue.α ~ alpha_driver.α,
+  LV_tissue.α ~ alpha_driver.α,
+
 
   #### Gravity Equations (Direct Connections)
   Asc_A.g ~ gravity_driver.g,
@@ -370,6 +390,8 @@ circ_eqs = [
   Head_art.g ~ gravity_driver.g,
   Head_veins.g ~ gravity_driver.g,
   Jugular_vein.g ~ gravity_driver.g,
+  Cor_art.g ~ gravity_driver.g,
+  Cor_vein.g ~ gravity_driver.g,
 #   VP.g ~ gravity_driver.g,
   Interstitial.g ~ gravity_driver.g,
   Intrathoracic.g ~ gravity_driver.g,
@@ -377,6 +399,11 @@ circ_eqs = [
   Pulm_vein.g ~ gravity_driver.g,
   Pulm_cap.g ~ gravity_driver.g,
   Lungs.g ~ gravity_driver.g,
+  RA_tissue.g ~ gravity_driver.g,
+  RV_tissue.g ~ gravity_driver.g,
+  LA_tissue.g ~ gravity_driver.g,
+  LV_tissue.g ~ gravity_driver.g,
+
 
   #### LBNP Equations (Direct Connections)
   ExternalLBNP.p_lbnp ~ lbnp_driver.p_lbnp,
@@ -485,6 +512,8 @@ This section of the code composes the system of ordinary differential equations 
 #   Head_veins_Junc, # Venous Junctions
   UpBd_cap, Renal_cap, Splanchnic_cap, Leg_cap, Head_cap, # Microcirculation
   Interstitial, # Interstitial Compartment
+    RA_tissue, RV_tissue, LA_tissue, LV_tissue, # Heart Tissue Pressures
+
   Intrathoracic, Abdominal, External, ExternalLBNP, Intracranial, # External Pressures
   alpha_driver, gravity_driver, lbnp_driver, # Design of Experiments Drivers
   Lungs, RespMuscles, LungGE, TV, # Lung Model Breathing ChestWall
