@@ -49,7 +49,7 @@ These parameters define the heart's properties, including systolic and elastance
 """
 
 #### Cardiac Timings
-RR₀ = 0.25 # Nominal RR interval (s)
+RR₀ = 0.30 # Nominal RR interval (s)
 τₐᵥ = 0.12 # PR interval (A-V delay) (s)
 τₐₛ = 0.2 # Atrium systolic contraction time (s)
 τᵥₛ = 0.3 # QT interval (Ventricle systolic contraction time) (s)
@@ -603,12 +603,12 @@ DTv = 0.2 # (s)
 τResistance = 6 # (s)
 DResistance = 2 # (s)
 
-GResistance = 2.0 # (mmHg.s/ml/ν)
+GResistance = 1.8 # (mmHg.s/ml/ν)
 
-R_UpBd_cap = 9 # Upper Body microvascular resistance (PRU)
-R_Renal_cap = 3.9 # Renal microvascular resistance (PRU)
-R_Splanchnic_cap = 2.0 # Splanchnic microvascular resistance (PRU) (Increased from 2.8 for coronary arteries)
-R_Leg_cap = 3.2 # Leg microvascular resistance (PRU)# Total microvascular resistance (PRU)
+R_UpBd_cap = 7.2 # Upper Body microvascular resistance (PRU)
+R_Renal_cap = 3.0 # Renal microvascular resistance (PRU)
+R_Splanchnic_cap = 1.6 # Splanchnic microvascular resistance (PRU) (Increased from 2.8 for coronary arteries)
+R_Leg_cap = 2.5 # Leg microvascular resistance (PRU)# Total microvascular resistance (PRU)
 
 
 
@@ -621,17 +621,17 @@ Vsplit_Renal = 2/31 # Renal Veins volume split
 Vsplit_Splanchnic = 15/31 # Splanchnic Veins volume split
 Vsplit_Leg = 8/31 # Leg Veins volume split
 
-GVtone = -800 # (ml/ν) # Total venous tone gain (ml/ν)
+GVtone = -1166.3 # (ml/ν) # Total venous tone gain (ml/ν)
 
 GVtone_UpBd = GVtone*Vsplit_UpBd # (ml/ν)
 GVtone_Renal = GVtone*Vsplit_Renal # (ml/ν)
 GVtone_Splanchnic = GVtone*Vsplit_Splanchnic # (ml/ν)
 GVtone_Leg = GVtone*Vsplit_Leg # (ml/ν)
 
-v0_UpBd_vein = 421.8 # Upper Body Veins zero pressure volume (ml)
-v0_Renal_vein = 70.3 # Renal Vein zero pressure volume (ml)
-v0_Splanchnic_vein = 1110.0 # Splanchnic Vein zero pressure volume (ml) (Subtracted coronary veins)
-v0_Leg_vein = 703.0 # Leg Vein zero pressure volume (ml)
+v0_UpBd_vein = 560.6 # Upper Body Veins zero pressure volume (ml)
+v0_Renal_vein = 96.9 # Renal Vein zero pressure volume (ml)
+v0_Splanchnic_vein = 1549.3 # Splanchnic Vein zero pressure volume (ml) (Subtracted coronary veins)
+v0_Leg_vein = 983.4 # Leg Vein zero pressure volume (ml)
 
 tot = v0_UpBd_vein + v0_Renal_vein + v0_Splanchnic_vein + v0_Leg_vein
 3226.4

@@ -93,18 +93,18 @@ This section of code instances the compartments used in the model, based on the 
 @named LV_tissue = TissuePressure(rad=rad_Thor)
 
 #### Coronary Circulation
-@named Cor_art = Artery(C=Cca, R=Rca, V₀=v0ca, has_hydrostatic=false, has_tissue=true, is_heart=true, Vₜ=Vₜ_heart, RQ=RQ₀, rad=rad_Thor)
+@named Cor_art = Artery(C=Cca, R=Rca, V₀=v0ca, has_hydrostatic=false, is_heart=true, Vₜ=Vₜ_heart, RQ=RQ₀, rad=rad_Thor)
 @named Cor_cap = VarResistor()
-@named Cor_vein = Vein(C=Ccv, R=Rcv, V₀=v0cv, has_hydrostatic=false, has_tissue=true, rad=rad_Thor)
+@named Cor_vein = Vein(C=Ccv, R=Rcv, V₀=v0cv, has_hydrostatic=false, rad=rad_Thor)
 
 #### Dynamic Heart Power
 @named HeartP = HeartPower()
 
 #### Arterial Circulation
-@named Asc_A = Artery(C=C_Asc_A, R=R_Asc_A, V₀=v0_Asc_A, h=h_Asc_A, has_tissue=true, has_inertia=false, rad=rad_Thor)
-@named BC_A = Artery(C=C_BC_A, R=R_BC_A, V₀=v0_BC_A, h=h_BC_A, has_tissue=true, L=L_BC_A, rad=rad_Thor)
+@named Asc_A = Artery(C=C_Asc_A, R=R_Asc_A, V₀=v0_Asc_A, h=h_Asc_A, has_inertia=false, rad=rad_Thor)
+@named BC_A = Artery(C=C_BC_A, R=R_BC_A, V₀=v0_BC_A, h=h_BC_A, L=L_BC_A, rad=rad_Thor)
 @named UpBd_art = Artery(C=C_UpBd_art, R=R_UpBd_art, V₀=v0_UpBd_art, h=h_UpBd_art, con=con_UpBd_art, rad=rad_UB, L=L_UpBd_art, has_gasexchange=true, Vₜ=Vₜ_ub, MO₂=MO₂_ub, RQ=RQ₀)
-@named Thor_A = Artery(C=C_Thor_A, R=R_Thor_A, V₀=v0_Thor_A, h=h_Thor_A, has_tissue=true, L=L_Thor_A, rad=rad_Thor)
+@named Thor_A = Artery(C=C_Thor_A, R=R_Thor_A, V₀=v0_Thor_A, h=h_Thor_A, L=L_Thor_A, rad=rad_Thor)
 @named Abd_A = Artery(C=C_Abd_A, R=R_Abd_A, V₀=v0_Abd_A, h=h_Abd_A, rad=rad_Abd, L=L_Abd_A)
 @named Renal_art = Artery(C=C_Renal_art, R=R_Renal_art, V₀=v0_Renal_art, h=h_Renal_art, rad=rad_Abd, L=L_Renal_art, has_gasexchange=true, Vₜ=Vₜ_renal, MO₂=MO₂_renal, RQ=RQ₀)
 @named Splanchnic_art = Artery(C=C_Splanchnic_art, R=R_Splanchnic_art, V₀=v0_Splanchnic_art, h=h_Splanchnic_art, rad=rad_Abd, L=L_Splanchnic_art, has_gasexchange=true, Vₜ=Vₜ_splanchnic, MO₂=MO₂_splanchnic, RQ=RQ₀)
@@ -114,12 +114,12 @@ This section of code instances the compartments used in the model, based on the 
 
 #### Venous Circulation
 @named UpBd_vein = Vein(C=C_UpBd_vein, R=R_UpBd_vein, V₀=v0_UpBd_vein, h=h_UpBd_vein, con=con_UpBd_vein, has_valve=true, has_reflex=true, rad=rad_UB)
-@named SVC = Vein(C=C_SVC, R=R_SVC, V₀=v0_SVC, h=h_SVC, has_tissue=true, rad=rad_Thor)
+@named SVC = Vein(C=C_SVC, R=R_SVC, V₀=v0_SVC, h=h_SVC, rad=rad_Thor)
 @named Renal_vein = Vein(C=C_Renal_vein, R=R_Renal_vein, V₀=v0_Renal_vein, h=h_Renal_vein, has_reflex=true, rad=rad_Abd, V_min=vₘᵢₙ_Renal_vein)
 @named Splanchnic_vein = Vein(C=C_Splanchnic_vein, R=R_Splanchnic_vein, V₀=v0_Splanchnic_vein, h=h_Splanchnic_vein, is_nonlinear=true, Flow_div = Flow_Splanchnic_vein, V_max=vM_Splanchnic_vein, has_reflex=true, rad=rad_Abd)
 @named Leg_vein = Vein(C=C_Leg_vein, R=R_Leg_vein, V₀=v0_Leg_vein, h=h_Leg_vein, con=con_Leg_vein, has_valve=true, is_nonlinear=true, Flow_div = Flow_Leg_vein, V_max=vM_Leg_vein, has_reflex=true, rad=rad_Leg)
 @named Abd_veins = Vein(C=C_Abd_veins, R=R_Abd_veins, V₀=v0_Abd_veins, h=h_Abd_veins, is_nonlinear=true, Flow_div = Flow_Abd_veins, V_max=vM_Abd_vein, rad=rad_Abd)
-@named Thor_IVC = Vein(C=C_Thor_IVC, R=R_Thor_IVC, V₀=v0_Thor_IVC, h=h_Thor_IVC, has_tissue=true, rad=rad_Thor)
+@named Thor_IVC = Vein(C=C_Thor_IVC, R=R_Thor_IVC, V₀=v0_Thor_IVC, h=h_Thor_IVC, rad=rad_Thor)
 @named Head_veins = Vein(C=C_Head_veins, R=R_Head_veins, V₀=v0_Head_veins, h=h_Head_veins, rad=rad_Head, has_valve=true)
 @named Jugular_vein = Vein(C=C_Jugular_vein, R=R_Jugular_vein, V₀=v0_Jugular_vein, h=h_Jugular_vein, rad=rad_Neck)
 
