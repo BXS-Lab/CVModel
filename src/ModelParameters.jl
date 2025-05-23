@@ -49,7 +49,7 @@ These parameters define the heart's properties, including systolic and elastance
 """
 
 #### Cardiac Timings
-RR₀ = 0.5 # Nominal RR interval (s)
+RR₀ = 0.25 # Nominal RR interval (s)
 τₐᵥ = 0.12 # PR interval (A-V delay) (s)
 τₐₛ = 0.2 # Atrium systolic contraction time (s)
 τᵥₛ = 0.3 # QT interval (Ventricle systolic contraction time) (s)
@@ -588,8 +588,8 @@ GEmaxrv = 0.738 # (mmHg/ml/ν)
 τEmaxrv = 8 # (s)
 DEmaxrv = 2 # (s)
 
-Ees_rv = 0.13 # Right Ventricle end systolic elastance (mmHg/ml)
-Ees_lv = 1.00 # Left Ventricle end systolic elastance (mmHg/ml)
+Ees_rv = 1.0 # Right Ventricle end systolic elastance (mmHg/ml)
+Ees_lv = 2.20 # Left Ventricle end systolic elastance (mmHg/ml)
 
 #### Heart Rate
 GTs = -0.13 # (s/ν)

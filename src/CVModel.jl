@@ -567,8 +567,8 @@ u0 = [
   #### Sino-Atrial Node
   SA.RR_held => Bas_RR,
   SA.ϕ => 0.0,
-  SA.Eabr_rv_held => Bas_Eᵣᵥ,
-  SA.Eabr_lv_held => Bas_Eₗᵥ,
+  SA.Eabr_rv_held => IC_Eᵣᵥ,
+  SA.Eabr_lv_held => IC_Eₗᵥ,
 
   #### Valves
   R_tricuspid.ζ => 1,
@@ -1023,6 +1023,18 @@ Uncomment the following lines to save the outputs to a CSV file.
 # df_parameters = DataFrame(Parameter = parameter_names, Value = parameter_values) # Construct a DataFrame of parameter names and values
 
 # CSV.write("model_parameters.csv", df_parameters) # Write model parameters to CSV
+
+Sol[TPR][20000]
+Sol[TPR][40000]
+Sol[HR][20000]
+Sol[HR][40000]
+Sol[RV.Eₘₐₓeff][20000]
+Sol[RV.Eₘₐₓeff][40000]
+Sol[LV.Eₘₐₓeff][20000]
+Sol[LV.Eₘₐₓeff][40000]
+Sol[Vzpf][20000]
+Sol[Vzpf][40000]
+
 
 end
 
