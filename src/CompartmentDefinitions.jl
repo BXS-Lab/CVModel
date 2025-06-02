@@ -1403,7 +1403,7 @@ See the standalone SolvingLungGasExchange.jl for a more detailed description of 
     _α₂ = α₂ # CO₂ saturation constant (/mmHg)
     _β₁ = β₁ # O₂ saturation constant (/mmHg)
     _β₂ = β₂ # CO₂ saturation constant (/mmHg)
-    _pₐₜₘ = pₐₜₘ # Absolute Atmospheric pressure (mmHg)
+    _pₐₜₘ = pₐₜₘ₀ # Absolute Atmospheric pressure (mmHg)
     _p_ws = p_ws # Water vapor pressure (mmHg)
     _sol_O₂ = sol_O₂ # Solubility of O₂ in blood (ml O₂/ml blood/mmHg)
     _Hgb_O₂_binding = Hgb_O₂_binding # Hemoglobin O₂ binding constant (ml O₂/ml blood/mmHg)

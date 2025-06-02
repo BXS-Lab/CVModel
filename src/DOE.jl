@@ -96,17 +96,25 @@ Gas Composition Protocol (FIO₂ and FICO₂)
 
 @mtkmodel Atmosphere begin
   @variables begin
-    FO₂(t)
-    FCO₂(t)
+    FIO₂(t)
+    FICO₂(t)
+    pₐₜₘ(t)
+    pIO₂(t)
+    pICO₂(t)
   end
 
   @parameters begin
     sl_O₂ = 21.0379/100
     sl_CO₂ = 0.0421/100
+    sl_pₐₜₘ = 760 # mmHg
+    _p_ws = p_ws # Water vapor pressure (mmHg)
   end
 
   @equations begin
-    FO₂ ~ sl_O₂
-    FCO₂ ~ sl_CO₂
+    FIO₂ ~ sl_O₂
+    FICO₂ ~ sl_CO₂
+    pₐₜₘ ~ sl_pₐₜₘ
+    pIO₂ ~ FIO₂ * (pₐₜₘ - _p_ws) # Partial pressure of O₂ (mmHg)
+    pICO₂ ~ FICO₂ * (pₐₜₘ - _p_ws) # Partial pressure of CO₂ (mmHg)
   end
 end

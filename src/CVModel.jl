@@ -410,8 +410,8 @@ circ_eqs = [
   Interstitial.p_lbnp ~ lbnp_driver.p_lbnp,
 
   #### Atmosphere Equations (Direct Connections)
-  LungGE.FIO₂ ~ atmosphere_driver.FO₂,
-  LungGE.FICO₂ ~ atmosphere_driver.FCO₂,
+  LungGE.FIO₂ ~ atmosphere_driver.FIO₂,
+  LungGE.FICO₂ ~ atmosphere_driver.FICO₂,
 
   ################
   # Reflex Arcs
@@ -809,8 +809,8 @@ p0c = plot(Sol, idxs=[lbnp_driver.p_lbnp],
              title = "Lower Body Negative Pressure",
              ylims = (-50, 0))
 
-p0d = plot(Sol, idxs=[atmosphere_driver.FO₂, atmosphere_driver.FCO₂],
-             label = ["FO₂" "FCO₂"],
+p0d = plot(Sol, idxs=[atmosphere_driver.FIO₂, atmosphere_driver.FICO₂],
+             label = ["FIO₂" "FICO₂"],
              xlabel = "Time (s)",
              ylabel = "Fraction",
              title = "Atmosphere",
@@ -991,8 +991,8 @@ p4h = plot(Sol, idxs=[TV.VT],
 display(plot(p4a,p4b,p4c,p4d,p4e,p4f,p4g,p4h, layout=(4,2), size=(900,600), suptitle="Lungs"))
 # savefig("Images/lungs.png")
 
-p5a = plot(Sol, idxs=[LungGE.FAO₂, LungGE.FACO₂, LungGE.FDO₂, LungGE.FDCO₂],
-        label = ["FAO₂" "FACO₂" "FDO₂" "FDCO₂"],
+p5a = plot(Sol, idxs=[LungGE.FAO₂, LungGE.FACO₂, LungGE.FDO₂, LungGE.FDCO₂, LungGE.FIO₂, LungGE.FICO₂],
+        label = ["FAO₂" "FACO₂" "FDO₂" "FDCO₂" "FIO₂" "FICO₂"],
         xlabel = "Time (s)",
         ylabel = "Fraction",
         title = "Gas Mix (Alveoli, Dead Space)")

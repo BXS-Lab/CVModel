@@ -390,7 +390,7 @@ Lung Gas Exchange Model
 """
 #### Environmental Conditions
 K = 1.2103 # Proportionality constant that allows convertion of volumes from body temperature pressure saturated to standard temperature pressure dry conditions
-pₐₜₘ = 760.0 # Atmospheric pressure (mmHg)
+pₐₜₘ₀ = 760.0 # Atmospheric pressure (mmHg)
 p_ws = 47.0 # Water vapor pressure (mmHg)
 
 #### O₂ Dissociation Curve
