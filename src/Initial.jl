@@ -62,6 +62,24 @@ lbnpval_evalulated = Symbolics.substitute(lbnpexpr, lbnpdefaults)
 lbnp_val_numeric = Symbolics.value(lbnpval_evalulated)
 
 """
+Find Atmospheric Composition at t=0
+Here we create a dummy Atmospheric driver to extract the initial value of the atmosphere.
+"""
+
+@named atmosphereIC = Atmosphere()
+atmoseqs = equations(atmosphereIC)
+O₂_eq = atmoseqs[1]
+O₂expr = O₂_eq.rhs
+CO₂_eq = atmoseqs[2]
+CO₂expr = CO₂_eq.rhs
+atmosdefaults = ModelingToolkit.defaults(atmosphereIC)
+atmosdefaults[t] = 0.0
+O₂val_evalulated = Symbolics.substitute(O₂expr, atmosdefaults)
+O₂_val_numeric = Symbolics.value(O₂val_evalulated)
+CO₂val_evalulated = Symbolics.substitute(CO₂expr, atmosdefaults)
+CO₂_val_numeric = Symbolics.value(CO₂val_evalulated)
+
+"""
 Determine the initial interstitial volume
 Here we use the previously extracted initial values to determine the steady state interstitial volume.
 """

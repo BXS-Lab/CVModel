@@ -205,6 +205,7 @@ This section of code instances the compartments used in the model, based on the 
 @named alpha_driver = Alpha()
 @named gravity_driver = Gravity()
 @named lbnp_driver = LBNP()
+@named atmosphere_driver = Atmosphere()
 
 """
 Structural Connections
@@ -404,10 +405,13 @@ circ_eqs = [
   LA_tissue.g ~ gravity_driver.g,
   LV_tissue.g ~ gravity_driver.g,
 
-
   #### LBNP Equations (Direct Connections)
   ExternalLBNP.p_lbnp ~ lbnp_driver.p_lbnp,
   Interstitial.p_lbnp ~ lbnp_driver.p_lbnp,
+
+  #### Atmosphere Equations (Direct Connections)
+  LungGE.FIO₂ ~ atmosphere_driver.FO₂,
+  LungGE.FICO₂ ~ atmosphere_driver.FCO₂,
 
   ################
   # Reflex Arcs
@@ -515,7 +519,7 @@ This section of the code composes the system of ordinary differential equations 
     RA_tissue, RV_tissue, LA_tissue, LV_tissue, # Heart Tissue Pressures
 
   Intrathoracic, Abdominal, External, ExternalLBNP, Intracranial, # External Pressures
-  alpha_driver, gravity_driver, lbnp_driver, # Design of Experiments Drivers
+  alpha_driver, gravity_driver, lbnp_driver, atmosphere_driver, # Design of Experiments Drivers
   Lungs, RespMuscles, LungGE, TV, # Lung Model Breathing ChestWall
   CentralResp, PeripheralResp,
   PeripheralChemo, LungStretchReceptors, # Respiratory Control
@@ -678,8 +682,8 @@ u0 = [
   RV.out.cCO₂ => 0.529,
 
   #### Lung Fractional Concentrations
-  LungGE.FDO₂ => FIO₂,
-  LungGE.FDCO₂ => FICO₂,
+  LungGE.FDO₂ => O₂_val_numeric,
+  LungGE.FDCO₂ => CO₂_val_numeric,
   LungGE.FAO₂ => 0.15,
   LungGE.FACO₂ => 0.05,
 
@@ -805,7 +809,14 @@ p0c = plot(Sol, idxs=[lbnp_driver.p_lbnp],
              title = "Lower Body Negative Pressure",
              ylims = (-50, 0))
 
-display(plot(p0a, p0b, p0c, layout=(2,2), size=(900,600), suptitle="Design of Experiments"))
+p0d = plot(Sol, idxs=[atmosphere_driver.FO₂, atmosphere_driver.FCO₂],
+             label = ["FO₂" "FCO₂"],
+             xlabel = "Time (s)",
+             ylabel = "Fraction",
+             title = "Atmosphere",
+             ylims = (0, 1))
+
+display(plot(p0a, p0b, p0c, p0d, layout=(2,2), size=(900,600), suptitle="Design of Experiments"))
 # savefig("Images/doe.png")
 
 p1a = plot(Sol, idxs=[TPR],
@@ -1053,16 +1064,16 @@ Uncomment the following lines to save the outputs to a CSV file.
 
 # CSV.write("model_parameters.csv", df_parameters) # Write model parameters to CSV
 
-Sol[TPR][20000]
-Sol[TPR][40000]
-Sol[HR][20000]
-Sol[HR][40000]
-Sol[RV.Eₘₐₓeff][20000]
-Sol[RV.Eₘₐₓeff][40000]
-Sol[LV.Eₘₐₓeff][20000]
-Sol[LV.Eₘₐₓeff][40000]
-Sol[Vzpf][20000]
-Sol[Vzpf][40000]
+# Sol[TPR][20000]
+# Sol[TPR][40000]
+# Sol[HR][20000]
+# Sol[HR][40000]
+# Sol[RV.Eₘₐₓeff][20000]
+# Sol[RV.Eₘₐₓeff][40000]
+# Sol[LV.Eₘₐₓeff][20000]
+# Sol[LV.Eₘₐₓeff][40000]
+# Sol[Vzpf][20000]
+# Sol[Vzpf][40000]
 
 
 end

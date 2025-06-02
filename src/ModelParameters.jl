@@ -389,8 +389,6 @@ Whₙₒₘ = 12660 # Nominal heart workload (mmHg.ml/s)
 Lung Gas Exchange Model
 """
 #### Environmental Conditions
-FIO₂ = 21.0379/100 # Fraction of O₂ in the inspired air
-FICO₂ = 0.0421/100 # Fraction of CO₂ in the inspired air (%)
 K = 1.2103 # Proportionality constant that allows convertion of volumes from body temperature pressure saturated to standard temperature pressure dry conditions
 pₐₜₘ = 760.0 # Atmospheric pressure (mmHg)
 p_ws = 47.0 # Water vapor pressure (mmHg)

@@ -89,3 +89,24 @@ Lower Body Negative Pressure (LBNP) Protocol (p_lbnp in mmHg, should be negative
     #        (lbnp_max - no_lbnp) * (t - t_ramp_start) / (t_ramp_end - t_ramp_start)))
   end
 end
+
+"""
+Gas Composition Protocol (FIO₂ and FICO₂)
+"""
+
+@mtkmodel Atmosphere begin
+  @variables begin
+    FO₂(t)
+    FCO₂(t)
+  end
+
+  @parameters begin
+    sl_O₂ = 21.0379/100
+    sl_CO₂ = 0.0421/100
+  end
+
+  @equations begin
+    FO₂ ~ sl_O₂
+    FCO₂ ~ sl_CO₂
+  end
+end
