@@ -555,10 +555,10 @@ Wcₛₚ = 5 # Chemoreceptors to arterioles
 Wpₛₚ = -0.34 # Pulmonary stretch receptors to arterioles
 Wrₛₚ = -1 # Cardiopulmonary reflex to arterioles
 
-Wbₛᵥ = -0.5 # Baroreflex to venous tone
-Wcₛᵥ = 2.5 # Chemoreceptors to venous tone
-Wpₛᵥ = -0.17 # Pulmonary stretch receptors to venous tone
-Wrₛᵥ = -1.5 # Cardiopulmonary reflex to venous tone
+Wbₛᵥ = -1 # Baroreflex to venous tone
+Wcₛᵥ = 5 # Chemoreceptors to venous tone
+Wpₛᵥ = -0.34 # Pulmonary stretch receptors to venous tone
+Wrₛᵥ = -2 # Cardiopulmonary reflex to venous tone
 
 fev₀ = 3.2 # (spikes/s)
 fev∞ = 6.3 # (spikes/s)
@@ -578,20 +578,20 @@ Effectors
 fesₘᵢₙ = 2.66 # (spikes/s)
 
 #### Cardiac Elastances
-GEmaxlv = 0.877 # (mmHg/ml/ν)
+GEmaxlv = 1.3*0.877 # (mmHg/ml/ν)
 τEmaxlv = 8 # (s)
 DEmaxlv = 2 # (s)
 
-GEmaxrv = 0.738 # (mmHg/ml/ν)
+GEmaxrv = 1.3*0.738 # (mmHg/ml/ν)
 τEmaxrv = 8 # (s)
 DEmaxrv = 2 # (s)
 
-Ees_rv = 1.0 # Right Ventricle end systolic elastance (mmHg/ml)
-Ees_lv = 2.20 # Left Ventricle end systolic elastance (mmHg/ml)
+Ees_rv = 0.8*1.0 # Right Ventricle end systolic elastance (mmHg/ml)
+Ees_lv = 0.8*2.20 # Left Ventricle end systolic elastance (mmHg/ml)
 
 #### Heart Rate
-GTs = -0.13 # (s/ν)
-GTv = 0.09 # (s/ν)
+GTs = 1.5*-0.13 # (s/ν)
+GTv = 1.5*0.09 # (s/ν)
 τTs = 2 # (s)
 τTv = 1.5 # (s)
 DTs = 2 # (s)
@@ -601,12 +601,12 @@ DTv = 0.2 # (s)
 τResistance = 6 # (s)
 DResistance = 2 # (s)
 
-GResistance = 1.8 # (mmHg.s/ml/ν)
+GResistance = 2 # (mmHg.s/ml/ν)
 
-R_UpBd_cap = 7.2 # Upper Body microvascular resistance (PRU)
-R_Renal_cap = 3.0 # Renal microvascular resistance (PRU)
-R_Splanchnic_cap = 1.6 # Splanchnic microvascular resistance (PRU) (Increased from 2.8 for coronary arteries)
-R_Leg_cap = 2.5 # Leg microvascular resistance (PRU)# Total microvascular resistance (PRU)
+R_UpBd_cap = 1*7.2 # Upper Body microvascular resistance (PRU)
+R_Renal_cap = 1*3.0 # Renal microvascular resistance (PRU)
+R_Splanchnic_cap = 1*1.6 # Splanchnic microvascular resistance (PRU) (Increased from 2.8 for coronary arteries)
+R_Leg_cap = 1*2.5 # Leg microvascular resistance (PRU)# Total microvascular resistance (PRU)
 
 
 
@@ -619,17 +619,17 @@ Vsplit_Renal = 2/31 # Renal Veins volume split
 Vsplit_Splanchnic = 15/31 # Splanchnic Veins volume split
 Vsplit_Leg = 8/31 # Leg Veins volume split
 
-GVtone = -1166.3 # (ml/ν) # Total venous tone gain (ml/ν)
+GVtone = 1.1*-1166.3 # (ml/ν) # Total venous tone gain (ml/ν)
 
 GVtone_UpBd = GVtone*Vsplit_UpBd # (ml/ν)
 GVtone_Renal = GVtone*Vsplit_Renal # (ml/ν)
 GVtone_Splanchnic = GVtone*Vsplit_Splanchnic # (ml/ν)
 GVtone_Leg = GVtone*Vsplit_Leg # (ml/ν)
 
-v0_UpBd_vein = 560.6 # Upper Body Veins zero pressure volume (ml)
-v0_Renal_vein = 96.9 # Renal Vein zero pressure volume (ml)
-v0_Splanchnic_vein = 1549.3 # Splanchnic Vein zero pressure volume (ml) (Subtracted coronary veins)
-v0_Leg_vein = 983.4 # Leg Vein zero pressure volume (ml)
+v0_UpBd_vein = 0.7*560.6 # Upper Body Veins zero pressure volume (ml)
+v0_Renal_vein = 0.7*96.9 # Renal Vein zero pressure volume (ml)
+v0_Splanchnic_vein = 0.7*1549.3 # Splanchnic Vein zero pressure volume (ml) (Subtracted coronary veins)
+v0_Leg_vein = 0.7*983.4 # Leg Vein zero pressure volume (ml)
 
 tot = v0_UpBd_vein + v0_Renal_vein + v0_Splanchnic_vein + v0_Leg_vein
 3226.4

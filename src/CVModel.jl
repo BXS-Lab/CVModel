@@ -75,9 +75,9 @@ This section of code instances the compartments used in the model, based on the 
 @named R_pulmonary = MynardValve_SemiLunar(Leff=Leff_pv, Ann=Ann_pv, Kvc=Kvc_pv, Kvo=Kvo_pv)
 
 #### Pulmonary Circulation
-@named Pulm_art = Artery(C=Cpa, R=Rpa, V₀=v0pa, has_hydrostatic=false, has_tissue=true, has_inertia=false, is_pulmonary=true, rad=rad_Thor)
+@named Pulm_art = Artery(C=Cpa, R=Rpa, V₀=v0pa, has_hydrostatic=false, has_tissue=false, has_inertia=false, is_pulmonary=true, rad=rad_Thor)
 @named Pulm_cap = StarlingResistor(R=Rpc, h=h_Lungs)
-@named Pulm_vein = Vein(C=Cpv, R=Rpv, V₀=v0pv, has_hydrostatic=false, has_tissue=true, rad=rad_Thor)
+@named Pulm_vein = Vein(C=Cpv, R=Rpv, V₀=v0pv, has_hydrostatic=false, has_tissue=false, rad=rad_Thor)
 
 #### Left Heart
 @named LA = HeldtChamber(V₀=v0_la, Eₘᵢₙ=Ed_la, Eₘₐₓ=Ees_la, τₑₛ=τₐₛ, inP=true)
@@ -87,10 +87,10 @@ This section of code instances the compartments used in the model, based on the 
 
 #### Heart Tissue Pressures
 # These create the external thoracic tissue weight on the heart (all arteries and veins already have this lumped in to their models).
-@named RA_tissue = TissuePressure(rad=rad_Thor)
-@named RV_tissue = TissuePressure(rad=rad_Thor)
-@named LA_tissue = TissuePressure(rad=rad_Thor)
-@named LV_tissue = TissuePressure(rad=rad_Thor)
+# @named RA_tissue = TissuePressure(rad=rad_Thor)
+# @named RV_tissue = TissuePressure(rad=rad_Thor)
+# @named LA_tissue = TissuePressure(rad=rad_Thor)
+# @named LV_tissue = TissuePressure(rad=rad_Thor)
 
 #### Coronary Circulation
 @named Cor_art = Artery(C=Cca, R=Rca, V₀=v0ca, has_hydrostatic=false, is_heart=true, Vₜ=Vₜ_heart, RQ=RQ₀, rad=rad_Thor)
@@ -267,10 +267,10 @@ circ_eqs = [
   connect(Cor_cap.out, Cor_vein.in),
 
   #### Heart Tissue Pressures
-  connect(RA.ep, RA_tissue.out),
-  connect(RV.ep, RV_tissue.out),
-  connect(LA.ep, LA_tissue.out),
-  connect(LV.ep, LV_tissue.out),
+#   connect(RA.ep, RA_tissue.out),
+#   connect(RV.ep, RV_tissue.out),
+#   connect(LA.ep, LA_tissue.out),
+#   connect(LV.ep, LV_tissue.out),
 
   #### Heart Power
   HeartP.Plv ~ LV.pₜₘ,
@@ -303,7 +303,7 @@ circ_eqs = [
   connect(Thor_IVC.out, SVC.out, Cor_vein.out, RA.in),
 
   #### External Pressures
-  connect(Intrathoracic.pth, Asc_A.ep, BC_A.ep, Thor_A.ep, SVC.ep, Thor_IVC.ep, RA_tissue.in, RV_tissue.in, Pulm_art.ep, Pulm_vein.ep, LA_tissue.in, LV_tissue.in, Cor_art.ep, Cor_vein.ep),
+  connect(Intrathoracic.pth, Asc_A.ep, BC_A.ep, Thor_A.ep, SVC.ep, Thor_IVC.ep, RA.ep, RV.ep, Pulm_art.ep, Pulm_vein.ep, LA.ep, LV.ep, Cor_art.ep, Cor_vein.ep),
   connect(Abdominal.pabd, Abd_A.ep, Renal_art.ep, Splanchnic_art.ep, Renal_vein.ep, Splanchnic_vein.ep, Abd_veins.ep),
   connect(External.pext, UpBd_art.ep, UpBd_vein.ep, CommonCarotid.ep, Jugular_vein.ep, Lungs.in, RespMuscles.in),
   connect(ExternalLBNP.pext, Leg_art.ep, Leg_vein.ep),
@@ -365,10 +365,10 @@ circ_eqs = [
   Pulm_vein.α ~ alpha_driver.α,
   Pulm_cap.α ~ alpha_driver.α,
   Lungs.α ~ alpha_driver.α,
-  RA_tissue.α ~ alpha_driver.α,
-  RV_tissue.α ~ alpha_driver.α,
-  LA_tissue.α ~ alpha_driver.α,
-  LV_tissue.α ~ alpha_driver.α,
+#   RA_tissue.α ~ alpha_driver.α,
+#   RV_tissue.α ~ alpha_driver.α,
+#   LA_tissue.α ~ alpha_driver.α,
+#   LV_tissue.α ~ alpha_driver.α,
 
 
   #### Gravity Equations (Direct Connections)
@@ -400,10 +400,10 @@ circ_eqs = [
   Pulm_vein.g ~ gravity_driver.g,
   Pulm_cap.g ~ gravity_driver.g,
   Lungs.g ~ gravity_driver.g,
-  RA_tissue.g ~ gravity_driver.g,
-  RV_tissue.g ~ gravity_driver.g,
-  LA_tissue.g ~ gravity_driver.g,
-  LV_tissue.g ~ gravity_driver.g,
+#   RA_tissue.g ~ gravity_driver.g,
+#   RV_tissue.g ~ gravity_driver.g,
+#   LA_tissue.g ~ gravity_driver.g,
+#   LV_tissue.g ~ gravity_driver.g,
 
   #### LBNP Equations (Direct Connections)
   ExternalLBNP.p_lbnp ~ lbnp_driver.p_lbnp,
@@ -516,7 +516,7 @@ This section of the code composes the system of ordinary differential equations 
 #   Head_veins_Junc, # Venous Junctions
   UpBd_cap, Renal_cap, Splanchnic_cap, Leg_cap, Head_cap, # Microcirculation
   Interstitial, # Interstitial Compartment
-    RA_tissue, RV_tissue, LA_tissue, LV_tissue, # Heart Tissue Pressures
+#     RA_tissue, RV_tissue, LA_tissue, LV_tissue, # Heart Tissue Pressures
 
   Intrathoracic, Abdominal, External, ExternalLBNP, Intracranial, # External Pressures
   alpha_driver, gravity_driver, lbnp_driver, atmosphere_driver, # Design of Experiments Drivers

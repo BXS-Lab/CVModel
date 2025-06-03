@@ -91,12 +91,12 @@ Determine the initial tissue pressures
 Here we use the previously extracted initial angle and gravity to determine the initial segment tissue pressures. These are used to find the initial compartment pressures.
 """
 
-pt0_Head = ρ_fft * gravity_val_numeric * (rad_Head/100) * cos(α_val_numeric) * Pa2mmHg
-pt0_Neck = ρ_fft * gravity_val_numeric * (rad_Neck/100) * cos(α_val_numeric) * Pa2mmHg
-pt0_UB = ρ_fft * gravity_val_numeric * (rad_UB/100) * cos(α_val_numeric) * Pa2mmHg
-pt0_Thor = ρ_fft * gravity_val_numeric * (rad_Thor/100) * cos(α_val_numeric) * Pa2mmHg
-pt0_Abd = ρ_fft * gravity_val_numeric * (rad_Abd/100) * cos(α_val_numeric) * Pa2mmHg
-pt0_Leg = ρ_fft * gravity_val_numeric * (rad_Leg/100) * cos(α_val_numeric) * Pa2mmHg
+pt0_Head = 0 #ρ_fft * gravity_val_numeric * (rad_Head/100) * cos(α_val_numeric) * Pa2mmHg
+pt0_Neck = 0 #ρ_fft * gravity_val_numeric * (rad_Neck/100) * cos(α_val_numeric) * Pa2mmHg
+pt0_UB = 0 #ρ_fft * gravity_val_numeric * (rad_UB/100) * cos(α_val_numeric) * Pa2mmHg
+pt0_Thor = 0 #ρ_fft * gravity_val_numeric * (rad_Thor/100) * cos(α_val_numeric) * Pa2mmHg
+pt0_Abd = 0 #ρ_fft * gravity_val_numeric * (rad_Abd/100) * cos(α_val_numeric) * Pa2mmHg
+pt0_Leg = 0 #ρ_fft * gravity_val_numeric * (rad_Leg/100) * cos(α_val_numeric) * Pa2mmHg
 
 """
 Determine the initial hydrostatic pressures
