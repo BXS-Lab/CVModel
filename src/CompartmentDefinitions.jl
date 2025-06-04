@@ -700,7 +700,7 @@ This model represents an arterial compartment. It is a lumped compartment consis
     con = 2.0
     has_valve = false
     has_hydrostatic = true  # new flag to include/exclude Ph
-    has_tissue = false
+    has_tissue = true
     has_inertia = true
     ρt = ρ_fft
     rad = 10.0
@@ -809,7 +809,7 @@ This model represents a venous compartment. It is a lumped compartment consistin
     V_max = 1.0
     Flow_div = 1/3
     has_reflex = false
-    has_tissue = false
+    has_tissue = true
     ρt = ρ_fft
     rad = 10.0
   end

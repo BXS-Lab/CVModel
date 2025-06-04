@@ -75,9 +75,9 @@ This section of code instances the compartments used in the model, based on the 
 @named R_pulmonary = MynardValve_SemiLunar(Leff=Leff_pv, Ann=Ann_pv, Kvc=Kvc_pv, Kvo=Kvo_pv)
 
 #### Pulmonary Circulation
-@named Pulm_art = Artery(C=Cpa, R=Rpa, V₀=v0pa, has_hydrostatic=false, has_tissue=false, has_inertia=false, is_pulmonary=true, rad=rad_Thor)
+@named Pulm_art = Artery(C=Cpa, R=Rpa, V₀=v0pa, has_hydrostatic=false, has_inertia=false, is_pulmonary=true, rad=rad_Thor)
 @named Pulm_cap = StarlingResistor(R=Rpc, h=h_Lungs)
-@named Pulm_vein = Vein(C=Cpv, R=Rpv, V₀=v0pv, has_hydrostatic=false, has_tissue=false, rad=rad_Thor)
+@named Pulm_vein = Vein(C=Cpv, R=Rpv, V₀=v0pv, has_hydrostatic=false, rad=rad_Thor)
 
 #### Left Heart
 @named LA = HeldtChamber(V₀=v0_la, Eₘᵢₙ=Ed_la, Eₘₐₓ=Ees_la, τₑₛ=τₐₛ, inP=true)
@@ -87,10 +87,10 @@ This section of code instances the compartments used in the model, based on the 
 
 #### Heart Tissue Pressures
 # These create the external thoracic tissue weight on the heart (all arteries and veins already have this lumped in to their models).
-# @named RA_tissue = TissuePressure(rad=rad_Thor)
-# @named RV_tissue = TissuePressure(rad=rad_Thor)
-# @named LA_tissue = TissuePressure(rad=rad_Thor)
-# @named LV_tissue = TissuePressure(rad=rad_Thor)
+@named RA_tissue = TissuePressure(rad=rad_Thor)
+@named RV_tissue = TissuePressure(rad=rad_Thor)
+@named LA_tissue = TissuePressure(rad=rad_Thor)
+@named LV_tissue = TissuePressure(rad=rad_Thor)
 
 #### Coronary Circulation
 @named Cor_art = Artery(C=Cca, R=Rca, V₀=v0ca, has_hydrostatic=false, is_heart=true, Vₜ=Vₜ_heart, RQ=RQ₀, rad=rad_Thor)
@@ -200,6 +200,19 @@ This section of code instances the compartments used in the model, based on the 
 @named CentralResp = Chemoreceptors(Delay=Dc, Gain_A=G_cA, Gain_f=G_cf, set_point=PaCO₂n, time_A=τ_cA, time_f=τ_cf, delay_order=reflex_delay_order)
 @named PeripheralResp = Chemoreceptors(Delay=Dp, Gain_A=G_pA, Gain_f=G_pf, set_point=fapc_set, time_A=τ_pA, time_f=τ_pf, delay_order=reflex_delay_order)
 
+#### Reflex Arcs
+# There are two afferents, one for each arc (ABR and CPR). The separate effects (e.g., α-Sympathetic, β-Sympathetic, Parasympathetic) are modeled as separate transfer functions.
+@named CPRafferent = Afferent(p_set=p_cpr, gain=gain_cpr)
+@named ABRafferent = Afferent(p_set=p_abr, gain=gain_abr)
+@named Lungafferent = AfferentLung()
+
+@named αr = TransferFunction(delay_order = reflex_delay_order, reflex_delay = αr_delay, reflex_peak = αr_peak, reflex_end = αr_end)
+@named αv = TransferFunction(delay_order = reflex_delay_order, reflex_delay = αv_delay, reflex_peak = αv_peak, reflex_end = αv_end)
+@named β = TransferFunction(delay_order = reflex_delay_order, reflex_delay = β_delay, reflex_peak = β_peak, reflex_end = β_end)
+@named vagal = TransferFunction(delay_order = reflex_delay_order, reflex_delay = vagal_delay, reflex_peak = vagal_peak, reflex_end = vagal_end)
+# @named cpr_αr = TransferFunction(delay_order = reflex_delay_order, reflex_delay = cpr_αr_delay, reflex_peak = cpr_αr_peak, reflex_end = cpr_αr_end)
+@named cpr_αv = TransferFunction(delay_order = reflex_delay_order, reflex_delay = αv_delay, reflex_peak = αv_peak, reflex_end = αv_end)
+
 #### Design of Experiments
 # These are the drivers to implement the protocols defined in the "doe.jl" file.
 @named alpha_driver = Alpha()
@@ -267,10 +280,10 @@ circ_eqs = [
   connect(Cor_cap.out, Cor_vein.in),
 
   #### Heart Tissue Pressures
-#   connect(RA.ep, RA_tissue.out),
-#   connect(RV.ep, RV_tissue.out),
-#   connect(LA.ep, LA_tissue.out),
-#   connect(LV.ep, LV_tissue.out),
+  connect(RA.ep, RA_tissue.out),
+  connect(RV.ep, RV_tissue.out),
+  connect(LA.ep, LA_tissue.out),
+  connect(LV.ep, LV_tissue.out),
 
   #### Heart Power
   HeartP.Plv ~ LV.pₜₘ,
@@ -303,7 +316,7 @@ circ_eqs = [
   connect(Thor_IVC.out, SVC.out, Cor_vein.out, RA.in),
 
   #### External Pressures
-  connect(Intrathoracic.pth, Asc_A.ep, BC_A.ep, Thor_A.ep, SVC.ep, Thor_IVC.ep, RA.ep, RV.ep, Pulm_art.ep, Pulm_vein.ep, LA.ep, LV.ep, Cor_art.ep, Cor_vein.ep),
+  connect(Intrathoracic.pth, Asc_A.ep, BC_A.ep, Thor_A.ep, SVC.ep, Thor_IVC.ep, RA_tissue.in, RV_tissue.in, Pulm_art.ep, Pulm_vein.ep, LA_tissue.in, LV_tissue.in, Cor_art.ep, Cor_vein.ep),
   connect(Abdominal.pabd, Abd_A.ep, Renal_art.ep, Splanchnic_art.ep, Renal_vein.ep, Splanchnic_vein.ep, Abd_veins.ep),
   connect(External.pext, UpBd_art.ep, UpBd_vein.ep, CommonCarotid.ep, Jugular_vein.ep, Lungs.in, RespMuscles.in),
   connect(ExternalLBNP.pext, Leg_art.ep, Leg_vein.ep),
@@ -365,10 +378,10 @@ circ_eqs = [
   Pulm_vein.α ~ alpha_driver.α,
   Pulm_cap.α ~ alpha_driver.α,
   Lungs.α ~ alpha_driver.α,
-#   RA_tissue.α ~ alpha_driver.α,
-#   RV_tissue.α ~ alpha_driver.α,
-#   LA_tissue.α ~ alpha_driver.α,
-#   LV_tissue.α ~ alpha_driver.α,
+  RA_tissue.α ~ alpha_driver.α,
+  RV_tissue.α ~ alpha_driver.α,
+  LA_tissue.α ~ alpha_driver.α,
+  LV_tissue.α ~ alpha_driver.α,
 
 
   #### Gravity Equations (Direct Connections)
@@ -400,10 +413,10 @@ circ_eqs = [
   Pulm_vein.g ~ gravity_driver.g,
   Pulm_cap.g ~ gravity_driver.g,
   Lungs.g ~ gravity_driver.g,
-#   RA_tissue.g ~ gravity_driver.g,
-#   RV_tissue.g ~ gravity_driver.g,
-#   LA_tissue.g ~ gravity_driver.g,
-#   LV_tissue.g ~ gravity_driver.g,
+  RA_tissue.g ~ gravity_driver.g,
+  RV_tissue.g ~ gravity_driver.g,
+  LA_tissue.g ~ gravity_driver.g,
+  LV_tissue.g ~ gravity_driver.g,
 
   #### LBNP Equations (Direct Connections)
   ExternalLBNP.p_lbnp ~ lbnp_driver.p_lbnp,
@@ -426,6 +439,20 @@ circ_eqs = [
   HeartAutoreg.uPaCO₂ ~ LungGE.paCO₂,
   UBMuscleAutoreg.uPaCO₂ ~ LungGE.paCO₂,
   LBMuscleAutoreg.uPaCO₂ ~ LungGE.paCO₂,
+
+    #### Reflex Arc Afferent Inputs (Sensed Pressures)
+  CPRafferent.e ~ (RA.pₜₘ),
+  ABRafferent.e ~ (Asc_A.C.pₜₘ+(BC_A.C.pₜₘ + (ρ_b*gravity_driver.g*h_cs*sin(alpha_driver.α)*0.0000750062)))/2.0,
+  Lungafferent.e ~ TV.VT,
+
+  #### Reflex Arc Afferent Outputs Connected to Transfer Function Inputs
+  αr.u ~ Gabr_r * ABRafferent.δ + Gcpr_r * CPRafferent.δ + Gps_r * Lungafferent.δ + Gpc_r * (PeripheralChemo.fapc-3.7),
+  αv.u ~ Gabr_v * ABRafferent.δ + Gcpr_v * CPRafferent.δ + Gps_v * Lungafferent.δ + Gpc_r * (PeripheralChemo.fapc-3.7),
+#   cpr_αv.u ~ CPRafferent.δ,
+  β.u ~ ABRafferent.δ,
+  vagal.u ~ ABRafferent.δ,
+#   cpr_αr.u ~ CPRafferent.δ,
+
 
   #### Afferent: Arterial Baroreflex
   ABR.pb ~ (Asc_A.C.pₜₘ+(BC_A.C.pₜₘ + (ρ_b*gravity_driver.g*(h_cs/100)*sin(alpha_driver.α)*Pa2mmHg)))/2.0,
@@ -474,23 +501,23 @@ circ_eqs = [
   Cor_cap.R ~ Rcc * (1 + HeartAutoreg.xjCO₂) /(1 + HeartAutoreg.xjO₂),
   Head_cap.G ~ Gbpn * (1 + BrainAutoreg.xbO₂ + BrainAutoreg.xbCO₂),
 
-  UpBd_cap.R ~ (R_UpBd_cap + EResistance.Δσ) * (1 + UBMuscleAutoreg.xjCO₂) /(1 + UBMuscleAutoreg.xjO₂),
-  Renal_cap.R ~ R_Renal_cap + EResistance.Δσ,
-  Splanchnic_cap.R ~ R_Splanchnic_cap + EResistance.Δσ,
-  Leg_cap.R ~ (R_Leg_cap + EResistance.Δσ) * (1 + LBMuscleAutoreg.xjCO₂) /(1 + LBMuscleAutoreg.xjO₂),
+  UpBd_cap.R ~ (R_UpBd_cap + αr.y) * (1 + UBMuscleAutoreg.xjCO₂) /(1 + UBMuscleAutoreg.xjO₂),
+  Renal_cap.R ~ R_Renal_cap + αr.y,
+  Splanchnic_cap.R ~ R_Splanchnic_cap + αr.y,
+  Leg_cap.R ~ (R_Leg_cap + αr.y) * (1 + LBMuscleAutoreg.xjCO₂) /(1 + LBMuscleAutoreg.xjO₂),
 
   #### Effectors: Venous Tone
-  UpBd_vein.ΔV ~ EVtone_UpBd.Δσ,
-  Renal_vein.ΔV ~ EVtone_Renal.Δσ,
-  Splanchnic_vein.ΔV ~ EVtone_Splanchnic.Δσ,
-  Leg_vein.ΔV ~ EVtone_Leg.Δσ,
+  UpBd_vein.ΔV ~ Vsplit_UpBd * αv.y,
+  Renal_vein.ΔV ~ Vsplit_Renal * αv.y,
+  Splanchnic_vein.ΔV ~ Vsplit_Splanchnic * αv.y,
+  Leg_vein.ΔV ~ Vsplit_Leg * αv.y,
 
   #### Effectors: Ventricular Contractility
-  SA.Eabr_rv ~ ERH.Δσ,
-  SA.Eabr_lv ~ ELH.Δσ,
+  SA.Eabr_rv ~ Gabr_erv * β.y,
+  SA.Eabr_lv ~ Gabr_elv * β.y,
 
   #### Effectors: Heart Rate
-  SA.RRabr ~ ERR.ΔT,
+  SA.RRabr ~ (Gabr_rrsymp * β.y) + (Gabr_rrpara * vagal.y),
 
   #### Pulmonary Reflexes
   CentralResp.u ~ LungGE.paCO₂,
@@ -513,10 +540,13 @@ This section of the code composes the system of ordinary differential equations 
   CommonCarotid, Head_art, Head_veins, Jugular_vein, # Head and Neck Circulation
 #   VP, # Vertebral Plexus
   Asc_A_Junc, BC_A_Junc, Abd_A_Junc, # Arterial Junctions
+  ABRafferent, CPRafferent, # Afferent Pathways
+        Lungafferent, # Afferent: Lung Stretch Receptors
+        αr, αv, β, vagal, # Transfer Functions
 #   Head_veins_Junc, # Venous Junctions
   UpBd_cap, Renal_cap, Splanchnic_cap, Leg_cap, Head_cap, # Microcirculation
   Interstitial, # Interstitial Compartment
-#     RA_tissue, RV_tissue, LA_tissue, LV_tissue, # Heart Tissue Pressures
+    RA_tissue, RV_tissue, LA_tissue, LV_tissue, # Heart Tissue Pressures
 
   Intrathoracic, Abdominal, External, ExternalLBNP, Intracranial, # External Pressures
   alpha_driver, gravity_driver, lbnp_driver, atmosphere_driver, # Design of Experiments Drivers
@@ -626,28 +656,28 @@ u0 = [
   Pulm_vein.C.out.cO₂ => 0.2,
   LA.out.cO₂ => 0.2,
   LV.out.cO₂ => 0.2,
-  Cor_art.C.out.cO₂ => 0.152, # After exchange
+  Cor_art.C.out.cO₂ => 0.11, # After exchange Coronary
   Asc_A.C.out.cO₂ => 0.2,
   BC_A.C.out.cO₂ => 0.2,
-  UpBd_art.C.out.cO₂ => 0.152, # After exchange
+  UpBd_art.C.out.cO₂ => 0.155, # After exchange Muscle
   Thor_A.C.out.cO₂ => 0.2,
   Abd_A.C.out.cO₂ => 0.2,
   Renal_art.C.out.cO₂ => 0.152, # After exchange
   Splanchnic_art.C.out.cO₂ => 0.152, # After exchange
-  Leg_art.C.out.cO₂ => 0.152, # After exchange
+  Leg_art.C.out.cO₂ => 0.155, # After exchange Muscle
   CommonCarotid.C.out.cO₂ => 0.2,
-  Head_art.C.out.cO₂ => 0.152, # After exchange
+  Head_art.C.out.cO₂ => 0.14, # After exchange Head
   #### Blood Gas O₂ Venous
-  Cor_vein.C.out.cO₂ => 0.152,
-  UpBd_vein.C.out.cO₂ => 0.152,
+  Cor_vein.C.out.cO₂ => 0.11, # Coronary
+  UpBd_vein.C.out.cO₂ => 0.155, # Muscle
   SVC.C.out.cO₂ => 0.152,
   Renal_vein.C.out.cO₂ => 0.152,
   Splanchnic_vein.C.out.cO₂ => 0.152,
-  Leg_vein.C.out.cO₂ => 0.152,
+  Leg_vein.C.out.cO₂ => 0.155, # Muscle
   Abd_veins.C.out.cO₂ => 0.152,
   Thor_IVC.C.out.cO₂ => 0.152,
-  Head_veins.C.out.cO₂ => 0.152,
-  Jugular_vein.C.out.cO₂ => 0.152,
+  Head_veins.C.out.cO₂ => 0.14, # Head
+  Jugular_vein.C.out.cO₂ => 0.14, # Head
   RA.out.cO₂ => 0.152,
   RV.out.cO₂ => 0.152,
 
@@ -751,6 +781,59 @@ u0 = [
   EVtone_Splanchnic.d.x => reflex_delay_init,
   EVtone_Leg.Δσ => IC_V₀_Leg,
   EVtone_Leg.d.x => reflex_delay_init,
+
+  #### Reflex Afferents
+  CPRafferent.x => x0,
+  ABRafferent.x => x0,
+
+  #### Reflex Transfer Functions
+  αr.tfdelay.tftime.x => reflex_delay_init,
+  αr.tfdelay.double_integrator.v => 0.0,
+  αr.tfdelay.double_integrator.y => 0.0,
+  αr.tfpeak.tftime.x => reflex_delay_init,
+  αr.tfpeak.double_integrator.v => 0.0,
+  αr.tfpeak.double_integrator.y => 0.0,
+  αr.tfend.tftime.x => reflex_delay_init,
+  αr.tfend.double_integrator.v => 0.0,
+  αr.tfend.double_integrator.y => 0.0,
+  αv.tfdelay.tftime.x => reflex_delay_init,
+  αv.tfdelay.double_integrator.v => 0.0,
+  αv.tfdelay.double_integrator.y => 0.0,
+  αv.tfpeak.tftime.x => reflex_delay_init,
+  αv.tfpeak.double_integrator.v => 0.0,
+  αv.tfpeak.double_integrator.y => 0.0,
+  αv.tfend.tftime.x => reflex_delay_init,
+  αv.tfend.double_integrator.v => 0.0,
+  αv.tfend.double_integrator.y => 0.0,
+  β.tfdelay.tftime.x => reflex_delay_init,
+  β.tfdelay.double_integrator.v => 0.0,
+  β.tfdelay.double_integrator.y => 0.0,
+  β.tfpeak.tftime.x => reflex_delay_init,
+  β.tfpeak.double_integrator.v => 0.0,
+  β.tfpeak.double_integrator.y => 0.0,
+  β.tfend.tftime.x => reflex_delay_init,
+  β.tfend.double_integrator.v => 0.0,
+  β.tfend.double_integrator.y => 0.0,
+  vagal.tfdelay.tftime.x => reflex_delay_init,
+  vagal.tfdelay.double_integrator.v => 0.0,
+  vagal.tfdelay.double_integrator.y => 0.0,
+  vagal.tfpeak.tftime.x => reflex_delay_init,
+  vagal.tfpeak.double_integrator.v => 0.0,
+  vagal.tfpeak.double_integrator.y => 0.0,
+  vagal.tfend.tftime.x => reflex_delay_init,
+  vagal.tfend.double_integrator.v => 0.0,
+  vagal.tfend.double_integrator.y => 0.0,
+  cpr_αv.tfdelay.tftime.x => reflex_delay_init,
+  cpr_αv.tfdelay.double_integrator.v => 0.0,
+  cpr_αv.tfdelay.double_integrator.y => 0.0,
+  cpr_αv.tfpeak.tftime.x => reflex_delay_init,
+  cpr_αv.tfpeak.double_integrator.v => 0.0,
+  cpr_αv.tfpeak.double_integrator.y => 0.0,
+  cpr_αv.tfend.tftime.x => reflex_delay_init,
+  cpr_αv.tfend.double_integrator.v => 0.0,
+  cpr_αv.tfend.double_integrator.y => 0.0,
+
+  Lungafferent.δ => 0.0, # Lung Stretch Receptors
 ]
 
 """
@@ -922,7 +1005,7 @@ p3d = plot(beat_times, [SV],
 display(plot(p3a, p3b, p3c, p3d, layout=(2,2), size=(900,600), suptitle="Beat-to-Beat Trends"))
 # savefig("Images/beat2beat.png")
 
-plot(beat_times, [(Head_art_Vmean + Head_veins_Vmean + Jugular_vein_Vmean + CommonCarotid_Vmean),
+display(plot(beat_times, [(Head_art_Vmean + Head_veins_Vmean + Jugular_vein_Vmean + CommonCarotid_Vmean),
         (UpBd_art_Vmean + UpBd_vein_Vmean),
         (Renal_art_Vmean + Renal_vein_Vmean),
         (Splanchnic_art_Vmean + Splanchnic_vein_Vmean),
@@ -933,7 +1016,7 @@ plot(beat_times, [(Head_art_Vmean + Head_veins_Vmean + Jugular_vein_Vmean + Comm
         label = ["Head" "Upper Body" "Renal" "Splanchnic" "Leg" "Coronary" "Thoracic" "Cardiopulmonary"],
         xlabel = "Time (s)",
         ylabel = "Volume (ml)",
-        title = "Average Branch Volumes")
+        title = "Average Branch Volumes"))
 
 # savefig("Images/volumes.png")
 #### Pulmonary and Respiratory Plots
@@ -1030,6 +1113,12 @@ p5f = plot(Sol, idxs=[Pulm_cap.l₁, Pulm_cap.l₂],
 display(plot(p5a,p5b,p5c,p5d,p5e,p5f, layout=(3,2), size=(900,900), suptitle="Gas Exchange"))
 # savefig("Images/gas_exchange.png")
 
+plot(Sol, idxs=[Gabr_r*ABRafferent.δ, Gcpr_r*CPRafferent.δ, Gps_r*Lungafferent.δ, Gpc_r*(PeripheralChemo.fapc-3.7)],
+        xlabel = "Time (s)",
+        ylabel = "Pressure (mmHg)",
+        title = "Chest Wall Pressures",
+        size=(900,300))
+
 """
 Save Outputs
 Uncomment the following lines to save the outputs to a CSV file.
@@ -1075,10 +1164,14 @@ Uncomment the following lines to save the outputs to a CSV file.
 # Sol[Vzpf][20000]
 # Sol[Vzpf][40000]
 
+plot(Sol, idxs=[UpBd_cap.R, Renal_cap.R, Splanchnic_cap.R, Leg_cap.R, Cor_cap.R], ylims = (0,20))
+
+plot(Sol, idxs=[Cor_vein.cO₂, Leg_vein.cO₂, Head_veins.cO₂])
 
 end
 
 ### TODO: CV Model:            (1) Refine Model Parameters (2) Vertebral Plexus (3) Dynamic ICP
 ### TODO: Pulmonary Mechanics: (1) Bring Intrathoracic Pressure into Lung Model
-### TODO: Simulation:          (1) Exercise Model, (2) Other blood parameters (e.g., pH etc.), (https://github.com/baillielab/oxygen_delivery/blob/master/oxygen_delivery.py) (3) Altitude, pressure, temperature driver; water vapor etc.
+### TODO: Control:             (1) Ischemic Response
+### TODO: Simulation:          (1) Exercise Model, (2) Other blood parameters (e.g., pH etc.), (https://github.com/baillielab/oxygen_delivery/blob/master/oxygen_delivery.py) (3) Altitude, pressure, temperature driver; water vapor etc. (4) DOE for atmospheric pressure (lung gas exchange long equations)
 ### TODO: Code:                (1) Fix the whole model params thing

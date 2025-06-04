@@ -9,7 +9,7 @@ Global System Parameters
 These parameters define global anthropometric and physiological constants for the model.
 """
 HRₙₒₘ = 67  # Nominal Heart Rate (bpm)
-TBV = 5150.0 # Total Blood Volume (ml)
+TBV = 5300.0 # Total Blood Volume (ml)
 ρ_b = 1060.0 # Blood Density (kg/m^3)
 Pa2mmHg = 0.00750062 # Conversion factor from Pascal to mmHg
 mmHg2dynecm2 = 10/Pa2mmHg # Conversion factor from mmHg to dyne/cm^2
@@ -49,7 +49,7 @@ These parameters define the heart's properties, including systolic and elastance
 """
 
 #### Cardiac Timings
-RR₀ = 0.30 # Nominal RR interval (s)
+RR₀ = 60/67 # Nominal RR interval (s)
 τₐᵥ = 0.12 # PR interval (A-V delay) (s)
 τₐₛ = 0.2 # Atrium systolic contraction time (s)
 τᵥₛ = 0.3 # QT interval (Ventricle systolic contraction time) (s)
@@ -360,7 +360,7 @@ Vₜ_heart = 284 # Heart tissue volume (ml)
 Vₜ_splanchnic = 2673 # Lung tissue volume (ml)
 Vₜ_renal = 262 # Renal tissue volume (ml)
 Vₜ_sm = 31200 # Skeletal muscle tissue volume (ml)
-ub_mass_frac = 0.429 # Fraction of skeletal muscle in the upper body (Jansen 2000, https://journals.physiology.org/doi/full/10.1152/jappl.2000.89.1.81)
+ub_mass_frac = 0.35 # Fraction of skeletal muscle in the upper body (Jansen 2000, https://journals.physiology.org/doi/full/10.1152/jappl.2000.89.1.81)
 Vₜ_ub = Vₜ_sm * ub_mass_frac # Upper body (skeletal muscle) tissue volume (ml)
 Vₜ_legs = Vₜ_sm * (1-ub_mass_frac) # Leg (skeletal muscle) tissue volume (ml)
 
@@ -431,7 +431,7 @@ Local Autoregulation (Magosso 2001)
 PaCO₂n = 40.0 # Set point for paCO₂ (mmHg)
 
 CvbO₂n = 0.14
-gbO₂ = 10#140 # Raised from 10 by Albanese, ml blood/mlO₂
+gbO₂ = 140 # Raised from 10 by Albanese, ml blood/mlO₂ 140
 A_auto = 20.9
 B_auto = 92.8
 C_auto = 10570
@@ -439,12 +439,12 @@ D_auto = -5.251
 
 #Rhpn = 19.71 # mmHg.s/ml, same as Rcc
 CvhO₂n = 0.11
-ghO₂ = 35 # Raised from 35 by Albanese, ml blood/mlO₂
+ghO₂ = 490 # Raised from 35 by Albanese, ml blood/mlO₂ 490
 khCO₂ = 11.11 # mmHg
 
 # Rmpn = 4.48 # mmHg.s/ml, replaced by leg and arm microvascular resistances
 CvmO₂n = 0.155
-gmO₂ = 30 # Raised from 30 by Albanese, ml blood/mlO₂
+gmO₂ = 420 # Raised from 30 by Albanese, ml blood/mlO₂ 420
 kmCO₂ = 142.86 # mmHg
 
 τO₂ = 10 # s
@@ -586,8 +586,8 @@ GEmaxrv = 1.3*0.738 # (mmHg/ml/ν)
 τEmaxrv = 8 # (s)
 DEmaxrv = 2 # (s)
 
-Ees_rv = 0.8*1.0 # Right Ventricle end systolic elastance (mmHg/ml)
-Ees_lv = 0.8*2.20 # Left Ventricle end systolic elastance (mmHg/ml)
+Ees_rv = 1.3 # Right Ventricle end systolic elastance (mmHg/ml)
+Ees_lv = 2.5 # Left Ventricle end systolic elastance (mmHg/ml)
 
 #### Heart Rate
 GTs = 1.5*-0.13 # (s/ν)
@@ -603,10 +603,10 @@ DResistance = 2 # (s)
 
 GResistance = 2 # (mmHg.s/ml/ν)
 
-R_UpBd_cap = 1*7.2 # Upper Body microvascular resistance (PRU)
-R_Renal_cap = 1*3.0 # Renal microvascular resistance (PRU)
-R_Splanchnic_cap = 1*1.6 # Splanchnic microvascular resistance (PRU) (Increased from 2.8 for coronary arteries)
-R_Leg_cap = 1*2.5 # Leg microvascular resistance (PRU)# Total microvascular resistance (PRU)
+R_UpBd_cap = 12 # Upper Body microvascular resistance (PRU) Reduced from 12
+R_Renal_cap = 4.7 # Renal microvascular resistance (PRU)
+R_Splanchnic_cap = 3.3 # Splanchnic microvascular resistance (PRU) (Increased from 2.8 for coronary arteries)
+R_Leg_cap = 4 # Leg microvascular resistance (PRU)# Total microvascular resistance (PRU)
 
 
 
@@ -614,10 +614,10 @@ R_Leg_cap = 1*2.5 # Leg microvascular resistance (PRU)# Total microvascular resi
 τVtone = 20 # (s)
 DVtone = 5 # (s)
 
-Vsplit_UpBd = 6/31 # Upper Body Veins volume split
-Vsplit_Renal = 2/31 # Renal Veins volume split
-Vsplit_Splanchnic = 15/31 # Splanchnic Veins volume split
-Vsplit_Leg = 8/31 # Leg Veins volume split
+Vsplit_UpBd = 5/27 # Upper Body Veins volume split
+Vsplit_Renal = 2/27 # Renal Veins volume split
+Vsplit_Splanchnic = 13/27 # Splanchnic Veins volume split
+Vsplit_Leg = 7/27 # Leg Veins volume split
 
 GVtone = 1.1*-1166.3 # (ml/ν) # Total venous tone gain (ml/ν)
 
@@ -626,10 +626,10 @@ GVtone_Renal = GVtone*Vsplit_Renal # (ml/ν)
 GVtone_Splanchnic = GVtone*Vsplit_Splanchnic # (ml/ν)
 GVtone_Leg = GVtone*Vsplit_Leg # (ml/ν)
 
-v0_UpBd_vein = 0.7*560.6 # Upper Body Veins zero pressure volume (ml)
-v0_Renal_vein = 0.7*96.9 # Renal Vein zero pressure volume (ml)
-v0_Splanchnic_vein = 0.7*1549.3 # Splanchnic Vein zero pressure volume (ml) (Subtracted coronary veins)
-v0_Leg_vein = 0.7*983.4 # Leg Vein zero pressure volume (ml)
+v0_UpBd_vein = 360 # Upper Body Veins zero pressure volume (ml)
+v0_Renal_vein = 30 # Renal Vein zero pressure volume (ml)
+v0_Splanchnic_vein = 1146 # Splanchnic Vein zero pressure volume (ml) (Subtracted coronary veins)
+v0_Leg_vein = 716 # Leg Vein zero pressure volume (ml)
 
 tot = v0_UpBd_vein + v0_Renal_vein + v0_Splanchnic_vein + v0_Leg_vein
 3226.4
@@ -669,6 +669,106 @@ IC_V₀_UpBd = Bas_V₀_UpBd - v0_UpBd_vein
 IC_V₀_Renal = Bas_V₀_Renal - v0_Renal_vein
 IC_V₀_Splanchnic = Bas_V₀_Splanchnic - v0_Splanchnic_vein
 IC_V₀_Leg = Bas_V₀_Leg - v0_Leg_vein
+
+
+"""
+Reflex System Parameters
+These parameters define the properties of the arterial baroreflex (ABR) and cardiopulmonary reflex (CPR). The afferent arms include a state space filter with  matrices A, B, and C, as well as the set points and afferent gains. The transfer functions are defined by a delay, a peak, and an end timing and are dynamically set to have unit area impulse response. The delay is defined by a Pade approximation, the order of the approximation can be set here to give a sharper response (more computationally intensive). Finally, the static gains for the ABR and CPR are also defined here.
+"""
+
+######################
+# Afferent Arms
+######################
+
+#### State Space Filter
+
+A_9x9 = [
+  -9.45889157397485 -116.684730988048 -716.776540007884 -4286.18041417701 -16964.9739125645 -56703.9505500527 -128365.488100833 -200510.747016871 -151338.279894609
+  1.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0
+  0.0 1.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0
+  0.0 0.0 1.0 0.0 0.0 0.0 0.0 0.0 0.0
+  0.0 0.0 0.0 1.0 0.0 0.0 0.0 0.0 0.0
+  0.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 0.0
+  0.0 0.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0
+  0.0 0.0 0.0 0.0 0.0 0.0 1.0 0.0 0.0
+  0.0 0.0 0.0 0.0 0.0 0.0 0.0 1.0 0.0
+] # A matrix for the state space filter
+B_9x1 = [1.0; 0.0; 0.0; 0.0; 0.0; 0.0; 0.0; 0.0; 0.0][:, :] # B matrix for the state space filter
+C_1x9 = [0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 151338.279894609] # C matrix for the state space filter
+x0 = ones(9) # Initial condition for the state space filter
+
+#### Afferent Set Points and Gains
+
+p_cpr = 6.0 # CPR Set Point (mmHg)
+gain_cpr = 5.0 # CPR Afferent Gain
+
+p_abr = 91.0 # ABR Set Point (mmHg)
+gain_abr = 18.0 # ABR Afferent Gain
+
+######################
+# Transfer Functions
+######################
+
+#### Pade Approximation
+
+reflex_delay_order = 2 # Order of the Pade delay
+reflex_delay_init = zeros(reflex_delay_order) # Initial condition for the delay
+
+#### Transfer Function Timings
+
+αr_delay = 2.5 # Arterial Baroreflex α-sympathetic resistance delay (s)
+αr_peak = 3.5 # Arterial Baroreflex α-sympathetic resistance peak (s)
+αr_end = 30.0 # Arterial Baroreflex α-sympathetic resistance end (s)
+
+αv_delay = 5.0 # Arterial Baroreflex α-sympathetic volume delay (s)
+αv_peak = 10.0 # Arterial Baroreflex α-sympathetic volume peak (s)
+αv_end = 42.0 # Arterial Baroreflex α-sympathetic volume end (s)
+
+β_delay = 2.5 # Arterial Baroreflex β-sympathetic delay (s)
+β_peak = 3.5 # Arterial Baroreflex β-sympathetic peak (s)
+β_end = 15.0 # Arterial Baroreflex β-sympathetic end (s)
+
+vagal_delay = 0.59 # Arterial Baroreflex parasympathetic delay (s)
+vagal_peak = 0.70 # Arterial Baroreflex parasympathetic peak (s)
+vagal_end = 1.0 # Arterial Baroreflex parasympathetic end (s)
+
+######################
+# Efferent Static Gains
+######################
+
+#### Arterial Baroreflex
+
+Gabr_r = -0.05 # ABR Resistance Gain (PRU/mmHg)
+Gcpr_r = -0.05 # CPR Resistance Gain (PRU/mmHg)
+Gps_r = -0.000344
+Gpc_r = 0.125
+Gabr_v = 31.0
+Gcpr_v = 100.0
+Gps_v = 0.066
+Gpc_v = -33.6
+
+Gabr_vub = 5.0 # ABR Upper Body Volume Gain (ml/mmHg) (Previous 5.3)
+Gabr_vre = 2.0 # ABR Renal Volume Gain (ml/mmHg) (Previous 1.3)
+Gabr_vsp = 13.0 # ABR Splanchnic Volume Gain (ml/mmHg) (Previous 13.3)
+Gabr_vlb = 7.0 # ABR Lower Body Volume Gain (ml/mmHg) (Previous 6.7)
+
+Gabr_erv = -0.037 # ABR RV Elastance Gain (1/ml) (Equivalent to contractility gain of 0.022 ml/mmHg^2) (Previous Contractility Gain 0.021)
+Gabr_elv = -0.044 # ABR LV Elastance Gain (1/ml) (Equivalent to contractility gain of 0.007 ml/mmHg^2) (Previous Contractility Gain 0.014)
+
+Gabr_rrsymp = 0.009 # ABR RR Interval Sympathetic Gain (s/mmHg) (Previous 0.012)
+Gabr_rrpara = 0.009 # ABR RR Interval Parasympathetic Gain (s/mmHg)
+
+#### Cardiopulmonary Reflex
+
+Gcpr_r = -0.05 # CPR Resistance Gain (PRU/mmHg) (Previous -0.3)
+
+Gcpr_vub = 13.0 # CPR Upper Body Volume Gain (ml/mmHg) (Previous 13.5)
+Gcpr_vre = 3.0 # CPR Renal Volume Gain (ml/mmHg) (Previous 2.7)
+Gcpr_vsp = 64.0 # CPR Splanchnic Volume Gain (ml/mmHg)
+Gcpr_vlb = 30.0 # CPR Lower Body Volume Gain (ml/mmHg)
+
+τps = 2
+VTset = 540
 
 
 # GVtone_Renal = -74.21 # (ml/ν)
