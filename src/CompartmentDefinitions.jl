@@ -1336,7 +1336,7 @@ This is a complete model of the lung mechanics, based on the work of Albanese (2
     in.q ~ Vrᵢₙ
 
     chestwall.q ~ 0
-    chestwall.p ~ pₘᵤₛ
+    chestwall.p ~ pₘᵤₛ + 3.5 * (g / 9.81) * sin(α)
 
     C_l * D(p_l) ~ (pₐₒ - p_l) / R_ml - (p_l - p_tr) / R_lt
     C_tr * (D(p_tr) - D(pₚₗ)) ~ (p_l - p_tr) / R_lt - (p_tr - p_b) / R_tb

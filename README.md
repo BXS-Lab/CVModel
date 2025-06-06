@@ -1,7 +1,7 @@
 # Cardiopulmonary Model
 
-**Version:** 3.4.0<br>
-**Release Date:** May 21st, 2025<br>
+**Version:** 3.5.0<br>
+**Release Date:** June 7th, 2025<br>
 **Lab:** BXS Lab, UC Davis<br>
 **Authors:** R.S. Whittle, A.J. Kondoor, H.S. Vellore<br>
 **Contact:**<br>
@@ -108,16 +108,16 @@ This project is licensed under the [MIT License](LICENSE).
 
 ## Citation
 
-Whittle RS, Kondoor AJ, Vellore HS. BXS-Lab/CVModel: v3.4.0. Zenodo; 2025. doi: [10.5281/zenodo.15486814](https://doi.org/10.5281/zenodo.15486814).
+Whittle RS, Kondoor AJ, Vellore HS. BXS-Lab/CVModel: v3.5.0. Zenodo; 2025. doi: [10.5281/zenodo.15338311](https://doi.org/10.5281/zenodo.15338311).
 
 ### BibTeX
 
 ```bibtex
 @software{whittle2025cvmodel,
   author       = {Whittle, R. S. and Kondoor, A. J. and Vellore, H. S.},
-  title        = {BXS-Lab/CVModel: v3.4.0},
+  title        = {BXS-Lab/CVModel: v3.5.0},
   year         = 2025,
   publisher    = {Zenodo},
-  doi          = {10.5281/zenodo.15486814},
-  url          = {https://doi.org/10.5281/zenodo.15486814}
+  doi          = {10.5281/zenodo.15338311},
+  url          = {https://doi.org/10.5281/zenodo.15338311}
 }

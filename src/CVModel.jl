@@ -1,6 +1,6 @@
 """
 Cardiopulmonary Model
-Version 3.4.0 (May 21st, 2025)
+Version 3.5.0 (June 7th, 2025)
 BXS Lab, UC Davis; Authors: RS Whittle, AJ Kondoor, HS Vellore
 Contact info: Dr. Rich Whittle – Department of Mechanical and Aerospace Engineering, UC Davis, One Shields Ave, Davis CA 95616 (rswhittle@ucdavis.edu)
 This model is a simulation of the human cardiopulmonary system. Model features:
@@ -10,11 +10,11 @@ Gas exchange: Gas exchange (O₂ and CO₂) in the lungs and peripheral tissues,
 Respiratory control: Frequency and depth control based on central and peripheral chemoreceptors.
 CV control: Arterial baroreflex, cardiopulmonary reflex, peripheral chemoreceptors, lung stretch receptors, CNS ischemic response, autoregulation in the brain, heart, and skeletal muscles.
 Simulation scenarios: tilt angle protocol, altered-gravity environment, and lower body negative pressure (LBNP) protocol.
-The underlying equations are based on the work of Ursino (2000, 2002), Magosso (2001), Heldt (2004), Zamanian (2007), Diaz Artiles (2015), Albanese (2016), and Whittle (2023). The model is implemented using the ModelingToolkit.jl package in Julia.
+The underlying equations are based on the work of Ursino (2000, 2002), Magosso (2001), Heldt (2004), Zamanian (2007), Mynard (2012), Diaz Artiles (2015), Albanese (2016), and Whittle (2023). The model is implemented using the ModelingToolkit.jl package in Julia.
 """
 
 module CVModel
-display("Cardiopulmonary Model v3.4.0 (May 21st, 2025) - BXS Lab, UC Davis")
+display("Cardiopulmonary Model v3.5.0 (June 7th, 2025) - BXS Lab, UC Davis")
 
 """
 Preamble
@@ -446,10 +446,10 @@ circ_eqs = [
   Lungafferent.e ~ TV.VT,
 
   #### Reflex Arc Afferent Outputs Connected to Transfer Function Inputs
-  αr.u ~ Gabr_r * ABRafferent.δ + Gcpr_r * CPRafferent.δ + Gps_r * Lungafferent.δ + Gpc_r * (PeripheralChemo.fapc-3.7),
-  αv.u ~ Gabr_v * ABRafferent.δ + Gcpr_v * CPRafferent.δ + Gps_v * Lungafferent.δ + Gpc_r * (PeripheralChemo.fapc-3.7),
+  αr.u ~ (Gabr_r * ABRafferent.δ) + (Gcpr_r * CPRafferent.δ) + (Gps_r * Lungafferent.δ) + (Gpc_r * (PeripheralChemo.fapc-3.7)),
+  αv.u ~ (Gabr_v * ABRafferent.δ) + (Gcpr_v * CPRafferent.δ) + (Gps_v * Lungafferent.δ) + (Gpc_r * (PeripheralChemo.fapc-3.7)),
 #   cpr_αv.u ~ CPRafferent.δ,
-  β.u ~ ABRafferent.δ,
+  β.u ~ (Gabr_e * ABRafferent.δ) + (Gpc_e * (PeripheralChemo.fapc - 3.7)),
   vagal.u ~ ABRafferent.δ,
 #   cpr_αr.u ~ CPRafferent.δ,
 
@@ -513,8 +513,8 @@ circ_eqs = [
   Leg_vein.ΔV ~ Vsplit_Leg * αv.y,
 
   #### Effectors: Ventricular Contractility
-  SA.Eabr_rv ~ Gabr_erv * β.y,
-  SA.Eabr_lv ~ Gabr_elv * β.y,
+  SA.Eabr_rv ~ G_erv * β.y,
+  SA.Eabr_lv ~ G_elv * β.y,
 
   #### Effectors: Heart Rate
   SA.RRabr ~ (Gabr_rrsymp * β.y) + (Gabr_rrpara * vagal.y),
@@ -1144,7 +1144,6 @@ Uncomment the following lines to save the outputs to a CSV file.
 
 # CSV.write("output.csv", df_cycle, header=true, delim=',', append=false) # Write beat-by-beat metrics to a CSV file
 
-
 # all_para_names = names(ModelParams, all=true) # Extract all parameter names from the ModelParameters.jl file
 # params_syms = filter(n -> isdefined(ModelParams, n) && getfield(ModelParams, n) isa Number, all_para_names) # Filter for numerical (scalar) parameters
 # parameter_names  = String.(params_syms) # Convert symbols to strings for DataFrame labeling
@@ -1153,25 +1152,10 @@ Uncomment the following lines to save the outputs to a CSV file.
 
 # CSV.write("model_parameters.csv", df_parameters) # Write model parameters to CSV
 
-# Sol[TPR][20000]
-# Sol[TPR][40000]
-# Sol[HR][20000]
-# Sol[HR][40000]
-# Sol[RV.Eₘₐₓeff][20000]
-# Sol[RV.Eₘₐₓeff][40000]
-# Sol[LV.Eₘₐₓeff][20000]
-# Sol[LV.Eₘₐₓeff][40000]
-# Sol[Vzpf][20000]
-# Sol[Vzpf][40000]
-
-plot(Sol, idxs=[UpBd_cap.R, Renal_cap.R, Splanchnic_cap.R, Leg_cap.R, Cor_cap.R], ylims = (0,20))
-
-plot(Sol, idxs=[Cor_vein.cO₂, Leg_vein.cO₂, Head_veins.cO₂])
-
 end
 
-### TODO: CV Model:            (1) Refine Model Parameters (2) Vertebral Plexus (3) Dynamic ICP
-### TODO: Pulmonary Mechanics: (1) Bring Intrathoracic Pressure into Lung Model
+### TODO: CV Model:            (1) Vertebral Plexus (2) Dynamic ICP
 ### TODO: Control:             (1) Ischemic Response
-### TODO: Simulation:          (1) Exercise Model, (2) Other blood parameters (e.g., pH etc.), (https://github.com/baillielab/oxygen_delivery/blob/master/oxygen_delivery.py) (3) Altitude, pressure, temperature driver; water vapor etc. (4) DOE for atmospheric pressure (lung gas exchange long equations)
-### TODO: Code:                (1) Fix the whole model params thing
+### TODO: Simulation:          (1) Exercise Model, (2) DOE for atmospheric pressure (lung gas exchange long equations)
+
+### TODO: Long-term:           (1) Other blood parameters (e.g., pH etc.), (https://github.com/baillielab/oxygen_delivery/blob/master/oxygen_delivery.py) (2) Temperature driver; water vapor etc.

@@ -746,16 +746,18 @@ Gabr_v = 31.0
 Gcpr_v = 100.0
 Gps_v = 0.066
 Gpc_v = -33.6
+Gabr_e = -1
+Gpc_e = 0.474
 
 Gabr_vub = 5.0 # ABR Upper Body Volume Gain (ml/mmHg) (Previous 5.3)
 Gabr_vre = 2.0 # ABR Renal Volume Gain (ml/mmHg) (Previous 1.3)
 Gabr_vsp = 13.0 # ABR Splanchnic Volume Gain (ml/mmHg) (Previous 13.3)
 Gabr_vlb = 7.0 # ABR Lower Body Volume Gain (ml/mmHg) (Previous 6.7)
 
-Gabr_erv = -0.037 # ABR RV Elastance Gain (1/ml) (Equivalent to contractility gain of 0.022 ml/mmHg^2) (Previous Contractility Gain 0.021)
-Gabr_elv = -0.044 # ABR LV Elastance Gain (1/ml) (Equivalent to contractility gain of 0.007 ml/mmHg^2) (Previous Contractility Gain 0.014)
+G_erv = 0.037 # ABR RV Elastance Gain (1/ml) (Equivalent to contractility gain of 0.022 ml/mmHg^2) (Previous Contractility Gain 0.021)
+G_elv = 0.044 # ABR LV Elastance Gain (1/ml) (Equivalent to contractility gain of 0.007 ml/mmHg^2) (Previous Contractility Gain 0.014)
 
-Gabr_rrsymp = 0.009 # ABR RR Interval Sympathetic Gain (s/mmHg) (Previous 0.012)
+Gabr_rrsymp = -0.012 # ABR RR Interval Sympathetic Gain (s/mmHg) (Previous 0.012)
 Gabr_rrpara = 0.009 # ABR RR Interval Parasympathetic Gain (s/mmHg)
 
 #### Cardiopulmonary Reflex
