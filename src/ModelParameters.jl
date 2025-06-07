@@ -127,7 +127,7 @@ These parameters define the properties of the coronary system, including the cor
 Rca = 0.34 # Coronary Artery resistance (PRU)
 Cca = 0.15 # Coronary Artery compliance (ml/mmHg)
 v0ca = 24.0 # Coronary Artery zero pressure volume (ml)
-Lca = 0.047 # Coronary Artery inductance (mmHg.s^2/ml)
+Lca = 0.00047 # Coronary Artery inductance (mmHg.s^2/ml)
 
 #### Coronary Capillaries
 Rcc = 19.71 # Coronary Capillary microvascular resistance (PRU)
@@ -171,7 +171,7 @@ C_UpBd_art = 0.26 # Upper Body Artery compliance (ml/mmHg)
 v0_UpBd_art = 72.0 # Upper Body Artery zero pressure volume (ml)
 h_UpBd_art = 66.0 # Upper Body Artery length (cm)
 con_UpBd_art = 3.0 # Upper Body Artery hydrostatic conversion
-L_UpBd_art = 0.00141 # Upper Body Artery inductance (mmHg.s^2/ml)
+L_UpBd_art = 0.000141 # Upper Body Artery inductance (mmHg.s^2/ml)
 
 #### Compartment 6: Thoracic Aorta
 R_Thor_A = 0.011 # Thoracic Aorta resistance (PRU)
@@ -214,14 +214,14 @@ R_CCA = 0.014 # Common Carotid Artery resistance (PRU)
 C_CCA = 0.07 # Common Carotid Artery compliance (ml/mmHg)
 v0_CCA = 20.0 # Common Carotid Artery zero pressure volume (ml)
 h_CCA = -20.0 # Common Carotid Artery length (cm)
-L_CCA = 0.0007 # Common Carotid Artery inductance (mmHg.s^2/ml)
+L_CCA = 0.00007 # Common Carotid Artery inductance (mmHg.s^2/ml)
 
 #### Compartment H2: Head Arteries
 R_Head_art = 0.014 # Head Artery resistance (PRU)
 C_Head_art = 0.08 # Head Artery compliance (ml/mmHg)
 v0_Head_art = 108.0 # Head Artery zero pressure volume (ml)
 h_Head_art = -10.0 # Head Artery length (cm)
-L_Head_art = 0.0007 # Head Artery inductance (mmHg.s^2/ml)
+L_Head_art = 0.00007 # Head Artery inductance (mmHg.s^2/ml)
 
 """
 Venous System Parameters
@@ -738,16 +738,31 @@ vagal_end = 1.0 # Arterial Baroreflex parasympathetic end (s)
 
 #### Arterial Baroreflex
 
-Gabr_r = -0.05 # ABR Resistance Gain (PRU/mmHg)
-Gcpr_r = -0.05 # CPR Resistance Gain (PRU/mmHg)
-Gps_r = -0.000344
-Gpc_r = 0.125
-Gabr_v = 31.0
-Gcpr_v = 100.0
-Gps_v = 0.066
-Gpc_v = -33.6
-Gabr_e = -1
-Gpc_e = 0.474
+Wabr_r = -1 # ABR Resistance Gain (PRU/mmHg)
+Wcpr_r = -1 # CPR Resistance Gain (PRU/mmHg)
+Wps_r = -6.88
+Wpc_r = 2.5
+
+Wabr_v = -1
+Wcpr_v = -3.23
+Wps_v = -2.13
+Wpc_v = 1.08
+
+Wabr_e = -1
+Wpc_e = 0.474
+
+Wabr_vagal = 1
+Wps_vagal = -12.1
+Wpc_vagal = 1.99
+
+Wisch_αr = 1.464
+Wisch_αv = 0.622
+Wisch_β = 0.378
+
+G_r = 0.05
+G_v = -31.0
+
+
 
 # Gabr_vub = 5.0 # ABR Upper Body Volume Gain (ml/mmHg) (Previous 5.3)
 # Gabr_vre = 2.0 # ABR Renal Volume Gain (ml/mmHg) (Previous 1.3)

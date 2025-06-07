@@ -394,55 +394,53 @@ Ursino: Efferent Pathways
 
 @mtkmodel EfferentPathways begin
   @parameters begin
-    _fes₀ = fes₀
-    _fesₘₐₓ = fesₘₐₓ
-    _fes∞ = fes∞
-    _kes = kes
+    _Wabr_r = Wabr_r
+    _Wcpr_r = Wcpr_r
+    _Wps_r = Wps_r
+    _Wpc_r = Wpc_r
+    _Wisch_αr = Wisch_αr
 
-    _Wbh = Wbₛₕ
-    _Wch = Wcₛₕ
-    _Wph = Wpₛₕ
-    _Wrh = Wrₛₕ
+    _Wabr_v = Wabr_v
+    _Wcpr_v = Wcpr_v
+    _Wps_v = Wps_v
+    _Wpc_v = Wpc_v
+    _Wisch_αv = Wisch_αv
 
-    _Wbp = Wbₛₚ
-    _Wcp = Wcₛₚ
-    _Wpp = Wpₛₚ
-    _Wrp = Wrₛₚ
+    _Wabr_e = Wabr_e
+    _Wpc_e = Wpc_e
+    _Wisch_β = Wisch_β
 
-    _Wbv = Wbₛᵥ
-    _Wcv = Wcₛᵥ
-    _Wpv = Wpₛᵥ
-    _Wrv = Wrₛᵥ
+    _Wabr_vagal = Wabr_vagal
+    _Wps_vagal = Wps_vagal
+    _Wpc_vagal = Wpc_vagal
 
-    _fev₀ = fev₀
-    _fev∞ = fev∞
-    _kev = kev
+    _fapc_set = fapc_set
 
-    _fab₀ = fab₀
-    _Wc_vagal = Wcᵥ
-    _Wp_vagal = Wpᵥ
-    _θᵥ = θᵥ
-
+    _θ_αr₀ = θₛₚₙ
+    _θ_αv₀ = θₛᵥₙ
+    _θ_β₀ = θₛₕₙ
   end
   @variables begin
-    fab(t)
-    fapc(t)
-    fasr(t)
-    fcpr(t)
-    θₛₕ(t)
-    θₛₚ(t)
-    θₛᵥ(t)
-    fₛₕ(t)
-    fₛₚ(t)
-    fₛᵥ(t)
-    fᵥ(t)
+    abr(t)
+    cpr(t)
+    pulm(t)
+    pc(t)
+    θ_αr(t)
+    θ_αv(t)
+    θ_β(t)
+    f_αr(t)
+    f_αv(t)
+    f_β(t)
+    f_vagal(t)
   end
   @equations begin
-    fₛₕ ~ min(_fes∞ + (_fes₀ - _fes∞) * exp(_kes * ((_Wbh * fab) + (_Wch * fapc) + (_Wph * fasr) + (_Wrh * fcpr) - θₛₕ)), _fesₘₐₓ)
-    fₛₚ ~ min(_fes∞ + (_fes₀ - _fes∞) * exp(_kes * ((_Wbp * fab) + (_Wcp * fapc) + (_Wpp * fasr) + (_Wrp * fcpr) - θₛₚ)), _fesₘₐₓ)
-    fₛᵥ ~ min(_fes∞ + (_fes₀ - _fes∞) * exp(_kes * ((_Wbv * fab) + (_Wcv * fapc) + (_Wpv * fasr) + (_Wrv * fcpr) - θₛᵥ)), _fesₘₐₓ)
+     f_αr ~ (_Wabr_r * abr) + (_Wcpr_r * cpr) + (_Wps_r * (pulm/1000)) + (_Wpc_r * (pc - _fapc_set)) - (_Wisch_αr * (θ_αr - _θ_αr₀))
 
-    fᵥ ~ (_fev₀ + _fev∞ * exp((fab - _fab₀) / _kev)) / (1 + exp((fab - _fab₀) / _kev)) + (_Wc_vagal * fapc) + (_Wp_vagal * fasr) - _θᵥ
+     f_αv ~ (_Wabr_v * abr) + (_Wcpr_v * cpr) + (_Wps_v * (pulm/1000)) + (_Wpc_v * (pc - _fapc_set)) - (_Wisch_αv * (θ_αv - _θ_αv₀))
+
+     f_β ~ (_Wabr_e * abr) + (_Wpc_e * (pc - _fapc_set)) - (_Wisch_β * (θ_β - _θ_β₀))
+
+     f_vagal ~ (_Wabr_vagal * abr) + (_Wps_vagal * (pulm/1000)) + (_Wpc_vagal * (pc - _fapc_set))
   end
 end
 

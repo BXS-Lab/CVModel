@@ -515,10 +515,10 @@ This model represents the sino-atrial node of the heart. In our implementation i
     atrial_offset(t)  # atrial offset
     beat_trigger(t)   # smoothed pulse function
     refractory_ok(t)
-    Eabr_rv(t)
-    Eabr_rv_held(t)
-    Eabr_lv(t)
-    Eabr_lv_held(t)
+    ΔE_rv(t)
+    ΔE_rv_held(t)
+    ΔE_lv(t)
+    ΔE_lv_held(t)
   end
 
   @equations begin
@@ -532,19 +532,19 @@ This model represents the sino-atrial node of the heart. In our implementation i
     beat_trigger ~ exp(-((ϕ_wrapped - 1)^2) / ε) * refractory_ok
 
     D(RR_held) ~ beat_trigger * (RR_new - RR_held) / τ_reset
-    D(Eabr_rv_held) ~ beat_trigger * (Eabr_rv - Eabr_rv_held) / τ_reset
-    D(Eabr_lv_held) ~ beat_trigger * (Eabr_lv - Eabr_lv_held) / τ_reset
+    D(ΔE_rv_held) ~ beat_trigger * (ΔE_rv - ΔE_rv_held) / τ_reset
+    D(ΔE_lv_held) ~ beat_trigger * (ΔE_lv - ΔE_lv_held) / τ_reset
   end
 end
 
 """
 Heldt Chamber
-This model represents a single chamber of the heart. It has two parameters: the zero pressure volume (V₀, ml) and the elastance (E, mmHg/ml). The elastance is time-varying and is defined by a shape function that describes the contraction and relaxation of the chamber. The model also includes a transmural pressure variable (pₜₘ, mmHg) that can be directly interrogated, an external static pressure (p₀, mmHg), and a time-varying external pressure (ep). The equations are defined in terms of either pressure or volume, depending on the inP flag. The end-systolic elastance can be adjusted based on the ABR signal (Eabr_held) from the SA node if the has_abr flag is set. The end-systolic elastance is defined as Eₘₐₓeff, which is limited by Elimit to prevent excessive elastance with severe orthostatic stress.
+This model represents a single chamber of the heart. It has two parameters: the zero pressure volume (V₀, ml) and the elastance (E, mmHg/ml). The elastance is time-varying and is defined by a shape function that describes the contraction and relaxation of the chamber. The model also includes a transmural pressure variable (pₜₘ, mmHg) that can be directly interrogated, an external static pressure (p₀, mmHg), and a time-varying external pressure (ep). The equations are defined in terms of either pressure or volume, depending on the inP flag. The end-systolic elastance can be adjusted based on the ABR signal (ΔE_held) from the SA node if the has_abr flag is set. The end-systolic elastance is defined as Eₘₐₓeff, which is limited by Elimit to prevent excessive elastance with severe orthostatic stress.
 
 Note: due to complexity this is composed as a @component and not a @mtkmodel. It makes no difference to the user.
 """
 
-@component function HeldtChamber(; name, inP=false, V₀, p₀=0.0, Eₘᵢₙ, Eₘₐₓ, Elimit=100.0, τₑₛ, has_abr=false)
+@component function HeldtChamber(; name, inP=false, V₀, p₀=0.0, Eₘᵢₙ, Eₘₐₓ, Elimit=100.0, τₑₛ, has_reflex=false)
 
   @named in = Pin()
   @named out = Pin()
@@ -563,7 +563,7 @@ Note: due to complexity this is composed as a @component and not a @mtkmodel. It
     E(t) # Time varying elastance (mmHg/ml)
     DE(t) # Derivative of E(t)
     p_rel(t) # Time varying external pressure (mmHg)
-    Eabr_held(t) # ABR ventricular contractility
+    ΔE_held(t) # ABR ventricular contractility
     Eₘₐₓeff(t) # Beat-to-Beat end-systolic elastance (mmHg/ml)
     cO₂(t)
     cCO₂(t)
@@ -592,9 +592,9 @@ Note: due to complexity this is composed as a @component and not a @mtkmodel. It
   ])
 
 
-    if has_abr # If there is ABR control, set the adjusted end-systolic elastance based on the held ABR signal
+    if has_reflex # If there is ABR control, set the adjusted end-systolic elastance based on the held ABR signal
       append!(eqs, [
-        Eₘₐₓeff ~ min(Eₘₐₓ + Eabr_held, Elimit),
+        Eₘₐₓeff ~ min(Eₘₐₓ + ΔE_held, Elimit),
       ])
     else # Otherwise static end-systolic elastance
       append!(eqs, [
