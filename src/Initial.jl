@@ -9,7 +9,7 @@ BXS Lab, UC Davis. Last updated May 9th, 2025.
 Some time constants for later use
 """
 
-T = RR₀ #+ IC_RR
+T = RR₀
 Tsys = τᵥₛ * sqrt(T)
 Tdias = T - Tsys
 Tatria = τₐᵥ * sqrt(T)
@@ -126,7 +126,7 @@ ph0_Jugular_vein = ρ_b * gravity_val_numeric * (h_Jugular_vein/100/con_default)
 Initial Intrathoracic Pressure
 """
 
-pₜₕ₀ = pₚₗ₀ - 3.5 * (gravity_val_numeric / 9.81) * sin(α_val_numeric)
+pₜₕ₀ = pₚₗ₀ - 3.5 * (gravity_val_numeric / 9.81) * sin(α_val_numeric) # TODO: Fix
 
 """
 Create Pressure Vector

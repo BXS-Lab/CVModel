@@ -34,6 +34,26 @@ The afferent arm of the reflex model is defined by a linear state-space system w
 end
 
 """
+This is a simple model for the Pulmonary Stretch Receptor Afferent (Whittle, 2025; adapted from Albanese, 2016)
+"""
+
+@mtkmodel AfferentLung begin
+  @parameters begin
+    _τps = τps
+    _VTset = VTset
+  end
+  @variables begin
+    ϕ(t)
+    e(t)
+    δ(t)
+  end
+  @equations begin
+    ϕ ~ (e - _VTset)
+    D(δ) ~ (-δ + ϕ) / _τps
+  end
+end
+
+"""
 Transfer Function
 The following components build up the transfer function.
 """
@@ -144,27 +164,6 @@ The TransferFunction component implements a transfer function that models the re
     y ~ tfdelay.y + tfpeak.y + tfend.y
   end
 end
-
-@mtkmodel AfferentLung begin
-  @parameters begin
-    _τps = τps
-    _VTset = VTset
-  end
-  @variables begin
-    ϕ(t)
-    e(t)
-    δ(t)
-  end
-  @equations begin
-    ϕ ~ (e - _VTset)
-    D(δ) ~ (-δ + ϕ) / _τps
-  end
-end
-
-"""
-NEW Reflexes
-Included for the 3.4.0 update, removing the Heldt-style reflexes and replacing with the Ursino style with spikes and synaptic connections.
-"""
 
 """
 Ursino: Autoregulation
@@ -395,7 +394,6 @@ Ursino: Efferent Pathways
 
 @mtkmodel EfferentPathways begin
   @parameters begin
-    # TODO
     _fes₀ = fes₀
     _fesₘₐₓ = fesₘₐₓ
     _fes∞ = fes∞

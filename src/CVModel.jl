@@ -165,53 +165,31 @@ This section of code instances the compartments used in the model, based on the 
 @named LBMuscleAutoreg = Autoregulation(_gjO₂=gmO₂, _CvjO₂n=CvmO₂n, _τO₂=τO₂, _PaCO₂n=PaCO₂n, _kjCO₂=kmCO₂, _τCO₂=τCO₂)
 
 #### Arterial Baroreflex
-@named ABR = AfferentBaroreflex()
+@named ABRafferent = Afferent(p_set=p_abr, gain=gain_abr)
 
 #### Cardiopulmonary Reflex
-@named CPR = AfferentCPR()
+@named CPRafferent = Afferent(p_set=p_cpr, gain=gain_cpr)
 
 #### Peripheral Chemoreceptors
 @named PeripheralChemo = PeripheralChemoreceptors()
 
 #### Lung Stretch Receptors
-@named LungStretchReceptors = LungStretch()
+@named Lungafferent = AfferentLung()
 
 #### CNS Ischemic Response
 @named IschArterioles = IschemicResponse(_χₛⱼ=χₛₚ, _PaO₂ₛⱼn=PO₂nₛₚ, _kiscₛⱼ=kiscₛₚ, _τisc=τisc, _PaCO₂n=PaCO₂n, _gccₛⱼ=gccₛₚ, _τcc=τcc, _θₛⱼn=θₛₚₙ)
 @named IschVeins = IschemicResponse(_χₛⱼ=χₛᵥ, _PaO₂ₛⱼn=PO₂nₛᵥ, _kiscₛⱼ=kiscₛᵥ, _τisc=τisc, _PaCO₂n=PaCO₂n, _gccₛⱼ=gccₛᵥ, _τcc=τcc, _θₛⱼn=θₛᵥₙ)
 @named IschHeart = IschemicResponse(_χₛⱼ=χₛₕ, _PaO₂ₛⱼn=PO₂nₛₕ, _kiscₛⱼ=kiscₛₕ, _τisc=τisc, _PaCO₂n=PaCO₂n, _gccₛⱼ=gccₛₕ, _τcc=τcc, _θₛⱼn=θₛₕₙ)
 
-#### Efferent Pathways
-@named Efferent = EfferentPathways()
-
 #### Effectors
-@named ERH = Effectors(Gain=GEmaxrv, delay=DEmaxrv, time=τEmaxrv, min=fesₘᵢₙ, delay_order=reflex_delay_order)
-@named ELH = Effectors(Gain=GEmaxlv, delay=DEmaxlv, time=τEmaxlv, min=fesₘᵢₙ, delay_order=reflex_delay_order)
-@named ERR = EffectorsRR(Gainₛ=GTs, Gainᵥ=GTv, delayₛ=DTs, delayᵥ=DTv, timeₛ=τTs, timeᵥ=τTv, min=fesₘᵢₙ, delay_order=reflex_delay_order)
-
-@named EResistance = Effectors(Gain=GResistance, delay=DResistance, time=τResistance, min=fesₘᵢₙ, delay_order=reflex_delay_order)
-
-@named EVtone_UpBd = Effectors(Gain=GVtone_UpBd, delay=DVtone, time=τVtone, min=fesₘᵢₙ, delay_order=reflex_delay_order)
-@named EVtone_Renal = Effectors(Gain=GVtone_Renal, delay=DVtone, time=τVtone, min=fesₘᵢₙ, delay_order=reflex_delay_order)
-@named EVtone_Splanchnic = Effectors(Gain=GVtone_Splanchnic, delay=DVtone, time=τVtone, min=fesₘᵢₙ, delay_order=reflex_delay_order)
-@named EVtone_Leg = Effectors(Gain=GVtone_Leg, delay=DVtone, time=τVtone, min=fesₘᵢₙ, delay_order=reflex_delay_order)
-
-#### Pulmonary Reflexes
-@named CentralResp = Chemoreceptors(Delay=Dc, Gain_A=G_cA, Gain_f=G_cf, set_point=PaCO₂n, time_A=τ_cA, time_f=τ_cf, delay_order=reflex_delay_order)
-@named PeripheralResp = Chemoreceptors(Delay=Dp, Gain_A=G_pA, Gain_f=G_pf, set_point=fapc_set, time_A=τ_pA, time_f=τ_pf, delay_order=reflex_delay_order)
-
-#### Reflex Arcs
-# There are two afferents, one for each arc (ABR and CPR). The separate effects (e.g., α-Sympathetic, β-Sympathetic, Parasympathetic) are modeled as separate transfer functions.
-@named CPRafferent = Afferent(p_set=p_cpr, gain=gain_cpr)
-@named ABRafferent = Afferent(p_set=p_abr, gain=gain_abr)
-@named Lungafferent = AfferentLung()
-
 @named αr = TransferFunction(delay_order = reflex_delay_order, reflex_delay = αr_delay, reflex_peak = αr_peak, reflex_end = αr_end)
 @named αv = TransferFunction(delay_order = reflex_delay_order, reflex_delay = αv_delay, reflex_peak = αv_peak, reflex_end = αv_end)
 @named β = TransferFunction(delay_order = reflex_delay_order, reflex_delay = β_delay, reflex_peak = β_peak, reflex_end = β_end)
 @named vagal = TransferFunction(delay_order = reflex_delay_order, reflex_delay = vagal_delay, reflex_peak = vagal_peak, reflex_end = vagal_end)
-# @named cpr_αr = TransferFunction(delay_order = reflex_delay_order, reflex_delay = cpr_αr_delay, reflex_peak = cpr_αr_peak, reflex_end = cpr_αr_end)
-@named cpr_αv = TransferFunction(delay_order = reflex_delay_order, reflex_delay = αv_delay, reflex_peak = αv_peak, reflex_end = αv_end)
+
+#### Pulmonary Reflexes
+@named CentralResp = Chemoreceptors(Delay=Dc, Gain_A=G_cA, Gain_f=G_cf, set_point=PaCO₂n, time_A=τ_cA, time_f=τ_cf, delay_order=reflex_delay_order)
+@named PeripheralResp = Chemoreceptors(Delay=Dp, Gain_A=G_pA, Gain_f=G_pf, set_point=fapc_set, time_A=τ_pA, time_f=τ_pf, delay_order=reflex_delay_order)
 
 #### Design of Experiments
 # These are the drivers to implement the protocols defined in the "doe.jl" file.
@@ -440,32 +418,18 @@ circ_eqs = [
   UBMuscleAutoreg.uPaCO₂ ~ LungGE.paCO₂,
   LBMuscleAutoreg.uPaCO₂ ~ LungGE.paCO₂,
 
-    #### Reflex Arc Afferent Inputs (Sensed Pressures)
-  CPRafferent.e ~ (RA.pₜₘ),
-  ABRafferent.e ~ (Asc_A.C.pₜₘ+(BC_A.C.pₜₘ + (ρ_b*gravity_driver.g*h_cs*sin(alpha_driver.α)*0.0000750062)))/2.0,
-  Lungafferent.e ~ TV.VT,
-
-  #### Reflex Arc Afferent Outputs Connected to Transfer Function Inputs
-  αr.u ~ (Gabr_r * ABRafferent.δ) + (Gcpr_r * CPRafferent.δ) + (Gps_r * Lungafferent.δ) + (Gpc_r * (PeripheralChemo.fapc-3.7)),
-  αv.u ~ (Gabr_v * ABRafferent.δ) + (Gcpr_v * CPRafferent.δ) + (Gps_v * Lungafferent.δ) + (Gpc_r * (PeripheralChemo.fapc-3.7)),
-#   cpr_αv.u ~ CPRafferent.δ,
-  β.u ~ (Gabr_e * ABRafferent.δ) + (Gpc_e * (PeripheralChemo.fapc - 3.7)),
-  vagal.u ~ ABRafferent.δ,
-#   cpr_αr.u ~ CPRafferent.δ,
-
-
   #### Afferent: Arterial Baroreflex
-  ABR.pb ~ (Asc_A.C.pₜₘ+(BC_A.C.pₜₘ + (ρ_b*gravity_driver.g*(h_cs/100)*sin(alpha_driver.α)*Pa2mmHg)))/2.0,
+  ABRafferent.e ~ (Asc_A.C.pₜₘ+(BC_A.C.pₜₘ + (ρ_b*gravity_driver.g*h_cs*sin(alpha_driver.α)*0.0000750062)))/2.0,
 
   #### Afferent: Cardiopulmonary Reflex
-  CPR.pr ~ RA.pₜₘ,
+  CPRafferent.e ~ (RA.pₜₘ),
+
+  #### Afferent: Lung Stretch Receptors
+  Lungafferent.e ~ TV.VT,
 
   #### Afferent: Peripheral Chemoreceptors
   PeripheralChemo.uSaO₂ ~ LungGE.SaO₂,
   PeripheralChemo.ucaCO₂ ~ LungGE.caCO₂,
-
-  #### Afferent: Lung Stretch Receptors
-  TV.VT ~ LungStretchReceptors.VT,
 
   #### Afferent: CNS Ischemic Response
   IschArterioles.uPaO₂ ~ LungGE.paO₂,
@@ -476,26 +440,10 @@ circ_eqs = [
   IschHeart.uPaCO₂ ~ LungGE.paCO₂,
 
   #### Efferent Pathways
-  Efferent.fab ~ ABR.fab,
-  Efferent.fcpr ~ CPR.fcpr,
-  Efferent.fapc ~ PeripheralChemo.fapc,
-  Efferent.fasr ~ LungStretchReceptors.fasr,
-  Efferent.θₛₕ ~ IschHeart.θₛⱼ,
-  Efferent.θₛₚ ~ IschArterioles.θₛⱼ,
-  Efferent.θₛᵥ ~ IschVeins.θₛⱼ,
-
-  #### Effectors
-  ERH.u ~ Efferent.fₛₕ,
-  ELH.u ~ Efferent.fₛₕ,
-  ERR.uₛ ~ Efferent.fₛₕ,
-  ERR.uᵥ ~ Efferent.fᵥ,
-
-  EResistance.u ~ Efferent.fₛₚ,
-
-  EVtone_UpBd.u ~ Efferent.fₛᵥ,
-  EVtone_Renal.u ~ Efferent.fₛᵥ,
-  EVtone_Splanchnic.u ~ Efferent.fₛᵥ,
-  EVtone_Leg.u ~ Efferent.fₛᵥ,
+  αr.u ~ (Gabr_r * ABRafferent.δ) + (Gcpr_r * CPRafferent.δ) + (Gps_r * Lungafferent.δ) + (Gpc_r * (PeripheralChemo.fapc-3.7)),
+  αv.u ~ (Gabr_v * ABRafferent.δ) + (Gcpr_v * CPRafferent.δ) + (Gps_v * Lungafferent.δ) + (Gpc_r * (PeripheralChemo.fapc-3.7)),
+  β.u ~ (Gabr_e * ABRafferent.δ) + (Gpc_e * (PeripheralChemo.fapc - 3.7)),
+  vagal.u ~ ABRafferent.δ,
 
   #### Effectors: Arteriole Resistance
   Cor_cap.R ~ Rcc * (1 + HeartAutoreg.xjCO₂) /(1 + HeartAutoreg.xjO₂),
@@ -517,7 +465,7 @@ circ_eqs = [
   SA.Eabr_lv ~ G_elv * β.y,
 
   #### Effectors: Heart Rate
-  SA.RRabr ~ (Gabr_rrsymp * β.y) + (Gabr_rrpara * vagal.y),
+  SA.RRabr ~ (G_rrsymp * β.y) + (G_rrpara * vagal.y),
 
   #### Pulmonary Reflexes
   CentralResp.u ~ LungGE.paCO₂,
@@ -552,15 +500,10 @@ This section of the code composes the system of ordinary differential equations 
   alpha_driver, gravity_driver, lbnp_driver, atmosphere_driver, # Design of Experiments Drivers
   Lungs, RespMuscles, LungGE, TV, # Lung Model Breathing ChestWall
   CentralResp, PeripheralResp,
-  PeripheralChemo, LungStretchReceptors, # Respiratory Control
+  PeripheralChemo,
   BrainAutoreg, HeartAutoreg, UBMuscleAutoreg, LBMuscleAutoreg,# Autoregulation
   HeartP, # Heart Power
-  ABR, CPR, # Afferent Baroreflex
   IschArterioles, IschVeins, IschHeart, # CNS Ischemic Response
-  Efferent, # Efferent Pathways
-  ERH, ELH, ERR, # Effectors
-  EResistance, # Effectors: Arteriole Resistance
-  EVtone_UpBd, EVtone_Renal, EVtone_Splanchnic, EVtone_Leg, # Effectors: Venous Tone
   ])
 
 circ_sys = structural_simplify(circ_model)
@@ -628,10 +571,10 @@ u0 = [
   Interstitial.Vint => VintIC,
 
   #### Sino-Atrial Node
-  SA.RR_held => Bas_RR,
+  SA.RR_held => RR₀,
   SA.ϕ => 0.0,
-  SA.Eabr_rv_held => IC_Eᵣᵥ,
-  SA.Eabr_lv_held => IC_Eₗᵥ,
+  SA.Eabr_rv_held => Ees_rv,
+  SA.Eabr_lv_held => Ees_lv,
 
   #### Valves
   R_tricuspid.ζ => 1,
@@ -721,9 +664,6 @@ u0 = [
   PeripheralChemo.ϕCO₂dyn => 0.0,
   PeripheralChemo.ϕc => 3.7,
 
-  #### Lung Stretch Receptors
-  LungStretchReceptors.fasr => 540*0.01176,
-
   #### Respiratory Control
   CentralResp.delay.x => reflex_delay_init,
   CentralResp.y_A => 0.0,
@@ -749,10 +689,6 @@ u0 = [
   #### Heart Dynamic Consumption
   HeartP.Wh => Whₙₒₘ,
 
-  #### Afferent Baroreflex & CPR
-  ABR.P => Pn,
-  CPR.P => Prn,
-
   #### Ischemic Response
   IschArterioles.ΔΘO₂ₛⱼ => 0.0,
   IschArterioles.ΔΘCO₂ₛⱼ => 0.0,
@@ -760,27 +696,6 @@ u0 = [
   IschVeins.ΔΘCO₂ₛⱼ => 0.0,
   IschHeart.ΔΘO₂ₛⱼ => 0.0,
   IschHeart.ΔΘCO₂ₛⱼ => 0.0,
-
-  #### Effectors
-  ERH.Δσ => IC_Eᵣᵥ,
-  ERH.d.x => reflex_delay_init,
-  ELH.Δσ => IC_Eₗᵥ,
-  ELH.d.x => reflex_delay_init,
-  ERR.ΔT => IC_RR,
-  ERR.dₛ.x => reflex_delay_init,
-  ERR.dᵥ.x => reflex_delay_init,
-
-  EResistance.Δσ => IC_R_UpBd,
-  EResistance.d.x => reflex_delay_init,
-
-  EVtone_UpBd.Δσ => IC_V₀_UpBd,
-  EVtone_UpBd.d.x => reflex_delay_init,
-  EVtone_Renal.Δσ => IC_V₀_Renal,
-  EVtone_Renal.d.x => reflex_delay_init,
-  EVtone_Splanchnic.Δσ => IC_V₀_Splanchnic,
-  EVtone_Splanchnic.d.x => reflex_delay_init,
-  EVtone_Leg.Δσ => IC_V₀_Leg,
-  EVtone_Leg.d.x => reflex_delay_init,
 
   #### Reflex Afferents
   CPRafferent.x => x0,
@@ -823,15 +738,6 @@ u0 = [
   vagal.tfend.tftime.x => reflex_delay_init,
   vagal.tfend.double_integrator.v => 0.0,
   vagal.tfend.double_integrator.y => 0.0,
-  cpr_αv.tfdelay.tftime.x => reflex_delay_init,
-  cpr_αv.tfdelay.double_integrator.v => 0.0,
-  cpr_αv.tfdelay.double_integrator.y => 0.0,
-  cpr_αv.tfpeak.tftime.x => reflex_delay_init,
-  cpr_αv.tfpeak.double_integrator.v => 0.0,
-  cpr_αv.tfpeak.double_integrator.y => 0.0,
-  cpr_αv.tfend.tftime.x => reflex_delay_init,
-  cpr_αv.tfend.double_integrator.v => 0.0,
-  cpr_αv.tfend.double_integrator.y => 0.0,
 
   Lungafferent.δ => 0.0, # Lung Stretch Receptors
 ]
@@ -864,12 +770,6 @@ display(plot(Sol, idxs=[Vtotal],
         xlabel = "Time (s)",
         ylabel = "Volume (ml)",
         title = "Total Blood Volume")) # Debugging plot to quickly check volume conservation
-
-display(plot(Sol, idxs=[EResistance.σθ, EVtone_Splanchnic.σθ, ELH.σθ, ERR.ΔTₛ, ERR.ΔTᵥ],
-        label = ["Resistance" "Venous Tone" "Contractility" "RR-symp" "RR-para"],
-        xlabel = "Time (s)",
-        ylabel = "Spikes/s",
-        title = "Effectors")) # Debugging plot to quickly check resistance conservation
 
 #### Direct from Solution Plots
 
@@ -923,33 +823,33 @@ p1d = plot(Sol, idxs=[RV.Eₘₐₓeff, LV.Eₘₐₓeff],
              ylabel = "End-Systolic E (mmHg/ml)",
              title = "Ventricular Contractility")
 
-p1e = plot(Sol, idxs=[Head_cap.G, Head_veins.cO₂],
-             label = ["Brain Vascular Conductance" "Concentration of O₂ in Head Veins"],
-             xlabel = "Time (s)",
-             ylabel = "G (ml/s/mmHg), cO₂ (ml/ml)",
-             title = "Cerebral Autoregulation")
+# p1e = plot(Sol, idxs=[Head_cap.G, Head_veins.cO₂],
+#              label = ["Brain Vascular Conductance" "Concentration of O₂ in Head Veins"],
+#              xlabel = "Time (s)",
+#              ylabel = "G (ml/s/mmHg), cO₂ (ml/ml)",
+#              title = "Cerebral Autoregulation")
 
-p1f = plot(Sol, idxs=[Efferent.fapc, Efferent.fasr, Efferent.fcpr, Efferent.θₛₕ, Efferent.θₛₚ, Efferent.θₛᵥ],
-             label = ["Peripheral Chemoreceptors" "Pulmonary Stretch Receptors" "Cardiopulmonary Reflex" "Ischemic to β-Sympathetic" "Ischemic to α-Sympathetic (R)" "Ischemic to α-Sympathetic (V)"],
-             xlabel = "Time (s)",
-             ylabel = "Spikes/s",
-             title = "Afferent Pathways (Excluding Baroreflex)")
+# p1f = plot(Sol, idxs=[Efferent.fapc, Efferent.fasr, Efferent.fcpr, Efferent.θₛₕ, Efferent.θₛₚ, Efferent.θₛᵥ],
+#              label = ["Peripheral Chemoreceptors" "Pulmonary Stretch Receptors" "Cardiopulmonary Reflex" "Ischemic to β-Sympathetic" "Ischemic to α-Sympathetic (R)" "Ischemic to α-Sympathetic (V)"],
+#              xlabel = "Time (s)",
+#              ylabel = "Spikes/s",
+#              title = "Afferent Pathways (Excluding Baroreflex)")
 
-p1g = plot(Sol, idxs=[Efferent.fab],
-             label = "Arterial Baroreflex",
-             xlabel = "Time (s)",
-             ylabel = "Spikes/s",
-             title = "Arterial Baroreflex Afferent Pathway")
+# p1g = plot(Sol, idxs=[Efferent.fab],
+#              label = "Arterial Baroreflex",
+#              xlabel = "Time (s)",
+#              ylabel = "Spikes/s",
+#              title = "Arterial Baroreflex Afferent Pathway")
 
-p1h = plot(Sol, idxs=[Efferent.fₛₕ, Efferent.fₛₚ, Efferent.fₛᵥ, Efferent.fᵥ],
-             label = ["β-Sympathetic" "α-Sympathetic (R)" "α-Sympathetic (V)" "Vagal"],
-             xlabel = "Time (s)",
-             ylabel = "Spikes/s",
-             title = "Efferent Pathways")
+# p1h = plot(Sol, idxs=[Efferent.fₛₕ, Efferent.fₛₚ, Efferent.fₛᵥ, Efferent.fᵥ],
+#              label = ["β-Sympathetic" "α-Sympathetic (R)" "α-Sympathetic (V)" "Vagal"],
+#              xlabel = "Time (s)",
+#              ylabel = "Spikes/s",
+#              title = "Efferent Pathways")
 
 display(plot(p1a, p1b, p1c, p1d, layout=(2,2), size=(900,600), suptitle="Reflex Action (1)"))
 # savefig("Images/reflex1.png")
-display(plot(p1e, p1f, p1g, p1h, layout=(2,2), size=(900,600), suptitle="Reflex Action (2)"))
+# display(plot(p1e, p1f, p1g, p1h, layout=(2,2), size=(900,600), suptitle="Reflex Action (2)"))
 # savefig("Images/reflex2.png")
 
 p2a = plot(Sol, idxs=[Vtotal, Vvessel, Vinterstitial],
@@ -1021,19 +921,19 @@ display(plot(beat_times, [(Head_art_Vmean + Head_veins_Vmean + Jugular_vein_Vmea
 # savefig("Images/volumes.png")
 #### Pulmonary and Respiratory Plots
 
-p4a = plot(Sol, idxs=[RespMuscles.out.p], xlims = (0, 250),
+p4a = plot(Sol, idxs=[RespMuscles.out.p],
         label = "pₘᵤₛ",
         xlabel = "Time (s)",
         ylabel = "Pressure (mmHg)",
         title = "Respiratory Muscle Pressure")
 
-p4b = plot(Sol, idxs=[Lungs.pₚₗ], xlims = (0, 250),
+p4b = plot(Sol, idxs=[Lungs.pₚₗ],
         label = "pₚₗ",
         xlabel = "Time (s)",
         ylabel = "Pressure (mmHg)",
         title = "Pleural Pressure")
 
-p4c = plot(Sol, idxs=[Lungs.p_A], xlims = (0, 250),
+p4c = plot(Sol, idxs=[Lungs.p_A],
         label = "p_A",
         xlabel = "Time (s)",
         ylabel = "Pressure (mmHg)",
@@ -1155,7 +1055,7 @@ Uncomment the following lines to save the outputs to a CSV file.
 end
 
 ### TODO: CV Model:            (1) Vertebral Plexus (2) Dynamic ICP
-### TODO: Control:             (1) Ischemic Response
+### TODO: Control:             (1) Ischemic Response (2) Vagal Control
 ### TODO: Simulation:          (1) Exercise Model, (2) DOE for atmospheric pressure (lung gas exchange long equations)
 
 ### TODO: Long-term:           (1) Other blood parameters (e.g., pH etc.), (https://github.com/baillielab/oxygen_delivery/blob/master/oxygen_delivery.py) (2) Temperature driver; water vapor etc.

@@ -49,7 +49,7 @@ These parameters define the heart's properties, including systolic and elastance
 """
 
 #### Cardiac Timings
-RR₀ = 60/67 # Nominal RR interval (s)
+RR₀ = 60/HRₙₒₘ # Nominal RR interval (s)
 τₐᵥ = 0.12 # PR interval (A-V delay) (s)
 τₐₛ = 0.2 # Atrium systolic contraction time (s)
 τᵥₛ = 0.3 # QT interval (Ventricle systolic contraction time) (s)
@@ -454,22 +454,22 @@ kmCO₂ = 142.86 # mmHg
 BaroReflex Parameters
 """
 
-τzb = 6.37 # (s)
-τpb = 2.076 # (s)
-fabₘᵢₙ = 2.52 # (spikes/s)
-fabₘₐₓ = 47.78 # (spikes/s)
-Pn = 92 # (mmHg)
-kab = 11.76 # (mmHg)
+# τzb = 6.37 # (s)
+# τpb = 2.076 # (s)
+# fabₘᵢₙ = 2.52 # (spikes/s)
+# fabₘₐₓ = 47.78 # (spikes/s)
+# Pn = 92 # (mmHg)
+# kab = 11.76 # (mmHg)
 
 """
 Cardiopulmonary Reflex Parameters
 """
 
-τpr = 2.076
-Prn = 6
-kcpr = 3.27
-fcprₘₐₓ = 13.27
-fcprₘᵢₙ = 0.70
+# τpr = 2.076
+# Prn = 6
+# kcpr = 3.27
+# fcprₘₐₓ = 13.27
+# fcprₘᵢₙ = 0.70
 
 """
 Peripheral Chemoreceptors (Ursino 2002)
@@ -540,68 +540,68 @@ fapc_set = 3.7 # Set point for fapc (spikes/s)
 Efferent Pathways
 """
 
-fes₀ = 16.11 # (spikes/s)
-fesₘₐₓ = 60
-fes∞ =2.1 # (spikes/s)
-kes = 0.0675 # (s)
+# fes₀ = 16.11 # (spikes/s)
+# fesₘₐₓ = 60
+# fes∞ =2.1 # (spikes/s)
+# kes = 0.0675 # (s)
 
-Wbₛₕ = -1.75 # Baroreflex to heart
-Wcₛₕ = 1 # Modified from 5, Chemoreceptors to heart
-Wpₛₕ = 0 # Pulmonary stretch receptors to heart
-Wrₛₕ = 0 # Cardiopulmonary reflex to heart
+# Wbₛₕ = -1.75 # Baroreflex to heart
+# Wcₛₕ = 1 # Modified from 5, Chemoreceptors to heart
+# Wpₛₕ = 0 # Pulmonary stretch receptors to heart
+# Wrₛₕ = 0 # Cardiopulmonary reflex to heart
 
-Wbₛₚ = -1 # Baroreflex to arterioles
-Wcₛₚ = 5 # Chemoreceptors to arterioles
-Wpₛₚ = -0.34 # Pulmonary stretch receptors to arterioles
-Wrₛₚ = -1 # Cardiopulmonary reflex to arterioles
+# Wbₛₚ = -1 # Baroreflex to arterioles
+# Wcₛₚ = 5 # Chemoreceptors to arterioles
+# Wpₛₚ = -0.34 # Pulmonary stretch receptors to arterioles
+# Wrₛₚ = -1 # Cardiopulmonary reflex to arterioles
 
-Wbₛᵥ = -1 # Baroreflex to venous tone
-Wcₛᵥ = 5 # Chemoreceptors to venous tone
-Wpₛᵥ = -0.34 # Pulmonary stretch receptors to venous tone
-Wrₛᵥ = -2 # Cardiopulmonary reflex to venous tone
+# Wbₛᵥ = -1 # Baroreflex to venous tone
+# Wcₛᵥ = 5 # Chemoreceptors to venous tone
+# Wpₛᵥ = -0.34 # Pulmonary stretch receptors to venous tone
+# Wrₛᵥ = -2 # Cardiopulmonary reflex to venous tone
 
-fev₀ = 3.2 # (spikes/s)
-fev∞ = 6.3 # (spikes/s)
-kev = 7.06 # (s)
+# fev₀ = 3.2 # (spikes/s)
+# fev∞ = 6.3 # (spikes/s)
+# kev = 7.06 # (s)
 
-fab₀ = 25 # (spikes/s)
-Wcᵥ = 0.2
-Wpᵥ = 0.103
+# fab₀ = 25 # (spikes/s)
+# Wcᵥ = 0.2
+# Wpᵥ = 0.103
 
-θᵥ = -0.68 # (spikes/s)
+# θᵥ = -0.68 # (spikes/s)
 
 
 """
 Effectors
 """
 
-fesₘᵢₙ = 2.66 # (spikes/s)
+# fesₘᵢₙ = 2.66 # (spikes/s)
 
-#### Cardiac Elastances
-GEmaxlv = 1.3*0.877 # (mmHg/ml/ν)
-τEmaxlv = 8 # (s)
-DEmaxlv = 2 # (s)
+# #### Cardiac Elastances
+# GEmaxlv = 1.3*0.877 # (mmHg/ml/ν)
+# τEmaxlv = 8 # (s)
+# DEmaxlv = 2 # (s)
 
-GEmaxrv = 1.3*0.738 # (mmHg/ml/ν)
-τEmaxrv = 8 # (s)
-DEmaxrv = 2 # (s)
+# GEmaxrv = 1.3*0.738 # (mmHg/ml/ν)
+# τEmaxrv = 8 # (s)
+# DEmaxrv = 2 # (s)
 
 Ees_rv = 1.3 # Right Ventricle end systolic elastance (mmHg/ml)
 Ees_lv = 2.5 # Left Ventricle end systolic elastance (mmHg/ml)
 
 #### Heart Rate
-GTs = 1.5*-0.13 # (s/ν)
-GTv = 1.5*0.09 # (s/ν)
-τTs = 2 # (s)
-τTv = 1.5 # (s)
-DTs = 2 # (s)
-DTv = 0.2 # (s)
+# GTs = 1.5*-0.13 # (s/ν)
+# GTv = 1.5*0.09 # (s/ν)
+# τTs = 2 # (s)
+# τTv = 1.5 # (s)
+# DTs = 2 # (s)
+# DTv = 0.2 # (s)
 
 #### Arteriole Resistances
-τResistance = 6 # (s)
-DResistance = 2 # (s)
+# τResistance = 6 # (s)
+# DResistance = 2 # (s)
 
-GResistance = 2 # (mmHg.s/ml/ν)
+# GResistance = 2 # (mmHg.s/ml/ν)
 
 R_UpBd_cap = 12 # Upper Body microvascular resistance (PRU) Reduced from 12
 R_Renal_cap = 4.7 # Renal microvascular resistance (PRU)
@@ -611,64 +611,64 @@ R_Leg_cap = 4 # Leg microvascular resistance (PRU)# Total microvascular resistan
 
 
 #### Venous Tone
-τVtone = 20 # (s)
-DVtone = 5 # (s)
+# τVtone = 20 # (s)
+# DVtone = 5 # (s)
 
 Vsplit_UpBd = 5/27 # Upper Body Veins volume split
 Vsplit_Renal = 2/27 # Renal Veins volume split
 Vsplit_Splanchnic = 13/27 # Splanchnic Veins volume split
 Vsplit_Leg = 7/27 # Leg Veins volume split
 
-GVtone = 1.1*-1166.3 # (ml/ν) # Total venous tone gain (ml/ν)
+# GVtone = 1.1*-1166.3 # (ml/ν) # Total venous tone gain (ml/ν)
 
-GVtone_UpBd = GVtone*Vsplit_UpBd # (ml/ν)
-GVtone_Renal = GVtone*Vsplit_Renal # (ml/ν)
-GVtone_Splanchnic = GVtone*Vsplit_Splanchnic # (ml/ν)
-GVtone_Leg = GVtone*Vsplit_Leg # (ml/ν)
+# GVtone_UpBd = GVtone*Vsplit_UpBd # (ml/ν)
+# GVtone_Renal = GVtone*Vsplit_Renal # (ml/ν)
+# GVtone_Splanchnic = GVtone*Vsplit_Splanchnic # (ml/ν)
+# GVtone_Leg = GVtone*Vsplit_Leg # (ml/ν)
 
 v0_UpBd_vein = 360 # Upper Body Veins zero pressure volume (ml)
 v0_Renal_vein = 30 # Renal Vein zero pressure volume (ml)
-v0_Splanchnic_vein = 1146 # Splanchnic Vein zero pressure volume (ml) (Subtracted coronary veins)
+v0_Splanchnic_vein = 1047.8 # Splanchnic Vein zero pressure volume (ml) (Subtracted coronary veins)
 v0_Leg_vein = 716 # Leg Vein zero pressure volume (ml)
 
-tot = v0_UpBd_vein + v0_Renal_vein + v0_Splanchnic_vein + v0_Leg_vein
-3226.4
-ub=567.6/tot
-ren=99.2/tot
-spl=1566.8/tot
-leg=992.8/tot
-totn=tot+300
-ub*totn
-ren*totn
-spl*totn
-leg*totn
+# tot = v0_UpBd_vein + v0_Renal_vein + v0_Splanchnic_vein + v0_Leg_vein
+# 3226.4
+# ub=567.6/tot
+# ren=99.2/tot
+# spl=1566.8/tot
+# leg=992.8/tot
+# totn=tot+300
+# ub*totn
+# ren*totn
+# spl*totn
+# leg*totn
 """
 Basal Values
 """
 
-Bas_RR = 60/HRₙₒₘ
-Bas_Eᵣᵥ = 1.3
-Bas_Eₗᵥ = 2.5
-Bas_R_UpBd = 12
-Bas_R_Renal = 4.7
-Bas_R_Splanchnic = 3.3
-Bas_R_Leg = 4
-Bas_V₀_UpBd = 360
-Bas_V₀_Renal = 30
-Bas_V₀_Splanchnic = 1047.8
-Bas_V₀_Leg = 716
+# Bas_RR = 60/HRₙₒₘ
+# Bas_Eᵣᵥ = 1.3
+# Bas_Eₗᵥ = 2.5
+# Bas_R_UpBd = 12
+# Bas_R_Renal = 4.7
+# Bas_R_Splanchnic = 3.3
+# Bas_R_Leg = 4
+# Bas_V₀_UpBd = 360
+# Bas_V₀_Renal = 30
+# Bas_V₀_Splanchnic = 1047.8
+# Bas_V₀_Leg = 716
 
-IC_RR = Bas_RR - RR₀
-IC_Eᵣᵥ = Bas_Eᵣᵥ - Ees_rv
-IC_Eₗᵥ = Bas_Eₗᵥ - Ees_lv
-IC_R_UpBd = Bas_R_UpBd - R_UpBd_cap
-IC_R_Renal = Bas_R_Renal - R_Renal_cap
-IC_R_Splanchnic = Bas_R_Splanchnic - R_Splanchnic_cap
-IC_R_Leg = Bas_R_Leg - R_Leg_cap
-IC_V₀_UpBd = Bas_V₀_UpBd - v0_UpBd_vein
-IC_V₀_Renal = Bas_V₀_Renal - v0_Renal_vein
-IC_V₀_Splanchnic = Bas_V₀_Splanchnic - v0_Splanchnic_vein
-IC_V₀_Leg = Bas_V₀_Leg - v0_Leg_vein
+# IC_RR = Bas_RR - RR₀
+# IC_Eᵣᵥ = Bas_Eᵣᵥ - Ees_rv
+# IC_Eₗᵥ = Bas_Eₗᵥ - Ees_lv
+# IC_R_UpBd = Bas_R_UpBd - R_UpBd_cap
+# IC_R_Renal = Bas_R_Renal - R_Renal_cap
+# IC_R_Splanchnic = Bas_R_Splanchnic - R_Splanchnic_cap
+# IC_R_Leg = Bas_R_Leg - R_Leg_cap
+# IC_V₀_UpBd = Bas_V₀_UpBd - v0_UpBd_vein
+# IC_V₀_Renal = Bas_V₀_Renal - v0_Renal_vein
+# IC_V₀_Splanchnic = Bas_V₀_Splanchnic - v0_Splanchnic_vein
+# IC_V₀_Leg = Bas_V₀_Leg - v0_Leg_vein
 
 
 """
@@ -749,25 +749,25 @@ Gpc_v = -33.6
 Gabr_e = -1
 Gpc_e = 0.474
 
-Gabr_vub = 5.0 # ABR Upper Body Volume Gain (ml/mmHg) (Previous 5.3)
-Gabr_vre = 2.0 # ABR Renal Volume Gain (ml/mmHg) (Previous 1.3)
-Gabr_vsp = 13.0 # ABR Splanchnic Volume Gain (ml/mmHg) (Previous 13.3)
-Gabr_vlb = 7.0 # ABR Lower Body Volume Gain (ml/mmHg) (Previous 6.7)
+# Gabr_vub = 5.0 # ABR Upper Body Volume Gain (ml/mmHg) (Previous 5.3)
+# Gabr_vre = 2.0 # ABR Renal Volume Gain (ml/mmHg) (Previous 1.3)
+# Gabr_vsp = 13.0 # ABR Splanchnic Volume Gain (ml/mmHg) (Previous 13.3)
+# Gabr_vlb = 7.0 # ABR Lower Body Volume Gain (ml/mmHg) (Previous 6.7)
 
 G_erv = 0.037 # ABR RV Elastance Gain (1/ml) (Equivalent to contractility gain of 0.022 ml/mmHg^2) (Previous Contractility Gain 0.021)
 G_elv = 0.044 # ABR LV Elastance Gain (1/ml) (Equivalent to contractility gain of 0.007 ml/mmHg^2) (Previous Contractility Gain 0.014)
 
-Gabr_rrsymp = -0.012 # ABR RR Interval Sympathetic Gain (s/mmHg) (Previous 0.012)
-Gabr_rrpara = 0.009 # ABR RR Interval Parasympathetic Gain (s/mmHg)
+G_rrsymp = -0.012 # ABR RR Interval Sympathetic Gain (s/mmHg) (Previous 0.012)
+G_rrpara = 0.009 # ABR RR Interval Parasympathetic Gain (s/mmHg)
 
 #### Cardiopulmonary Reflex
 
-Gcpr_r = -0.05 # CPR Resistance Gain (PRU/mmHg) (Previous -0.3)
+# Gcpr_r = -0.05 # CPR Resistance Gain (PRU/mmHg) (Previous -0.3)
 
-Gcpr_vub = 13.0 # CPR Upper Body Volume Gain (ml/mmHg) (Previous 13.5)
-Gcpr_vre = 3.0 # CPR Renal Volume Gain (ml/mmHg) (Previous 2.7)
-Gcpr_vsp = 64.0 # CPR Splanchnic Volume Gain (ml/mmHg)
-Gcpr_vlb = 30.0 # CPR Lower Body Volume Gain (ml/mmHg)
+# Gcpr_vub = 13.0 # CPR Upper Body Volume Gain (ml/mmHg) (Previous 13.5)
+# Gcpr_vre = 3.0 # CPR Renal Volume Gain (ml/mmHg) (Previous 2.7)
+# Gcpr_vsp = 64.0 # CPR Splanchnic Volume Gain (ml/mmHg)
+# Gcpr_vlb = 30.0 # CPR Lower Body Volume Gain (ml/mmHg)
 
 τps = 2
 VTset = 540

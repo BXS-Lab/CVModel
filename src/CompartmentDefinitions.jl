@@ -46,7 +46,7 @@ end
 
 """
 One Port
-The One Port is a basic circuit element with an input and output. It has two variables: pressure difference (Δp, mmHg) and flow (q, ml/s). The pressure difference is defined as the difference between the output and input pressures. The flow is conserved such that the sum of the input and output flows is zero.
+The One Port is a basic circuit element with an input and output. It has two variables: pressure difference (Δp, mmHg) and flow (q, ml/s). The pressure difference is defined as the difference between the output and input pressures. The flow is conserved such that the sum of the input and output flows is zero. A separate OnePort is defined for the pressure only pin.
 """
 
 @mtkmodel OnePort begin
@@ -336,7 +336,9 @@ The Compliance model represents a vascular compliance. It has two parameters: th
 The inP flag indicates whether the formulation of the equations should be in terms of pressure (p) or volume (V). Pressure is used in this simulation, but volume is included for completeness.
 The has_ep flag indicates whether there is an external static pressure, and the has_variable_ep flag extends this with a third pin to a time varying external pressure (both can be used at once for a bias). The variable p_rel is defined based on these two flags and the static parameter p₀ (mmHg).
 The is_nonlinear flag can be set to transform the pressure-volume relationship into the nonlinear form as defined by Heldt (2004). If this flag is set, the V_max parameter (ml) is used to define the maximum distending volume. The nonlinear flag also inserts the variable qint (ml/s) to represent the flow through from these compartments to and from the interstitial compartment.
-The has_abr and has_cpr flags introduce extra variables Vabr and Vcpr, which represent the reflex control of tone. The effective zero-pressure volume, V₀eff (ml) is a variable set by the sum of these and the base V₀. If introduced, Vabr and Vcpr must be connected externally. The variable pₜₘ (mmHg) is the transmural pressure, defined as the difference between the internal pressure and the external pressure.
+The has_reflex flag introduces an extra variable ΔV, which represent the reflex control of tone. The effective zero-pressure volume, V₀eff (ml) is a variable set by the sum of this and the base V₀. If introduced, ΔV must be connected externally. The variable pₜₘ (mmHg) is the transmural pressure, defined as the difference between the internal pressure and the external pressure.
+
+Gas exchange takes place in the final compliance before the microcirculation. The has_gasexchange flag allows you to set a tissue volume and an O₂ consumption rate. For the coronary circulation, the consumption rate is dynamic and must be connected externally. Future exercise simulation will make skeletal muscle consumptions dynamic and adjust RQ.
 
 Note: due to complexity this is composed as a @component and not a @mtkmodel. It makes no difference to the user.
 """
@@ -1013,7 +1015,7 @@ end
 
 """
 External Pressure
-This model represents the external pressure. It is defined by a baseline pressure (p_ext) and currently has no time-varying effects.
+This model represents the external pressure. It is defined by a baseline pressure (p_ext) and currently has no time-varying effects. Note that this is not the absolute atmospheric pressure used for gas exchange calculations; rather it is the relative pressure.
 """
 
 @mtkmodel ExternalPressureUB begin
@@ -1064,6 +1066,10 @@ This model represents the external pressure on the legs. It is defined by a base
     pext.p ~ p_ext + p_lbnp
   end
 end
+
+"""
+Mynard Valves, copied from CirculatorySystemModels.jl
+"""
 
 """
 `MynardValve_Atrioventricular(; name, ρ, Mrg, Mst, Ann, Kvc, Kvo)`
